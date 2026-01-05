@@ -70,11 +70,6 @@ const data = {
             url: "/admin/news",
             icon: FileText,
         },
-        {
-            title: "Pengaturan",
-            url: "/admin/settings",
-            icon: Settings2,
-        },
     ],
 }
 
