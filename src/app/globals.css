@@ -37,6 +37,23 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+
+  /* Custom Colors for Navbar & Hero Section */
+  --color-navbar-topbar: var(--navbar-topbar);
+  --color-navbar-topbar-text: var(--navbar-topbar-text);
+  --color-navbar-icon-accent: var(--navbar-icon-accent);
+  --color-hero-overlay-from: var(--hero-overlay-from);
+  --color-hero-overlay-via: var(--hero-overlay-via);
+  --color-hero-overlay-to: var(--hero-overlay-to);
+  --color-hero-badge-bg: var(--hero-badge-bg);
+  --color-hero-badge-text: var(--hero-badge-text);
+  --color-hero-badge-border: var(--hero-badge-border);
+  --color-hero-title: var(--hero-title);
+  --color-hero-subtitle: var(--hero-subtitle);
+  --color-hero-description: var(--hero-description);
+  --color-hero-button-primary: var(--hero-button-primary);
+  --color-hero-button-primary-hover: var(--hero-button-primary-hover);
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -83,6 +100,42 @@
   --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
   --sidebar-border: oklch(0.984 0.003 247.858 / 0.1);
   --sidebar-ring: oklch(0.57 0.22 28);
+
+  /* Custom Colors for Navbar & Hero Section */
+  /* Navbar Top Bar - Dark Blue Gray (#3d4f5c) */
+  --navbar-topbar: #3d4f5c;
+  --navbar-topbar-text: #ffffff;
+  --navbar-icon-accent: #ef4444;
+  /* Red-500 for icons */
+
+  /* Hero Section Gradient Overlay */
+  --hero-overlay-from: rgba(15, 23, 42, 0.95);
+  /* slate-900/95 */
+  --hero-overlay-via: rgba(30, 41, 59, 0.85);
+  /* slate-800/85 */
+  --hero-overlay-to: rgba(51, 65, 85, 0.70);
+  /* slate-700/70 */
+
+  /* Hero Badge */
+  --hero-badge-bg: rgba(37, 99, 235, 0.2);
+  /* blue-600/20 */
+  --hero-badge-text: #93c5fd;
+  /* blue-300 */
+  --hero-badge-border: rgba(59, 130, 246, 0.3);
+  /* blue-500/30 */
+
+  /* Hero Text Colors */
+  --hero-title: #ffffff;
+  --hero-subtitle: #60a5fa;
+  /* blue-400 */
+  --hero-description: #d1d5db;
+  /* gray-300 */
+
+  /* Hero Buttons */
+  --hero-button-primary: #2563eb;
+  /* blue-600 */
+  --hero-button-primary-hover: #1d4ed8;
+  /* blue-700 */
 }
 
 .dark {
