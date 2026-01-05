@@ -3,7 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { ImageIcon, NewspaperIcon, LayoutDashboardIcon, UsersIcon, SettingsIcon, BarChartIcon } from "lucide-react"
+import { ImageIcon, NewspaperIcon, LayoutDashboardIcon, UsersIcon, BarChartIcon } from "lucide-react"
 
 export default function DashboardPage() {
     const features = [
@@ -12,7 +12,7 @@ export default function DashboardPage() {
             description: "Kelola gambar dan aset media",
             href: "/admin/gallery",
             icon: ImageIcon,
-            color: "bg-gradient-to-br from-purple-500 to-indigo-600",
+            color: "bg-gradient-to-br from-green-500 to-emerald-600",
         },
         {
             title: "News",
@@ -20,27 +20,6 @@ export default function DashboardPage() {
             href: "/admin/news",
             icon: NewspaperIcon,
             color: "bg-gradient-to-br from-blue-500 to-cyan-600",
-        },
-        {
-            title: "Users",
-            description: "Manajemen pengguna",
-            href: "/admin/users",
-            icon: UsersIcon,
-            color: "bg-gradient-to-br from-green-500 to-emerald-600",
-        },
-        {
-            title: "Analytics",
-            description: "Statistik dan laporan",
-            href: "/admin/analytics",
-            icon: BarChartIcon,
-            color: "bg-gradient-to-br from-orange-500 to-amber-600",
-        },
-        {
-            title: "Settings",
-            description: "Pengaturan sistem",
-            href: "/admin/settings",
-            icon: SettingsIcon,
-            color: "bg-gradient-to-br from-gray-500 to-slate-600",
         },
     ]
 

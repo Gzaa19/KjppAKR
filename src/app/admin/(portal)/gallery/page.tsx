@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 
 export default function GalleryPage() {
     return (
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+        <div className="flex flex-1 flex-col gap-4">
             <div className="flex items-center justify-between">
                 <div className="space-y-1">
                     <h2 className="text-2xl font-bold tracking-tight">Galeri Foto</h2>
