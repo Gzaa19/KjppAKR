@@ -62,12 +62,12 @@ const data = {
         },
         {
             title: "Galeri",
-            url: "/admin/gallery",
+            url: "/admin/dashboard/gallery",
             icon: Map,
         },
         {
             title: "Berita",
-            url: "/admin/news",
+            url: "/admin/dashboard/news",
             icon: FileText,
         },
         {
