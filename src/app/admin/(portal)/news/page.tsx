@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Plus, Search, Calendar, MessageSquare, MoreHorizontal } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import Link from "next/link"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -22,10 +23,12 @@ export default function NewsPage() {
                         Kelola postingan berita, artikel, dan pengumuman.
                     </p>
                 </div>
-                <Button>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Tulis Berita
-                </Button>
+                <Link href="/admin/news/create">
+                    <Button>
+                        <Plus className="mr-2 h-4 w-4" />
+                        Tulis Berita
+                    </Button>
+                </Link>
             </div>
 
             <div className="flex items-center gap-2 mb-2">

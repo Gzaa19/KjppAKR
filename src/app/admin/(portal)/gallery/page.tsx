@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Plus, Trash2, Search, Image as ImageIcon, MoreVertical } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import Link from "next/link"
 
 export default function GalleryPage() {
     return (
@@ -15,10 +16,12 @@ export default function GalleryPage() {
                         Dokumentasi kegiatan perusahaan seperti rapat dan survei lapangan.
                     </p>
                 </div>
-                <Button>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Upload Foto
-                </Button>
+                <Link href="/admin/gallery/create">
+                    <Button>
+                        <Plus className="mr-2 h-4 w-4" />
+                        Upload Foto
+                    </Button>
+                </Link>
             </div>
 
             <div className="flex items-center gap-2 mb-4">
@@ -59,10 +62,12 @@ export default function GalleryPage() {
                     </div>
                 ))}
                 {/* Upload Placeholder */}
-                <div className="aspect-square border-2 border-dashed rounded-lg flex flex-col items-center justify-center text-muted-foreground hover:bg-muted/50 cursor-pointer transition-colors">
-                    <Plus className="h-8 w-8 mb-2" />
-                    <span className="text-sm font-medium">Upload Baru</span>
-                </div>
+                <Link href="/admin/gallery/create" className="contents">
+                    <div className="aspect-square border-2 border-dashed rounded-lg flex flex-col items-center justify-center text-muted-foreground hover:bg-muted/50 cursor-pointer transition-colors">
+                        <Plus className="h-8 w-8 mb-2" />
+                        <span className="text-sm font-medium">Upload Baru</span>
+                    </div>
+                </Link>
             </div>
         </div>
     )
