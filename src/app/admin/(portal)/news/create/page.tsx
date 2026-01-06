@@ -1,23 +1,71 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { ArrowLeft, Save, Upload } from "lucide-react"
-import Link from "next/link"
-import { useState } from "react"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { ArrowLeft, Save, Upload } from "lucide-react";
+import Link from "next/link";
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { createNews } from "@/actions/news";
+import { generateSlug } from "@/lib/helpers";
+import type { CreateNewsInput } from "@/lib/validations";
 
 export default function CreateNewsPage() {
-    const [isLoading, setIsLoading] = useState(false)
+    const router = useRouter();
+    const [isPending, startTransition] = useTransition();
+    const [error, setError] = useState<string | null>(null);
+
+    const [formData, setFormData] = useState({
+        title: "",
+        slug: "",
+        excerpt: "",
+        content: "",
+        category: "" as "ARTIKEL" | "BERITA" | "KEGIATAN" | "PENGUMUMAN" | "",
+        coverImage: "",
+    });
+
+    const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const title = e.target.value;
+        setFormData((prev) => ({
+            ...prev,
+            title,
+            slug: generateSlug(title),
+        }));
+    };
 
     async function onSubmit(e: React.FormEvent) {
-        e.preventDefault()
-        setIsLoading(true)
-        setTimeout(() => {
-            setIsLoading(false)
-        }, 1000)
+        e.preventDefault();
+        setError(null);
+
+        if (!formData.category) {
+            setError("Pilih kategori terlebih dahulu");
+            return;
+        }
+
+        startTransition(async () => {
+            const input: CreateNewsInput = {
+                title: formData.title,
+                slug: formData.slug,
+                excerpt: formData.excerpt || undefined,
+                content: formData.content,
+                category: formData.category as "ARTIKEL" | "BERITA" | "KEGIATAN" | "PENGUMUMAN",
+                coverImage: formData.coverImage || undefined,
+                isPublished: false,
+            };
+
+            // TODO: Replace with actual user ID from session
+            const result = await createNews(input, "temp-user-id");
+
+            if (result.success) {
+                router.push("/admin/news");
+                router.refresh();
+            } else {
+                setError(result.error || "Gagal membuat berita");
+            }
+        });
     }
 
     return (
@@ -30,26 +78,45 @@ export default function CreateNewsPage() {
                 </Link>
                 <div>
                     <h1 className="text-2xl font-bold tracking-tight">Tulis Berita Baru</h1>
-                    <p className="text-muted-foreground">
-                        Buat postingan artikel, berita, atau pengumuman baru.
-                    </p>
+                    <p className="text-muted-foreground">Buat postingan artikel, berita, atau pengumuman baru.</p>
                 </div>
             </div>
 
+            {error && (
+                <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive">
+                    {error}
+                </div>
+            )}
+
             <form onSubmit={onSubmit}>
                 <div className="grid gap-8">
-                    {/* Main Content */}
                     <Card>
                         <CardHeader>
                             <CardTitle>Konten Berita</CardTitle>
-                            <CardDescription>
-                                Informasi utama berita yang akan ditampilkan.
-                            </CardDescription>
+                            <CardDescription>Informasi utama berita yang akan ditampilkan.</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
                             <div className="space-y-2">
                                 <Label htmlFor="title">Judul Berita</Label>
-                                <Input id="title" placeholder="Masukkan judul berita yang menarik" required />
+                                <Input
+                                    id="title"
+                                    placeholder="Masukkan judul berita yang menarik"
+                                    value={formData.title}
+                                    onChange={handleTitleChange}
+                                    required
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="slug">Slug URL</Label>
+                                <Input
+                                    id="slug"
+                                    placeholder="judul-berita-url-friendly"
+                                    value={formData.slug}
+                                    onChange={(e) => setFormData((prev) => ({ ...prev, slug: e.target.value }))}
+                                    required
+                                />
+                                <p className="text-xs text-muted-foreground">URL: /news/{formData.slug || "slug-berita"}</p>
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
@@ -57,19 +124,32 @@ export default function CreateNewsPage() {
                                     <Label htmlFor="category">Kategori</Label>
                                     <select
                                         id="category"
-                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                                        value={formData.category}
+                                        onChange={(e) =>
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                category: e.target.value as typeof formData.category,
+                                            }))
+                                        }
                                         required
                                     >
                                         <option value="">Pilih Kategori</option>
-                                        <option value="artikel">Artikel</option>
-                                        <option value="berita">Berita</option>
-                                        <option value="kegiatan">Kegiatan</option>
-                                        <option value="pengumuman">Pengumuman</option>
+                                        <option value="ARTIKEL">Artikel</option>
+                                        <option value="BERITA">Berita</option>
+                                        <option value="KEGIATAN">Kegiatan</option>
+                                        <option value="PENGUMUMAN">Pengumuman</option>
                                     </select>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="date">Tanggal Publish</Label>
-                                    <Input id="date" type="date" required />
+                                    <Label htmlFor="coverImage">URL Cover Image</Label>
+                                    <Input
+                                        id="coverImage"
+                                        type="url"
+                                        placeholder="https://example.com/image.jpg"
+                                        value={formData.coverImage}
+                                        onChange={(e) => setFormData((prev) => ({ ...prev, coverImage: e.target.value }))}
+                                    />
                                 </div>
                             </div>
 
@@ -79,6 +159,8 @@ export default function CreateNewsPage() {
                                     id="excerpt"
                                     placeholder="Ringkasan singkat untuk tampilan kartu..."
                                     className="h-20"
+                                    value={formData.excerpt}
+                                    onChange={(e) => setFormData((prev) => ({ ...prev, excerpt: e.target.value }))}
                                 />
                                 <p className="text-xs text-muted-foreground">
                                     Akan ditampilkan pada preview berita di halaman depan.
@@ -91,51 +173,25 @@ export default function CreateNewsPage() {
                                     id="content"
                                     placeholder="Tulis isi berita lengkap di sini..."
                                     className="min-h-[300px]"
+                                    value={formData.content}
+                                    onChange={(e) => setFormData((prev) => ({ ...prev, content: e.target.value }))}
                                     required
                                 />
                             </div>
                         </CardContent>
                     </Card>
 
-                    {/* Media */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Media & Cover</CardTitle>
-                            <CardDescription>
-                                Gambar utama yang akan menjadi cover berita.
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="grid gap-4">
-                                <div className="border-2 border-dashed rounded-lg p-8 text-center hover:bg-muted/50 cursor-pointer transition-colors">
-                                    <div className="flex flex-col items-center gap-2">
-                                        <div className="p-4 rounded-full bg-primary/10 text-primary">
-                                            <Upload className="h-6 w-6" />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <h3 className="font-semibold">Upload Gambar Cover</h3>
-                                            <p className="text-sm text-muted-foreground">
-                                                Drag & drop gambar di sini atau klik untuk memilih
-                                            </p>
-                                        </div>
-                                        <Input id="image" type="file" className="hidden" accept="image/*" />
-                                    </div>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-
                     <div className="flex items-center justify-end gap-4">
                         <Link href="/admin/news">
-                            <Button variant="ghost" type="button">Batal</Button>
+                            <Button variant="ghost" type="button">
+                                Batal
+                            </Button>
                         </Link>
-                        <Button type="submit" disabled={isLoading}>
-                            {isLoading ? (
-                                <>Menyimpan...</>
-                            ) : (
+                        <Button type="submit" disabled={isPending}>
+                            {isPending ? "Menyimpan..." : (
                                 <>
                                     <Save className="mr-2 h-4 w-4" />
-                                    Publikasikan Berita
+                                    Simpan sebagai Draft
                                 </>
                             )}
                         </Button>
@@ -143,5 +199,5 @@ export default function CreateNewsPage() {
                 </div>
             </form>
         </div>
-    )
+    );
 }

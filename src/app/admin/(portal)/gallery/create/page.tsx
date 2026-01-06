@@ -1,24 +1,77 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { ArrowLeft, Save, Upload, Image as ImageIcon } from "lucide-react"
-import Link from "next/link"
-import { useState } from "react"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { ArrowLeft, Save, Upload, Image as ImageIcon } from "lucide-react";
+import Link from "next/link";
+import { useState, useTransition, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { createGallery, getAlbums } from "@/actions/gallery";
+import type { CreateGalleryInput } from "@/lib/validations";
+
+type Album = {
+    id: string;
+    name: string;
+    slug: string;
+};
 
 export default function CreateGalleryPage() {
-    const [isLoading, setIsLoading] = useState(false)
+    const router = useRouter();
+    const [isPending, startTransition] = useTransition();
+    const [error, setError] = useState<string | null>(null);
+    const [albums, setAlbums] = useState<Album[]>([]);
+
+    const [formData, setFormData] = useState({
+        title: "",
+        description: "",
+        imageUrl: "",
+        eventDate: "",
+        albumId: "",
+    });
+
+    useEffect(() => {
+        async function loadAlbums() {
+            const result = await getAlbums(true);
+            if (result.success && result.data) {
+                setAlbums(result.data);
+            }
+        }
+        loadAlbums();
+    }, []);
 
     async function onSubmit(e: React.FormEvent) {
-        e.preventDefault()
-        setIsLoading(true)
-        // Simulate API call
-        setTimeout(() => {
-            setIsLoading(false)
-        }, 1000)
+        e.preventDefault();
+        setError(null);
+
+        if (!formData.imageUrl) {
+            setError("URL gambar wajib diisi");
+            return;
+        }
+
+        startTransition(async () => {
+            const input: CreateGalleryInput = {
+                title: formData.title,
+                description: formData.description || null,
+                imageUrl: formData.imageUrl,
+                eventDate: formData.eventDate ? new Date(formData.eventDate) : null,
+                albumId: formData.albumId || null,
+                isPublished: true,
+                sortOrder: 0,
+            };
+
+            // TODO: Replace with actual user ID from session
+            const result = await createGallery(input, "temp-user-id");
+
+            if (result.success) {
+                router.push("/admin/gallery");
+                router.refresh();
+            } else {
+                setError(result.error || "Gagal menambahkan foto");
+            }
+        });
     }
 
     return (
@@ -31,74 +84,95 @@ export default function CreateGalleryPage() {
                 </Link>
                 <div>
                     <h1 className="text-2xl font-bold tracking-tight">Upload Foto Baru</h1>
-                    <p className="text-muted-foreground">
-                        Tambahkan dokumentasi foto kegiatan baru ke galeri.
-                    </p>
+                    <p className="text-muted-foreground">Tambahkan dokumentasi foto kegiatan baru ke galeri.</p>
                 </div>
             </div>
 
+            {error && (
+                <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive">
+                    {error}
+                </div>
+            )}
+
             <form onSubmit={onSubmit}>
                 <div className="grid gap-8">
-                    {/* Upload Section */}
                     <Card>
                         <CardHeader>
-                            <CardTitle>File Foto</CardTitle>
-                            <CardDescription>
-                                Pilih foto yang ingin diupload (Max 5MB per file).
-                            </CardDescription>
+                            <CardTitle>URL Foto</CardTitle>
+                            <CardDescription>Masukkan URL gambar yang ingin ditambahkan ke galeri.</CardDescription>
                         </CardHeader>
-                        <CardContent>
-                            <div className="border-2 border-dashed rounded-lg p-12 text-center hover:bg-muted/50 cursor-pointer transition-colors group">
-                                <div className="flex flex-col items-center gap-4">
-                                    <div className="p-4 rounded-full bg-muted group-hover:bg-background transition-colors">
-                                        <ImageIcon className="h-8 w-8 text-muted-foreground" />
-                                    </div>
-                                    <div className="space-y-1">
-                                        <h3 className="font-semibold text-lg">Pilih Foto untuk Diupload</h3>
-                                        <p className="text-sm text-muted-foreground">
-                                            Format yang didukung: JPG, PNG, WEBP
-                                        </p>
-                                    </div>
-                                    <Button variant="secondary" className="mt-4">
-                                        <Upload className="mr-2 h-4 w-4" />
-                                        Pilih File
-                                    </Button>
-                                    <Input id="image" type="file" className="hidden" accept="image/*" multiple />
-                                </div>
+                        <CardContent className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="imageUrl">URL Gambar</Label>
+                                <Input
+                                    id="imageUrl"
+                                    type="url"
+                                    placeholder="https://example.com/image.jpg"
+                                    value={formData.imageUrl}
+                                    onChange={(e) => setFormData((prev) => ({ ...prev, imageUrl: e.target.value }))}
+                                    required
+                                />
                             </div>
+
+                            {formData.imageUrl && (
+                                <div className="border rounded-lg p-4">
+                                    <p className="text-sm text-muted-foreground mb-2">Preview:</p>
+                                    <div className="aspect-video bg-muted rounded-lg overflow-hidden">
+                                        <img
+                                            src={formData.imageUrl}
+                                            alt="Preview"
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => {
+                                                (e.target as HTMLImageElement).style.display = "none";
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                            )}
                         </CardContent>
                     </Card>
 
-                    {/* Image Details */}
                     <Card>
                         <CardHeader>
                             <CardTitle>Detail Informasi</CardTitle>
-                            <CardDescription>
-                                Informasi detail mengenai foto kegiatan ini.
-                            </CardDescription>
+                            <CardDescription>Informasi detail mengenai foto kegiatan ini.</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
                             <div className="space-y-2">
                                 <Label htmlFor="title">Judul Kegiatan / Foto</Label>
-                                <Input id="title" placeholder="Contoh: Survei Lapangan Proyek A" required />
+                                <Input
+                                    id="title"
+                                    placeholder="Contoh: Survei Lapangan Proyek A"
+                                    value={formData.title}
+                                    onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
+                                    required
+                                />
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="date">Tanggal Kegiatan</Label>
-                                    <Input id="date" type="date" required />
+                                    <Label htmlFor="eventDate">Tanggal Kegiatan</Label>
+                                    <Input
+                                        id="eventDate"
+                                        type="date"
+                                        value={formData.eventDate}
+                                        onChange={(e) => setFormData((prev) => ({ ...prev, eventDate: e.target.value }))}
+                                    />
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="album">Album (Opsional)</Label>
                                     <select
                                         id="album"
-                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                                        value={formData.albumId}
+                                        onChange={(e) => setFormData((prev) => ({ ...prev, albumId: e.target.value }))}
                                     >
                                         <option value="">Pilih Album...</option>
-                                        <option value="rapat">Rapat Kerja</option>
-                                        <option value="survei">Survei Lapangan</option>
-                                        <option value="gathering">Gathering</option>
-                                        <option value="lainnya">Lainnya</option>
+                                        {albums.map((album) => (
+                                            <option key={album.id} value={album.id}>
+                                                {album.name}
+                                            </option>
+                                        ))}
                                     </select>
                                 </div>
                             </div>
@@ -109,6 +183,8 @@ export default function CreateGalleryPage() {
                                     id="description"
                                     placeholder="Tulis keterangan singkat mengenai foto ini..."
                                     className="h-24"
+                                    value={formData.description}
+                                    onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
                                 />
                             </div>
                         </CardContent>
@@ -116,12 +192,12 @@ export default function CreateGalleryPage() {
 
                     <div className="flex items-center justify-end gap-4">
                         <Link href="/admin/gallery">
-                            <Button variant="ghost" type="button">Batal</Button>
+                            <Button variant="ghost" type="button">
+                                Batal
+                            </Button>
                         </Link>
-                        <Button type="submit" disabled={isLoading}>
-                            {isLoading ? (
-                                <>Menyimpan...</>
-                            ) : (
+                        <Button type="submit" disabled={isPending}>
+                            {isPending ? "Menyimpan..." : (
                                 <>
                                     <Save className="mr-2 h-4 w-4" />
                                     Simpan ke Galeri
@@ -132,5 +208,5 @@ export default function CreateGalleryPage() {
                 </div>
             </form>
         </div>
-    )
+    );
 }

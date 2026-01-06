@@ -1,19 +1,25 @@
-
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Plus, Search, Calendar, MessageSquare, MoreHorizontal } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import Link from "next/link"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Plus, Search, Calendar, MessageSquare, MoreHorizontal } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
+import { getNews, deleteNews, togglePublishNews } from "@/actions/news";
+import { formatDateShort } from "@/lib/helpers";
+import { DeleteNewsButton, TogglePublishButton } from "@/components/admin/news-actions";
 
-export default function NewsPage() {
+
+export default async function NewsPage() {
+    const result = await getNews();
+    const news = result.success ? result.data?.news || [] : [];
+
     return (
         <div className="flex flex-1 flex-col gap-4">
             <div className="flex items-center justify-between">
@@ -34,92 +40,97 @@ export default function NewsPage() {
             <div className="flex items-center gap-2 mb-2">
                 <div className="relative flex-1 max-w-sm">
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                        type="search"
-                        placeholder="Cari judul berita..."
-                        className="pl-8"
-                    />
+                    <Input type="search" placeholder="Cari judul berita..." className="pl-8" />
                 </div>
             </div>
 
-            <div className="grid gap-4">
-                {[
-                    {
-                        title: "Dasar Pelaksanaan Pengadaan Tanah Bagi Pembangunan Untuk Kepentingan Umum",
-                        category: "Artikel",
-                        date: "March 1, 2015",
-                        author: "IT DIVISION",
-                        comments: 0,
-                        excerpt: "Pedoman pelaksanaan pertanahan khususnya di Indonesia sudah di atur dari era terdahulu...",
-                        image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=200&h=150"
-                    },
-                    {
-                        title: "Mulai Maret, Uang Muka KPR Cukup Satu Persen!",
-                        category: "Berita",
-                        date: "Feb 28, 2015",
-                        author: "Admin",
-                        comments: 2,
-                        excerpt: "Kabar gembira bagi anda yang ingin memiliki rumah impian dengan DP ringan...",
-                        image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=200&h=150"
-                    },
-                    {
-                        title: "Rapat Kerja Tahunan 2024 KJPP AKR",
-                        category: "Kegiatan",
-                        date: "Jan 15, 2024",
-                        author: "HRD",
-                        comments: 5,
-                        excerpt: "Evaluasi kinerja tahun lalu dan penetapan target untuk tahun 2024...",
-                        image: "https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&q=80&w=200&h=150"
-                    },
-                ].map((news, i) => (
-                    <Card key={i} className="overflow-hidden hover:shadow-md transition-shadow">
-                        <div className="flex flex-col sm:flex-row">
-                            <div className="w-full sm:w-48 h-48 sm:h-auto bg-muted shrink-0">
-                                {/* Placeholder Image */}
-                                <img src={news.image} alt={news.title} className="w-full h-full object-cover" />
-                            </div>
-                            <div className="flex-1 p-6 flex flex-col justify-between">
-                                <div className="space-y-2">
-                                    <div className="flex items-center gap-2">
-                                        <Badge variant="secondary" className="text-xs font-normal">{news.category}</Badge>
-                                        <span className="text-xs text-muted-foreground flex items-center">
-                                            <Calendar className="h-3 w-3 mr-1" /> {news.date}
-                                        </span>
-                                    </div>
-                                    <h3 className="font-bold text-lg leading-tight hover:text-primary cursor-pointer">
-                                        {news.title}
-                                    </h3>
-                                    <p className="text-sm text-muted-foreground line-clamp-2">
-                                        {news.excerpt}
-                                    </p>
+            {news.length === 0 ? (
+                <Card className="p-12 text-center">
+                    <p className="text-muted-foreground">Belum ada berita. Mulai dengan membuat berita baru.</p>
+                    <Link href="/admin/news/create" className="mt-4 inline-block">
+                        <Button>
+                            <Plus className="mr-2 h-4 w-4" />
+                            Tulis Berita Pertama
+                        </Button>
+                    </Link>
+                </Card>
+            ) : (
+                <div className="grid gap-4">
+                    {news.map((item) => (
+                        <Card key={item.id} className="overflow-hidden hover:shadow-md transition-shadow">
+                            <div className="flex flex-col sm:flex-row">
+                                <div className="w-full sm:w-48 h-48 sm:h-auto bg-muted shrink-0">
+                                    {item.coverImage ? (
+                                        <img
+                                            src={item.coverImage}
+                                            alt={item.title}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                                            No Image
+                                        </div>
+                                    )}
                                 </div>
-                                <div className="flex items-center justify-between mt-4">
-                                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                                        <span className="flex items-center">Posted by: <span className="font-medium text-foreground ml-1">{news.author}</span></span>
-                                        <span className="flex items-center">
-                                            <MessageSquare className="h-3 w-3 mr-1" /> {news.comments} Comments
-                                        </span>
+                                <div className="flex-1 p-6 flex flex-col justify-between">
+                                    <div className="space-y-2">
+                                        <div className="flex items-center gap-2">
+                                            <Badge variant={item.isPublished ? "default" : "secondary"} className="text-xs font-normal">
+                                                {item.isPublished ? "Published" : "Draft"}
+                                            </Badge>
+                                            <Badge variant="outline" className="text-xs font-normal">
+                                                {item.category}
+                                            </Badge>
+                                            <span className="text-xs text-muted-foreground flex items-center">
+                                                <Calendar className="h-3 w-3 mr-1" />
+                                                {formatDateShort(item.createdAt)}
+                                            </span>
+                                        </div>
+                                        <h3 className="font-bold text-lg leading-tight hover:text-primary cursor-pointer">
+                                            {item.title}
+                                        </h3>
+                                        {item.excerpt && (
+                                            <p className="text-sm text-muted-foreground line-clamp-2">{item.excerpt}</p>
+                                        )}
                                     </div>
+                                    <div className="flex items-center justify-between mt-4">
+                                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                                            <span className="flex items-center">
+                                                Posted by: <span className="font-medium text-foreground ml-1">{item.author.name}</span>
+                                            </span>
+                                            <span className="flex items-center">
+                                                <MessageSquare className="h-3 w-3 mr-1" />
+                                                {item._count.comments} Comments
+                                            </span>
+                                        </div>
 
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                                                <MoreHorizontal className="h-4 w-4" />
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end">
-                                            <DropdownMenuItem>Edit Post</DropdownMenuItem>
-                                            <DropdownMenuItem>View Live</DropdownMenuItem>
-                                            <DropdownMenuSeparator />
-                                            <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="ghost" size="icon" className="h-8 w-8">
+                                                    <MoreHorizontal className="h-4 w-4" />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end">
+                                                <DropdownMenuItem asChild>
+                                                    <Link href={`/admin/news/${item.id}/edit`}>Edit Post</Link>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem asChild>
+                                                    <Link href={`/news/${item.slug}`} target="_blank">
+                                                        View Live
+                                                    </Link>
+                                                </DropdownMenuItem>
+                                                <TogglePublishButton id={item.id} isPublished={item.isPublished} />
+                                                <DropdownMenuSeparator />
+                                                <DeleteNewsButton id={item.id} />
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </Card>
-                ))}
-            </div>
+                        </Card>
+                    ))}
+                </div>
+            )}
         </div>
-    )
+    );
 }
