@@ -19,8 +19,8 @@ export function TrustedClientsSection() {
                             key={client.id}
                             className="group cursor-default"
                         >
-                            <div className="px-6 py-3 rounded-xl border border-transparent hover:border-slate-200 hover:bg-white hover:shadow-sm hover:-translate-y-1 transition-all duration-300 ease-out">
-                                <h3 className="text-lg md:text-xl font-bold text-slate-400 group-hover:text-slate-900 transition-colors duration-300 whitespace-nowrap">
+                            <div className="px-6 py-3 rounded-xl border border-transparent hover:border-border-hover hover:bg-white hover:shadow-sm hover:-translate-y-1 transition-all duration-300 ease-out">
+                                <h3 className="text-lg md:text-xl font-bold text-text-slate-1 group-hover:text-text-primary transition-colors duration-300 whitespace-nowrap">
                                     {client.name}
                                 </h3>
                             </div>

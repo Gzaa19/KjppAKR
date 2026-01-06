@@ -65,9 +65,16 @@
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
   --color-text-secondary-hover: var(--text-secondary-hover);
+  --color-text-slate-1: var(--text-slate-1);
+  --color-text-slate-2: var(--text-slate-2);
+  --color-text-slate-3: var(--text-slate-3);
+  --color-text-slate-4: var(--text-slate-4);
+  --color-text-slate-5: var(--text-slate-5);
+  --color-text-slate-6: var(--text-slate-6);
 
-  --color-kjpp-red: var(--kjpp-red);
-  --color-kjpp-dark: var(--kjpp-dark);
+  /* KJPP Brand Colors */
+  --color-kjpp-red: #ED1C24;
+  --color-kjpp-dark: #2C4157;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -155,6 +162,13 @@
   --border-primary: theme('colors.slate.100');
   --border-hover: theme('colors.slate.200');
 
+  --text-slate-1: theme('colors.slate.400');
+  --text-slate-2: theme('colors.slate.500');
+  --text-slate-3: theme('colors.slate.600');
+  --text-slate-4: theme('colors.slate.700');
+  --text-slate-5: theme('colors.slate.800');
+  --text-slate-6: theme('colors.slate.900');
+
   --kjpp-red: #ED1C24;
   --kjpp-dark: #2C4157;
 
@@ -202,6 +216,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }

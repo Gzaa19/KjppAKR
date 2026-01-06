@@ -92,14 +92,14 @@ export function StatsSection() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 text-center divide-y lg:divide-y-0 lg:divide-x divide-border-primary">
                     {stats.map((stat) => (
                         <div key={stat.id} className="px-4 pt-8 lg:pt-0 flex flex-col items-center group">
-                            <div className="text-5xl md:text-6xl font-extrabold text-slate-900 mb-3 flex items-baseline tracking-tight">
+                            <div className="text-5xl md:text-6xl font-extrabold text-text-primary mb-3 flex items-baseline tracking-tight">
                                 <Counter value={stat.value} />
-                                <span className="text-red-600 ml-1 text-4xl md:text-5xl">{stat.suffix}</span>
+                                <span className="text-kjpp-red ml-1 text-4xl md:text-5xl">{stat.suffix}</span>
                             </div>
-                            <h3 className="text-sm font-bold text-slate-800 mb-3 uppercase tracking-widest">
+                            <h3 className="text-sm font-bold text-text-primary mb-3 uppercase tracking-widest">
                                 {stat.label}
                             </h3>
-                            <p className="text-slate-500 text-sm leading-relaxed max-w-[220px]">
+                            <p className="text-text-slate-2 text-sm leading-relaxed max-w-[220px]">
                                 {stat.description}
                             </p>
                         </div>

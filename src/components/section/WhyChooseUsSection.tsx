@@ -53,8 +53,8 @@ export function WhyChooseUsSection() {
                                 className="group relative bg-white rounded-2xl p-1 border border-border-primary hover:border-border-hover shadow-sm hover:shadow-xl transition-all duration-300 ease-out hover:-translate-y-2"
                             >
                                 <CardContent className="h-full p-7 rounded-xl bg-white flex flex-col">
-                                    <div className="w-14 h-14 rounded-xl bg-bg-2 group-hover:bg-primary2 flex items-center justify-center mb-6 transition-colors duration-300">
-                                        <Icon className="w-7 h-7 text-slate-600 group-hover:text-white transition-colors duration-300" />
+                                    <div className="w-14 h-14 rounded-xl bg-bg-2 group-hover:bg-bg-primary2 flex items-center justify-center mb-6 transition-colors duration-300">
+                                        <Icon className="w-7 h-7 text-text-slate-3 group-hover:text-white transition-colors duration-300" />
                                     </div>
 
                                     <h3 className="text-lg font-bold text-text-primary mb-3 group-hover:text-text-primary2 transition-colors">

@@ -38,20 +38,19 @@ export function Navbar() {
 
     return (
         <header className="w-full sticky top-0 z-50">
-            {/* Top Bar */}
-            <div className="bg-[var(--navbar-topbar)] text-white py-4">
+            <div className="bg-navbar-topbar text-white py-4">
                 <div className="container mx-auto px-4">
                     <div className="flex flex-wrap items-center justify-end text-sm gap-6">
                         <div className="flex items-center gap-2">
-                            <MapPin className="w-4 h-4 text-red-500" />
+                            <MapPin className="w-4 h-4 text-kjpp-red" />
                             <span>Permata Kebayoran Plaza Blok A-11</span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <Clock className="w-4 h-4 text-red-500" />
+                            <Clock className="w-4 h-4 text-kjpp-red" />
                             <span>Mon - Fri 8.00 - 17.00</span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <Phone className="w-4 h-4 text-red-500" />
+                            <Phone className="w-4 h-4 text-kjpp-red" />
                             <span>021-7268181 | 021-7227643</span>
                         </div>
                     </div>
@@ -73,8 +72,6 @@ export function Navbar() {
                                 priority
                             />
                         </Link>
-
-                        {/* Navigation Menu */}
                         <NavigationMenu>
                             <NavigationMenuList>
                                 <NavigationMenuItem>
@@ -82,7 +79,7 @@ export function Navbar() {
                                         href="/"
                                         className={cn(
                                             navigationMenuTriggerStyle(),
-                                            isActive("/") && "text-[var(--color-navbar-text-link-hover)]"
+                                            isActive("/") && "text-kjpp-red"
                                         )}
                                     >
                                         Home
@@ -90,7 +87,7 @@ export function Navbar() {
                                 </NavigationMenuItem>
 
                                 <NavigationMenuItem>
-                                    <NavigationMenuTrigger className={isActive("/tentang") ? "text-[var(--color-navbar-text-link-hover)]" : ""}>
+                                    <NavigationMenuTrigger className={isActive("/tentang") ? "text-kjpp-red" : ""}>
                                         Tentang Kami
                                     </NavigationMenuTrigger>
                                     <NavigationMenuContent>
@@ -128,7 +125,7 @@ export function Navbar() {
                                 </NavigationMenuItem>
 
                                 <NavigationMenuItem>
-                                    <NavigationMenuTrigger className={isActive("/layanan") ? "text-[var(--color-navbar-text-link-hover)]" : ""}>
+                                    <NavigationMenuTrigger className={isActive("/layanan") ? "text-kjpp-red" : ""}>
                                         Jasa Layanan
                                     </NavigationMenuTrigger>
                                     <NavigationMenuContent>
@@ -170,7 +167,7 @@ export function Navbar() {
                                         href="/klien"
                                         className={cn(
                                             navigationMenuTriggerStyle(),
-                                            isActive("/klien") && "text-[var(--color-navbar-text-link-hover)]"
+                                            isActive("/klien") && "text-kjpp-red"
                                         )}
                                     >
                                         Klien
@@ -182,7 +179,7 @@ export function Navbar() {
                                         href="/galeri"
                                         className={cn(
                                             navigationMenuTriggerStyle(),
-                                            isActive("/galeri") && "text-[var(--color-navbar-text-link-hover)]"
+                                            isActive("/galeri") && "text-kjpp-red"
                                         )}
                                     >
                                         Galeri
@@ -194,7 +191,7 @@ export function Navbar() {
                                         href="/berita"
                                         className={cn(
                                             navigationMenuTriggerStyle(),
-                                            isActive("/berita") && "text-[var(--color-navbar-text-link-hover)]"
+                                            isActive("/berita") && "text-kjpp-red"
                                         )}
                                     >
                                         Berita
@@ -206,7 +203,7 @@ export function Navbar() {
                                         href="/hubungi-kami"
                                         className={cn(
                                             navigationMenuTriggerStyle(),
-                                            isActive("/hubungi-kami") && "text-[var(--color-navbar-text-link-hover)]"
+                                            isActive("/hubungi-kami") && "text-kjpp-red"
                                         )}
                                     >
                                         Hubungi Kami
@@ -233,8 +230,8 @@ const ListItem = React.forwardRef<
                     ref={ref}
                     href={href ?? "#"}
                     className={cn(
-                        "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:text-[var(--color-navbar-text-link-hover)] focus:text-[var(--color-navbar-text-link-hover)]",
-                        isActive && "text-[var(--color-navbar-text-link-hover)]",
+                        "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:text-kjpp-red focus:text-kjpp-red",
+                        isActive && "text-kjpp-red",
                         className
                     )}
                     {...props}

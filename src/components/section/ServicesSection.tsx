@@ -64,13 +64,13 @@ export function ServicesSection() {
                                 <CardContent className="h-full p-7 rounded-xl bg-bg-1 flex flex-col justify-between">
                                     <div>
                                         <div className="w-14 h-14 rounded-xl bg-bg-2 group-hover:bg-bg-primary2 flex items-center justify-center mb-6 transition-colors duration-300">
-                                            <Icon className="w-7 h-7 text-slate-600 group-hover:text-white transition-colors duration-300" />
+                                            <Icon className="w-7 h-7 text-text-slate-3 group-hover:text-white transition-colors duration-300" />
                                         </div>
 
                                         <h3 className="text-xl font-bold text-text-primary mb-3 group-hover:text-text-primary2 transition-colors">
                                             {service.title}
                                         </h3>
-                                        <p className="text-slate-500 leading-relaxed text-sm mb-6">
+                                        <p className="text-text-slate-2 leading-relaxed text-sm mb-6">
                                             {service.description}
                                         </p>
                                     </div>
