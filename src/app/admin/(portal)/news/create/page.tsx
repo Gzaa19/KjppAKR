@@ -15,7 +15,6 @@ export default function CreateNewsPage() {
     async function onSubmit(e: React.FormEvent) {
         e.preventDefault()
         setIsLoading(true)
-        // Simulate API call
         setTimeout(() => {
             setIsLoading(false)
         }, 1000)
