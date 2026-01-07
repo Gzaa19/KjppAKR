@@ -145,7 +145,7 @@ export function Navbar() {
                                         <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2">
                                             <ListItem
                                                 href="/layanan/penilaian"
-                                                title="Penilaian Properti"
+                                                title="Jasa Penilaian"
                                                 isActive={isActive("/layanan/penilaian")}
                                             >
                                                 Jasa penilaian properti profesional
