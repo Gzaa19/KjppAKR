@@ -4,6 +4,7 @@ import HeroSection from "@/components/section/HeroSection";
 import { TrustedClientsSection } from "@/components/section/TrustedClientsSection";
 import { ServicesSection } from "@/components/section/ServicesSection";
 import { WhyChooseUsSection } from "@/components/section/WhyChooseUsSection";
+import { RecentUpdatesSection } from "@/components/section/RecentUpdatesSection";
 import { StatsSection } from "@/components/section/StatsSection";
 
 export default function Home() {
@@ -13,6 +14,7 @@ export default function Home() {
       <HeroSection />
       <TrustedClientsSection />
       <ServicesSection />
+      <RecentUpdatesSection />
       <WhyChooseUsSection />
       <StatsSection />
       <Footer />
