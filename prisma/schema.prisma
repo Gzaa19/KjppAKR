@@ -1,0 +1,143 @@
+// Prisma Schema for KJPP AKR Admin Panel
+// Database: PostgreSQL (Supabase with Transaction Pooler)
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ==========================================
+// USER / ADMIN MODEL
+// ==========================================
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      UserRole @default(ADMIN)
+  avatar    String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  news      News[]
+  galleries Gallery[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  EDITOR
+}
+
+// ==========================================
+// NEWS / ARTICLE MODEL
+// ==========================================
+model News {
+  id          String       @id @default(cuid())
+  title       String
+  slug        String       @unique
+  excerpt     String?      @db.Text
+  content     String       @db.Text
+  coverImage  String?
+  category    NewsCategory
+  isPublished Boolean      @default(false)
+  publishedAt DateTime?
+  views       Int          @default(0)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  // Relations
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  // Comments relation
+  comments Comment[]
+
+  @@index([slug])
+  @@index([category])
+  @@index([isPublished])
+  @@index([publishedAt])
+  @@map("news")
+}
+
+enum NewsCategory {
+  ARTIKEL
+  BERITA
+  KEGIATAN
+  PENGUMUMAN
+}
+
+// ==========================================
+// COMMENT MODEL (for News)
+// ==========================================
+model Comment {
+  id          String   @id @default(cuid())
+  content     String   @db.Text
+  authorName  String
+  authorEmail String?
+  isApproved  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  newsId String
+  news   News   @relation(fields: [newsId], references: [id], onDelete: Cascade)
+
+  @@index([newsId])
+  @@map("comments")
+}
+
+// ==========================================
+// ALBUM MODEL (Gallery Categories)
+// ==========================================
+model Album {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?  @db.Text
+  coverImage  String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  galleries Gallery[]
+
+  @@index([slug])
+  @@map("albums")
+}
+
+// ==========================================
+// GALLERY / PHOTO MODEL
+// ==========================================
+model Gallery {
+  id           String    @id @default(cuid())
+  title        String
+  description  String?   @db.Text
+  imageUrl     String
+  thumbnailUrl String?
+  eventDate    DateTime?
+  isPublished  Boolean   @default(true)
+  sortOrder    Int       @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  // Relations
+  albumId      String?
+  album        Album?  @relation(fields: [albumId], references: [id], onDelete: SetNull)
+  uploadedById String
+  uploadedBy   User    @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
+
+  @@index([albumId])
+  @@index([isPublished])
+  @@index([eventDate])
+  @@map("galleries")
+}

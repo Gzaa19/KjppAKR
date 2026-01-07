@@ -1,0 +1,134 @@
+"use client";
+
+import * as React from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Instagram, Linkedin, Youtube, Twitter, Facebook, ArrowRight, MapPin } from "lucide-react";
+
+export function Footer() {
+    return (
+        <footer className="relative w-full">
+            <div className="relative w-full mb-0">
+                <div className="relative w-full overflow-hidden rounded-t-[5rem] md:rounded-t-[6rem] bg-bg-primary2">
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none"></div>
+                    <div className="container mx-auto px-6 md:px-12 lg:px-20 py-16 md:py-24 relative z-10">
+                        <div className="flex flex-col lg:flex-row gap-16 lg:gap-20 items-start">
+                            <div className="flex flex-col items-start space-y-8 flex-1">
+                                <div className="relative w-full max-w-[380px] h-[190px]">
+                                    <Image
+                                        src="/image/logoFooter.png"
+                                        alt="KJPP AKR Logo"
+                                        fill
+                                        className="object-contain object-left"
+                                        priority
+                                    />
+                                </div>
+                                <div className="space-y-2 text-left">
+                                    <p className="text-base md:text-lg font-bold text-white">
+                                        Anas Karim Rivai & Rekan
+                                    </p>
+                                    <p className="text-sm md:text-base text-white/90">
+                                        Kantor Jasa Penilai Publik
+                                    </p>
+                                    <div className="space-y-1 text-xs md:text-sm text-white/80">
+                                        <p>Kep. Menkeu No. 395/KM.1/2009</p>
+                                        <p>No. Izin 2.09.0030</p>
+                                        <p>Wilayah Kerja Republik Indonesia</p>
+                                    </div>
+                                </div>
+                                <div className="w-full max-w-[300px] h-px bg-white/30"></div>
+                                <div className="space-y-2 text-sm md:text-base text-white/90 text-left">
+                                    <p className="font-semibold text-white">Alamat Kantor</p>
+                                    <div className="flex items-start gap-2">
+                                        <MapPin className="w-5 h-5 text-kjpp-red flex-shrink-0 mt-0.5" />
+                                        <div className="space-y-1">
+                                            <p>Permata Kebayoran Plaza Blok A-11</p>
+                                            <p>Jl. Raya Kebayoran Lama No. 22</p>
+                                            <p>Jakarta 12220, Indonesia</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="hidden lg:block w-px bg-white/30 self-stretch min-h-full"></div>
+                            <div className="space-y-8 text-left flex-1">
+                                <div className="space-y-4">
+                                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-white">
+                                        Terhubung
+                                        <br />
+                                        dengan Kami
+                                    </h2>
+                                    <p className="text-base md:text-lg text-white/90 leading-relaxed max-w-xl mx-auto lg:mx-0">
+                                        Jadilah bagian dari komunitas kami yang bersemangat dan saling terhubung dalam visi masa depan yang berkelanjutan.
+                                    </p>
+                                </div>
+
+                                {/* Social Media Icons */}
+                                <div className="flex flex-wrap justify-center lg:justify-start gap-3">
+                                    <Link
+                                        href="https://instagram.com"
+                                        target="_blank"
+                                        className="w-12 h-12 rounded-full bg-white flex items-center justify-center hover:bg-kjpp-red hover:scale-110 transition-all duration-300 group"
+                                    >
+                                        <Instagram className="w-5 h-5 text-bg-primary2 group-hover:text-white transition-colors" />
+                                    </Link>
+                                    <Link
+                                        href="https://tiktok.com"
+                                        target="_blank"
+                                        className="w-12 h-12 rounded-full bg-white flex items-center justify-center hover:bg-kjpp-red hover:scale-110 transition-all duration-300 group"
+                                    >
+                                        <svg className="w-5 h-5 text-bg-primary2 group-hover:text-white transition-colors" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
+                                        </svg>
+                                    </Link>
+                                    <Link
+                                        href="https://twitter.com"
+                                        target="_blank"
+                                        className="w-12 h-12 rounded-full bg-white flex items-center justify-center hover:bg-kjpp-red hover:scale-110 transition-all duration-300 group"
+                                    >
+                                        <Twitter className="w-5 h-5 text-bg-primary2 group-hover:text-white transition-colors" />
+                                    </Link>
+                                    <Link
+                                        href="https://facebook.com"
+                                        target="_blank"
+                                        className="w-12 h-12 rounded-full bg-white flex items-center justify-center hover:bg-kjpp-red hover:scale-110 transition-all duration-300 group"
+                                    >
+                                        <Facebook className="w-5 h-5 text-bg-primary2 group-hover:text-white transition-colors" />
+                                    </Link>
+                                    <Link
+                                        href="https://linkedin.com"
+                                        target="_blank"
+                                        className="w-12 h-12 rounded-full bg-white flex items-center justify-center hover:bg-kjpp-red hover:scale-110 transition-all duration-300 group"
+                                    >
+                                        <Linkedin className="w-5 h-5 text-bg-primary2 group-hover:text-white transition-colors" />
+                                    </Link>
+                                    <Link
+                                        href="https://youtube.com"
+                                        target="_blank"
+                                        className="w-12 h-12 rounded-full bg-white flex items-center justify-center hover:bg-kjpp-red hover:scale-110 transition-all duration-300 group"
+                                    >
+                                        <Youtube className="w-5 h-5 text-bg-primary2 group-hover:text-white transition-colors" />
+                                    </Link>
+                                </div>
+
+                                {/* Contact Button */}
+                                <div className="pt-4">
+                                    <Button
+                                        asChild
+                                        size="lg"
+                                        className="bg-white text-bg-primary2 hover:bg-kjpp-red hover:text-white px-8 py-6 text-base font-semibold rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 group"
+                                    >
+                                        <Link href="/hubungi-kami" className="flex items-center gap-2">
+                                            Kontak Kami
+                                            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                        </Link>
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    );
+}

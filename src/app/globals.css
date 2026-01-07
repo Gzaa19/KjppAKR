@@ -37,6 +37,52 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+
+  /* Custom Colors for Navbar & Hero Section */
+  --color-navbar-topbar: var(--navbar-topbar);
+  --color-navbar-topbar-text: var(--navbar-topbar-text);
+  --color-navbar-icon-accent: var(--navbar-icon-accent);
+  --color-hero-overlay-from: var(--hero-overlay-from);
+  --color-hero-overlay-via: var(--hero-overlay-via);
+  --color-hero-overlay-to: var(--hero-overlay-to);
+  --color-hero-badge-bg: var(--hero-badge-bg);
+  --color-hero-badge-text: var(--hero-badge-text);
+  --color-hero-badge-border: var(--hero-badge-border);
+  --color-hero-title: var(--hero-title);
+  --color-hero-subtitle: var(--hero-subtitle);
+  --color-hero-description: var(--hero-description);
+  --color-hero-button-primary: var(--hero-button-primary);
+  --color-hero-button-primary-hover: var(--hero-button-primary-hover);
+
+  --color-bg-1: var(--bg-1);
+  --color-bg-2: var(--bg-2);
+  --color-bg-primary2: var(--bg-primary2);
+
+  --color-border-primary: var(--border-primary);
+  --color-border-hover: var(--border-hover);
+
+  --color-text-primary2: var(--text-primary2);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-secondary-hover: var(--text-secondary-hover);
+  --color-text-slate-1: var(--text-slate-1);
+  --color-text-slate-2: var(--text-slate-2);
+  --color-text-slate-3: var(--text-slate-3);
+  --color-text-slate-4: var(--text-slate-4);
+  --color-text-slate-5: var(--text-slate-5);
+  --color-text-slate-6: var(--text-slate-6);
+  --color-text-green-1: var(--text-green-1);
+  --color-text-green-2: var(--text-green-2);
+  --color-text-green-3: var(--text-green-3);
+  --color-text-green-4: var(--text-green-4);
+  --color-text-green-5: var(--text-green-5);
+  --color-text-green-6: var(--text-green-6);
+  --color-bg-green-5: var(--bg-green-5);
+
+  /* KJPP Brand Colors */
+  --color-kjpp-red: #ED1C24;
+  --color-kjpp-dark: #2C4157;
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -75,10 +121,77 @@
   --sidebar-foreground: oklch(0.129 0.042 264.695);
   --sidebar-primary: oklch(0.208 0.042 265.755);
   --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.968 0.007 247.896);
-  --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
-  --sidebar-border: oklch(0.929 0.013 255.508);
-  --sidebar-ring: oklch(0.704 0.04 256.788);
+  --sidebar-accent: oklch(0.30 0.04 255);
+  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-border: oklch(0.984 0.003 247.858 / 0.1);
+  --sidebar-ring: oklch(0.57 0.22 28);
+
+  /* Custom Colors for Navbar & Hero Section */
+  /* Navbar Top Bar - Dark Blue Gray (#3d4f5c) */
+  --navbar-topbar: #3d4f5c;
+  --navbar-topbar-text: #ffffff;
+  --navbar-icon-accent: #ef4444;
+  /* Red-500 for icons */
+
+  /* Hero Section Gradient Overlay */
+  --hero-overlay-from: rgba(15, 23, 42, 0.95);
+  /* slate-900/95 */
+  --hero-overlay-via: rgba(30, 41, 59, 0.85);
+  /* slate-800/85 */
+  --hero-overlay-to: rgba(51, 65, 85, 0.70);
+  /* slate-700/70 */
+
+  /* Hero Badge */
+  --hero-badge-bg: rgba(37, 99, 235, 0.2);
+  /* blue-600/20 */
+  --hero-badge-text: #93c5fd;
+  /* blue-300 */
+  --hero-badge-border: rgba(59, 130, 246, 0.3);
+  /* blue-500/30 */
+
+  /* Hero Text Colors */
+  --hero-title: #ffffff;
+  --hero-subtitle: #60a5fa;
+  /* blue-400 */
+  --hero-description: #d1d5db;
+  /* gray-300 */
+
+  /* Hero Buttons */
+  --hero-button-primary: #2563eb;
+  /* blue-600 */
+  --hero-button-primary-hover: #1d4ed8;
+  /* blue-700 */
+
+  --bg-1: #ffffff;
+  --bg-2: theme('colors.slate.50');
+  --bg-primary2: #3d4f5c;
+
+  --border-primary: theme('colors.slate.100');
+  --border-hover: theme('colors.slate.200');
+
+  --text-slate-1: theme('colors.slate.400');
+  --text-slate-2: theme('colors.slate.500');
+  --text-slate-3: theme('colors.slate.600');
+  --text-slate-4: theme('colors.slate.700');
+  --text-slate-5: theme('colors.slate.800');
+  --text-slate-6: theme('colors.slate.900');
+
+  --text-green-1: theme('colors.green.100');
+  --text-green-2: theme('colors.green.200');
+  --text-green-3: theme('colors.green.300');
+  --text-green-4: theme('colors.green.400');
+  --text-green-5: theme('colors.green.500');
+  --text-green-6: theme('colors.green.600');
+
+  --bg-green-5: theme('colors.green.500');
+
+  --kjpp-red: #ED1C24;
+  --kjpp-dark: #2C4157;
+
+  --text-primary2: #3d4f5c;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-secondary-hover: #111827;
 }
 
 .dark {
@@ -119,6 +232,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
