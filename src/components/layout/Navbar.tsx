@@ -188,10 +188,10 @@ export function Navbar() {
 
                                 <NavigationMenuItem>
                                     <NavigationMenuLink
-                                        href="/berita"
+                                        href="/news"
                                         className={cn(
                                             navigationMenuTriggerStyle(),
-                                            isActive("/berita") && "text-kjpp-red"
+                                            isActive("/news") && "text-kjpp-red"
                                         )}
                                     >
                                         Berita

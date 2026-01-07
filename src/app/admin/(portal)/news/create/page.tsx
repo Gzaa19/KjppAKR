@@ -5,9 +5,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Save, Upload } from "lucide-react";
+import { ImageUpload } from "@/components/ui/image-upload";
+import { ArrowLeft, Save } from "lucide-react";
 import Link from "next/link";
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createNews } from "@/actions/news";
 import { generateSlug } from "@/lib/helpers";
@@ -17,6 +18,7 @@ export default function CreateNewsPage() {
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
     const [error, setError] = useState<string | null>(null);
+    const [userId, setUserId] = useState<string | null>(null);
 
     const [formData, setFormData] = useState({
         title: "",
@@ -26,6 +28,22 @@ export default function CreateNewsPage() {
         category: "" as "ARTIKEL" | "BERITA" | "KEGIATAN" | "PENGUMUMAN" | "",
         coverImage: "",
     });
+
+    // Fetch user session
+    useEffect(() => {
+        async function fetchSession() {
+            try {
+                const res = await fetch("/api/auth/session");
+                const data = await res.json();
+                if (data.success) {
+                    setUserId(data.data.id);
+                }
+            } catch (error) {
+                console.error("Failed to fetch session:", error);
+            }
+        }
+        fetchSession();
+    }, []);
 
     const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const title = e.target.value;
@@ -45,6 +63,11 @@ export default function CreateNewsPage() {
             return;
         }
 
+        if (!userId) {
+            setError("Session tidak valid. Silakan login ulang.");
+            return;
+        }
+
         startTransition(async () => {
             const input: CreateNewsInput = {
                 title: formData.title,
@@ -56,8 +79,7 @@ export default function CreateNewsPage() {
                 isPublished: false,
             };
 
-            // TODO: Replace with actual user ID from session
-            const result = await createNews(input, "temp-user-id");
+            const result = await createNews(input, userId);
 
             if (result.success) {
                 router.push("/admin/news");
@@ -67,6 +89,7 @@ export default function CreateNewsPage() {
             }
         });
     }
+
 
     return (
         <div className="max-w-4xl mx-auto">
@@ -119,7 +142,7 @@ export default function CreateNewsPage() {
                                 <p className="text-xs text-muted-foreground">URL: /news/{formData.slug || "slug-berita"}</p>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="category">Kategori</Label>
                                     <select
@@ -141,16 +164,15 @@ export default function CreateNewsPage() {
                                         <option value="PENGUMUMAN">Pengumuman</option>
                                     </select>
                                 </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="coverImage">URL Cover Image</Label>
-                                    <Input
-                                        id="coverImage"
-                                        type="url"
-                                        placeholder="https://example.com/image.jpg"
-                                        value={formData.coverImage}
-                                        onChange={(e) => setFormData((prev) => ({ ...prev, coverImage: e.target.value }))}
-                                    />
-                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label>Cover Image</Label>
+                                <ImageUpload
+                                    value={formData.coverImage}
+                                    onChange={(url) => setFormData((prev) => ({ ...prev, coverImage: url }))}
+                                    disabled={isPending}
+                                />
                             </div>
 
                             <div className="space-y-2">

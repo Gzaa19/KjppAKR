@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Save, Upload, Image as ImageIcon } from "lucide-react";
+import { ArrowLeft, Save } from "lucide-react";
 import Link from "next/link";
 import { useState, useTransition, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -23,6 +23,7 @@ export default function CreateGalleryPage() {
     const [isPending, startTransition] = useTransition();
     const [error, setError] = useState<string | null>(null);
     const [albums, setAlbums] = useState<Album[]>([]);
+    const [userId, setUserId] = useState<string | null>(null);
 
     const [formData, setFormData] = useState({
         title: "",
@@ -32,14 +33,27 @@ export default function CreateGalleryPage() {
         albumId: "",
     });
 
+    // Fetch user session and albums
     useEffect(() => {
-        async function loadAlbums() {
-            const result = await getAlbums(true);
-            if (result.success && result.data) {
-                setAlbums(result.data);
+        async function fetchData() {
+            try {
+                // Fetch session
+                const sessionRes = await fetch("/api/auth/session");
+                const sessionData = await sessionRes.json();
+                if (sessionData.success) {
+                    setUserId(sessionData.data.id);
+                }
+
+                // Fetch albums
+                const albumResult = await getAlbums(true);
+                if (albumResult.success && albumResult.data) {
+                    setAlbums(albumResult.data);
+                }
+            } catch (error) {
+                console.error("Failed to fetch data:", error);
             }
         }
-        loadAlbums();
+        fetchData();
     }, []);
 
     async function onSubmit(e: React.FormEvent) {
@@ -48,6 +62,11 @@ export default function CreateGalleryPage() {
 
         if (!formData.imageUrl) {
             setError("URL gambar wajib diisi");
+            return;
+        }
+
+        if (!userId) {
+            setError("Session tidak valid. Silakan login ulang.");
             return;
         }
 
@@ -62,8 +81,7 @@ export default function CreateGalleryPage() {
                 sortOrder: 0,
             };
 
-            // TODO: Replace with actual user ID from session
-            const result = await createGallery(input, "temp-user-id");
+            const result = await createGallery(input, userId);
 
             if (result.success) {
                 router.push("/admin/gallery");
@@ -73,6 +91,7 @@ export default function CreateGalleryPage() {
             }
         });
     }
+
 
     return (
         <div className="max-w-4xl mx-auto">

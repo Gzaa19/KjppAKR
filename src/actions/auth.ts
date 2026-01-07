@@ -6,7 +6,6 @@ import { loginSchema, registerSchema, type LoginInput, type RegisterInput } from
 import { revalidatePath } from "next/cache";
 import type { ActionResponse } from "./index";
 
-
 export async function login(input: LoginInput): Promise<ActionResponse<{ id: string; email: string; name: string }>> {
     try {
         const validated = loginSchema.safeParse(input);
