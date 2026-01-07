@@ -87,7 +87,7 @@ function Counter({ value, duration = 2000 }: { value: number; duration?: number 
 
 export function StatsSection() {
     return (
-        <section className="py-24 bg-white border-y border-border-primary">
+        <section className="py-24">
             <div className="container mx-auto px-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 text-center divide-y lg:divide-y-0 lg:divide-x divide-border-primary">
                     {stats.map((stat) => (

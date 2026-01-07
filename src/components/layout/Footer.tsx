@@ -3,154 +3,128 @@
 import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { MapPin, Phone, Mail, Clock, Facebook, Instagram, Linkedin, Youtube } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Instagram, Linkedin, Youtube, Twitter, Facebook, ArrowRight, MapPin } from "lucide-react";
 
 export function Footer() {
     return (
-        <footer className="bg-[var(--navbar-topbar)] text-white">
-            <div className="container mx-auto px-4 py-12">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    {/* Company Info */}
-                    <div className="space-y-4">
-                        <Image
-                            src="/image/logoFooter.png"
-                            alt="KJPP AKR Logo"
-                            width={180}
-                            height={90}
-                            className="object-contain"
-                        />
-                        <p className="text-slate-300 text-sm leading-relaxed">
-                            Kantor Jasa Penilai Publik profesional yang terdaftar dan berizin resmi dari Kementerian Keuangan RI.
-                        </p>
-                        <div className="flex gap-3 pt-2">
-                            <Link
-                                href="https://facebook.com"
-                                target="_blank"
-                                className="w-9 h-9 rounded-full bg-white/10 hover:bg-kjpp-red flex items-center justify-center transition-colors"
-                            >
-                                <Facebook className="w-4 h-4" />
-                            </Link>
-                            <Link
-                                href="https://instagram.com"
-                                target="_blank"
-                                className="w-9 h-9 rounded-full bg-white/10 hover:bg-kjpp-red flex items-center justify-center transition-colors"
-                            >
-                                <Instagram className="w-4 h-4" />
-                            </Link>
-                            <Link
-                                href="https://linkedin.com"
-                                target="_blank"
-                                className="w-9 h-9 rounded-full bg-white/10 hover:bg-kjpp-red flex items-center justify-center transition-colors"
-                            >
-                                <Linkedin className="w-4 h-4" />
-                            </Link>
-                            <Link
-                                href="https://youtube.com"
-                                target="_blank"
-                                className="w-9 h-9 rounded-full bg-white/10 hover:bg-kjpp-red flex items-center justify-center transition-colors"
-                            >
-                                <Youtube className="w-4 h-4" />
-                            </Link>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 className="text-lg font-bold mb-4">Tautan Cepat</h3>
-                        <ul className="space-y-2">
-                            <li>
-                                <Link href="/tentang/profil" className="text-slate-300 hover:text-kjpp-red transition-colors text-sm">
-                                    Profil Perusahaan
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/layanan" className="text-slate-300 hover:text-kjpp-red transition-colors text-sm">
-                                    Jasa Layanan
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/klien" className="text-slate-300 hover:text-kjpp-red transition-colors text-sm">
-                                    Klien Kami
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/galeri" className="text-slate-300 hover:text-kjpp-red transition-colors text-sm">
-                                    Galeri
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/tentang/karir" className="text-slate-300 hover:text-kjpp-red transition-colors text-sm">
-                                    Karir
-                                </Link>
-                            </li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 className="text-lg font-bold mb-4">Layanan</h3>
-                        <ul className="space-y-2">
-                            <li>
-                                <Link href="/layanan/penilaian" className="text-slate-300 hover:text-kjpp-red transition-colors text-sm">
-                                    Penilaian Properti
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/layanan/konsultasi" className="text-slate-300 hover:text-kjpp-red transition-colors text-sm">
-                                    Konsultasi Aset
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/layanan/audit" className="text-slate-300 hover:text-kjpp-red transition-colors text-sm">
-                                    Audit Properti
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/layanan/riset" className="text-slate-300 hover:text-kjpp-red transition-colors text-sm">
-                                    Riset Pasar
-                                </Link>
-                            </li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 className="text-lg font-bold mb-4">Hubungi Kami</h3>
-                        <ul className="space-y-3">
-                            <li className="flex items-start gap-3 text-sm">
-                                <MapPin className="w-5 h-5 text-kjpp-red flex-shrink-0 mt-0.5" />
-                                <span className="text-slate-300">
-                                    Permata Kebayoran Plaza Blok A-11<br />
-                                    Jl. Raya Kebayoran Lama No. 22<br />
-                                    Jakarta 12220, Indonesia
-                                </span>
-                            </li>
-                            <li className="flex items-center gap-3 text-sm">
-                                <Phone className="w-5 h-5 text-kjpp-red flex-shrink-0" />
-                                <span className="text-slate-300">021-7268181 | 021-7227643</span>
-                            </li>
-                            <li className="flex items-center gap-3 text-sm">
-                                <Mail className="w-5 h-5 text-kjpp-red flex-shrink-0" />
-                                <span className="text-slate-300">info@kjppakr.com</span>
-                            </li>
-                            <li className="flex items-start gap-3 text-sm">
-                                <Clock className="w-5 h-5 text-kjpp-red flex-shrink-0 mt-0.5" />
-                                <span className="text-slate-300">
-                                    Senin - Jumat<br />
-                                    08:00 - 17:00 WIB
-                                </span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div className="border-t border-white/10">
-                <div className="container mx-auto px-4 py-6">
-                    <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white">
-                        <p>
-                            © {new Date().getFullYear()} <span className="font-bold">KJPP-AKR</span>. All rights reserved.
-                        </p>
-                        <div className="flex gap-6">
-                            <Link href="/privacy" className="hover:text-kjpp-red transition-colors">
-                                Kebijakan Privasi
-                            </Link>
-                            <Link href="/terms" className="hover:text-kjpp-red transition-colors">
-                                Syarat & Ketentuan
-                            </Link>
+        <footer className="relative w-full">
+            <div className="relative w-full mb-0">
+                <div className="relative w-full overflow-hidden rounded-t-[5rem] md:rounded-t-[6rem] bg-bg-primary2">
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none"></div>
+                    <div className="container mx-auto px-6 md:px-12 lg:px-20 py-16 md:py-24 relative z-10">
+                        <div className="flex flex-col lg:flex-row gap-16 lg:gap-20 items-start">
+                            <div className="flex flex-col items-start space-y-8 flex-1">
+                                <div className="relative w-full max-w-[380px] h-[190px]">
+                                    <Image
+                                        src="/image/logoFooter.png"
+                                        alt="KJPP AKR Logo"
+                                        fill
+                                        className="object-contain object-left"
+                                        priority
+                                    />
+                                </div>
+                                <div className="space-y-2 text-left">
+                                    <p className="text-base md:text-lg font-bold text-white">
+                                        Anas Karim Rivai & Rekan
+                                    </p>
+                                    <p className="text-sm md:text-base text-white/90">
+                                        Kantor Jasa Penilai Publik
+                                    </p>
+                                    <div className="space-y-1 text-xs md:text-sm text-white/80">
+                                        <p>Kep. Menkeu No. 395/KM.1/2009</p>
+                                        <p>No. Izin 2.09.0030</p>
+                                        <p>Wilayah Kerja Republik Indonesia</p>
+                                    </div>
+                                </div>
+                                <div className="w-full max-w-[300px] h-px bg-white/30"></div>
+                                <div className="space-y-2 text-sm md:text-base text-white/90 text-left">
+                                    <p className="font-semibold text-white">Alamat Kantor</p>
+                                    <div className="flex items-start gap-2">
+                                        <MapPin className="w-5 h-5 text-kjpp-red flex-shrink-0 mt-0.5" />
+                                        <div className="space-y-1">
+                                            <p>Permata Kebayoran Plaza Blok A-11</p>
+                                            <p>Jl. Raya Kebayoran Lama No. 22</p>
+                                            <p>Jakarta 12220, Indonesia</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="hidden lg:block w-px bg-white/30 self-stretch min-h-full"></div>
+                            <div className="space-y-8 text-left flex-1">
+                                <div className="space-y-4">
+                                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-white">
+                                        Terhubung
+                                        <br />
+                                        dengan Kami
+                                    </h2>
+                                    <p className="text-base md:text-lg text-white/90 leading-relaxed max-w-xl mx-auto lg:mx-0">
+                                        Jadilah bagian dari komunitas kami yang bersemangat dan saling terhubung dalam visi masa depan yang berkelanjutan.
+                                    </p>
+                                </div>
+
+                                {/* Social Media Icons */}
+                                <div className="flex flex-wrap justify-center lg:justify-start gap-3">
+                                    <Link
+                                        href="https://instagram.com"
+                                        target="_blank"
+                                        className="w-12 h-12 rounded-full bg-white flex items-center justify-center hover:bg-kjpp-red hover:scale-110 transition-all duration-300 group"
+                                    >
+                                        <Instagram className="w-5 h-5 text-bg-primary2 group-hover:text-white transition-colors" />
+                                    </Link>
+                                    <Link
+                                        href="https://tiktok.com"
+                                        target="_blank"
+                                        className="w-12 h-12 rounded-full bg-white flex items-center justify-center hover:bg-kjpp-red hover:scale-110 transition-all duration-300 group"
+                                    >
+                                        <svg className="w-5 h-5 text-bg-primary2 group-hover:text-white transition-colors" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
+                                        </svg>
+                                    </Link>
+                                    <Link
+                                        href="https://twitter.com"
+                                        target="_blank"
+                                        className="w-12 h-12 rounded-full bg-white flex items-center justify-center hover:bg-kjpp-red hover:scale-110 transition-all duration-300 group"
+                                    >
+                                        <Twitter className="w-5 h-5 text-bg-primary2 group-hover:text-white transition-colors" />
+                                    </Link>
+                                    <Link
+                                        href="https://facebook.com"
+                                        target="_blank"
+                                        className="w-12 h-12 rounded-full bg-white flex items-center justify-center hover:bg-kjpp-red hover:scale-110 transition-all duration-300 group"
+                                    >
+                                        <Facebook className="w-5 h-5 text-bg-primary2 group-hover:text-white transition-colors" />
+                                    </Link>
+                                    <Link
+                                        href="https://linkedin.com"
+                                        target="_blank"
+                                        className="w-12 h-12 rounded-full bg-white flex items-center justify-center hover:bg-kjpp-red hover:scale-110 transition-all duration-300 group"
+                                    >
+                                        <Linkedin className="w-5 h-5 text-bg-primary2 group-hover:text-white transition-colors" />
+                                    </Link>
+                                    <Link
+                                        href="https://youtube.com"
+                                        target="_blank"
+                                        className="w-12 h-12 rounded-full bg-white flex items-center justify-center hover:bg-kjpp-red hover:scale-110 transition-all duration-300 group"
+                                    >
+                                        <Youtube className="w-5 h-5 text-bg-primary2 group-hover:text-white transition-colors" />
+                                    </Link>
+                                </div>
+
+                                {/* Contact Button */}
+                                <div className="pt-4">
+                                    <Button
+                                        asChild
+                                        size="lg"
+                                        className="bg-white text-bg-primary2 hover:bg-kjpp-red hover:text-white px-8 py-6 text-base font-semibold rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 group"
+                                    >
+                                        <Link href="/hubungi-kami" className="flex items-center gap-2">
+                                            Kontak Kami
+                                            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                        </Link>
+                                    </Button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

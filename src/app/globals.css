@@ -71,6 +71,13 @@
   --color-text-slate-4: var(--text-slate-4);
   --color-text-slate-5: var(--text-slate-5);
   --color-text-slate-6: var(--text-slate-6);
+  --color-text-green-1: var(--text-green-1);
+  --color-text-green-2: var(--text-green-2);
+  --color-text-green-3: var(--text-green-3);
+  --color-text-green-4: var(--text-green-4);
+  --color-text-green-5: var(--text-green-5);
+  --color-text-green-6: var(--text-green-6);
+  --color-bg-green-5: var(--bg-green-5);
 
   /* KJPP Brand Colors */
   --color-kjpp-red: #ED1C24;
@@ -156,7 +163,7 @@
   /* blue-700 */
 
   --bg-1: #ffffff;
-  --bg-2: var(--slate-50);
+  --bg-2: theme('colors.slate.50');
   --bg-primary2: #3d4f5c;
 
   --border-primary: theme('colors.slate.100');
@@ -168,6 +175,15 @@
   --text-slate-4: theme('colors.slate.700');
   --text-slate-5: theme('colors.slate.800');
   --text-slate-6: theme('colors.slate.900');
+
+  --text-green-1: theme('colors.green.100');
+  --text-green-2: theme('colors.green.200');
+  --text-green-3: theme('colors.green.300');
+  --text-green-4: theme('colors.green.400');
+  --text-green-5: theme('colors.green.500');
+  --text-green-6: theme('colors.green.600');
+
+  --bg-green-5: theme('colors.green.500');
 
   --kjpp-red: #ED1C24;
   --kjpp-dark: #2C4157;

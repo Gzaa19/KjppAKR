@@ -1,23 +1,23 @@
 export interface HeroSlide {
     id: number;
-    image: string;
+    imageSrc: string;
     alt: string;
 }
 
 export const heroSlides: HeroSlide[] = [
     {
         id: 1,
-        image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1920&q=80",
+        imageSrc: "/image/hero/hero1.png",
         alt: "Modern office building exterior",
     },
     {
         id: 2,
-        image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80",
+        imageSrc: "/image/hero/hero2.png",
         alt: "Professional workspace interior",
     },
     {
         id: 3,
-        image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1920&q=80",
+        imageSrc: "/image/hero/hero1.png",
         alt: "Business meeting room",
     },
 ];

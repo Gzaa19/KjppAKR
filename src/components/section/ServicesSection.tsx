@@ -39,7 +39,7 @@ export function ServicesSection() {
                         <h2 className="text-3xl md:text-5xl font-bold text-text-primary2 leading-tight">
                             Solusi Penilaian <span className="text-red-600">Terintegrasi</span>
                         </h2>
-                        <p className="text-slate-600 text-lg leading-relaxed">
+                        <p className="text-text-slate-3 text-lg leading-relaxed">
                             Layanan penilaian aset profesional yang memadukan standar SPI,
                             analisis data mendalam, dan teknologi modern.
                         </p>

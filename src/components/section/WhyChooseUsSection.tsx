@@ -33,13 +33,13 @@ const features = [
 
 export function WhyChooseUsSection() {
     return (
-        <section className="py-20 bg-bg-2">
+        <section className="py-20 bg-bg-2 border-y border-border-primary2">
             <div className="container mx-auto px-4">
                 <div className="text-center max-w-3xl mx-auto mb-16">
                     <h2 className="text-3xl md:text-4xl font-bold text-text-primary2 mb-4">
                         Mengapa Memilih <span className="text-red-600">KJPP AKR?</span>
                     </h2>
-                    <p className="text-slate-600 text-lg">
+                    <p className="text-text-slate-3 text-lg leading-relaxed">
                         Komitmen kami pada integritas, validitas data, dan profesionalisme untuk memberikan nilai terbaik bagi aset Anda.
                     </p>
                 </div>
