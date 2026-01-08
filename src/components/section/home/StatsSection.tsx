@@ -15,7 +15,7 @@ interface StatItem {
 const stats: StatItem[] = [
     {
         id: 1,
-        value: 15,
+        value: 20,
         suffix: "+",
         label: "Tahun Pengalaman",
         description: "Dedikasi partner dalam industri penilaian profesional.",

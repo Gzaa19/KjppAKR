@@ -128,7 +128,7 @@
 
   /* Custom Colors for Navbar & Hero Section */
   /* Navbar Top Bar - Dark Blue Gray (#3d4f5c) */
-  --navbar-topbar: #3d4f5c;
+  --navbar-topbar: #2C4157;
   --navbar-topbar-text: #ffffff;
   --navbar-icon-accent: #ef4444;
   /* Red-500 for icons */
@@ -164,7 +164,7 @@
 
   --bg-1: #ffffff;
   --bg-2: theme('colors.slate.50');
-  --bg-primary2: #3d4f5c;
+  --bg-primary2: #2C4157;
 
   --border-primary: theme('colors.slate.100');
   --border-hover: theme('colors.slate.200');
@@ -188,7 +188,7 @@
   --kjpp-red: #ED1C24;
   --kjpp-dark: #2C4157;
 
-  --text-primary2: #3d4f5c;
+  --text-primary2: #2C4157;
   --text-primary: #111827;
   --text-secondary: #4b5563;
   --text-secondary-hover: #111827;

@@ -106,32 +106,25 @@ export function Navbar() {
                                     <NavigationMenuContent>
                                         <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2">
                                             <ListItem
-                                                href="/tentang/profil"
-                                                title="Profil Perusahaan"
-                                                isActive={isActive("/tentang/profil")}
+                                                href="/tentang-kami/sekapur-sirih"
+                                                title="Sekapur Sirih"
+                                                isActive={isActive("/tentang-kami/sekapur-sirih")}
                                             >
-                                                Sejarah dan visi misi perusahaan
+                                                Sejarah Perusahaan
                                             </ListItem>
                                             <ListItem
-                                                href="/tentang/tim"
-                                                title="Tim Kami"
-                                                isActive={isActive("/tentang/tim")}
+                                                href="/tentang-kami/visi-misi"
+                                                title="Visi Misi"
+                                                isActive={isActive("/tentang-kami/visi-misi")}
                                             >
-                                                Kenali tim profesional kami
+                                                Visi dan Misi Perusahaan
                                             </ListItem>
                                             <ListItem
-                                                href="/tentang/sertifikasi"
-                                                title="Sertifikasi"
-                                                isActive={isActive("/tentang/sertifikasi")}
+                                                href="/tentang-kami/manajemen"
+                                                title="Manajemen"
+                                                isActive={isActive("/tentang-kami/manajemen")}
                                             >
-                                                Sertifikasi dan penghargaan
-                                            </ListItem>
-                                            <ListItem
-                                                href="/tentang/karir"
-                                                title="Karir"
-                                                isActive={isActive("/tentang/karir")}
-                                            >
-                                                Bergabung dengan tim kami
+                                                Struktur Manajemen
                                             </ListItem>
                                         </ul>
                                     </NavigationMenuContent>
@@ -263,14 +256,14 @@ export function Navbar() {
                                                 Profil Perusahaan
                                             </Link>
                                             <Link
-                                                href="/tentang/tim"
+                                                href="/tentang-kami/manajemen"
                                                 className={cn(
                                                     "block py-2 px-4 rounded-lg text-sm",
-                                                    isActive("/tentang/tim") ? "text-kjpp-red bg-red-50" : "text-gray-600 hover:bg-gray-100"
+                                                    isActive("/tentang-kami/manajemen") ? "text-kjpp-red bg-red-50" : "text-gray-600 hover:bg-gray-100"
                                                 )}
                                                 onClick={() => setIsOpen(false)}
                                             >
-                                                Tim Kami
+                                                Manajemen
                                             </Link>
                                             <Link
                                                 href="/tentang/sertifikasi"

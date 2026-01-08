@@ -2,7 +2,18 @@
 
 import * as React from "react";
 import { LogoLoop } from "@/components/ui/LogoLoop";
-import { bankClients, nonBankClients, type Client } from "@/data/clients";
+
+interface Client {
+    id: string;
+    name: string;
+    logo: string;
+    category: string;
+}
+
+interface TrustedClientsSectionProps {
+    bankClients: Client[];
+    nonBankClients: Client[];
+}
 
 const convertToLogoItems = (clients: Client[]) => {
     return clients.map(client => ({
@@ -12,7 +23,7 @@ const convertToLogoItems = (clients: Client[]) => {
     }));
 };
 
-export function TrustedClientsSection() {
+export function TrustedClientsSection({ bankClients, nonBankClients }: TrustedClientsSectionProps) {
     const bankLogos = convertToLogoItems(bankClients);
     const nonBankLogos = convertToLogoItems(nonBankClients);
 

@@ -14,6 +14,7 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import { Toaster } from "@/components/ui/sonner"
 
 export default function DashboardLayout({
     children,
@@ -45,6 +46,7 @@ export default function DashboardLayout({
                     {children}
                 </div>
             </SidebarInset>
+            <Toaster />
         </SidebarProvider>
     )
 }
