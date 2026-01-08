@@ -11,6 +11,7 @@ import { useState, useTransition, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createGallery, getAlbums } from "@/actions/gallery";
 import type { CreateGalleryInput } from "@/lib/validations";
+import { ImageUpload } from "@/components/ui/image-upload";
 
 type Album = {
     id: string;
@@ -122,32 +123,14 @@ export default function CreateGalleryPage() {
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="imageUrl">URL Gambar</Label>
-                                <Input
-                                    id="imageUrl"
-                                    type="url"
-                                    placeholder="https://example.com/image.jpg"
+                                <Label>Foto</Label>
+                                <ImageUpload
                                     value={formData.imageUrl}
-                                    onChange={(e) => setFormData((prev) => ({ ...prev, imageUrl: e.target.value }))}
-                                    required
+                                    onChange={(url) => setFormData((prev) => ({ ...prev, imageUrl: url }))}
+                                    onRemove={() => setFormData((prev) => ({ ...prev, imageUrl: "" }))}
+                                    disabled={isPending}
                                 />
                             </div>
-
-                            {formData.imageUrl && (
-                                <div className="border rounded-lg p-4">
-                                    <p className="text-sm text-muted-foreground mb-2">Preview:</p>
-                                    <div className="aspect-video bg-muted rounded-lg overflow-hidden">
-                                        <img
-                                            src={formData.imageUrl}
-                                            alt="Preview"
-                                            className="w-full h-full object-cover"
-                                            onError={(e) => {
-                                                (e.target as HTMLImageElement).style.display = "none";
-                                            }}
-                                        />
-                                    </div>
-                                </div>
-                            )}
                         </CardContent>
                     </Card>
 

@@ -110,7 +110,7 @@ export default function AdminLoginPage() {
                         </div>
                     </CardContent>
 
-                    <CardFooter className="flex flex-col gap-4">
+                    <CardFooter className="flex flex-col gap-4 pt-6">
                         <Button
                             type="submit"
                             className="w-full text-md font-medium h-11 transition-all duration-200 hover:scale-[1.02] bg-primary text-primary-foreground hover:bg-primary/90"

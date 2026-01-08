@@ -138,7 +138,7 @@ export function Navbar() {
                                         <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2">
                                             <ListItem
                                                 href="/layanan/penilaian"
-                                                title="Penilaian Properti"
+                                                title="Jasa Penilaian"
                                                 isActive={isActive("/layanan/penilaian")}
                                             >
                                                 Jasa penilaian properti profesional
@@ -151,18 +151,11 @@ export function Navbar() {
                                                 Konsultasi properti dan investasi
                                             </ListItem>
                                             <ListItem
-                                                href="/layanan/audit"
-                                                title="Audit Properti"
-                                                isActive={isActive("/layanan/audit")}
+                                                href="/layanan/spesialisasi"
+                                                title="Spesialisasi"
+                                                isActive={isActive("/layanan/spesialisasi")}
                                             >
-                                                Audit dan evaluasi properti
-                                            </ListItem>
-                                            <ListItem
-                                                href="/layanan/riset"
-                                                title="Riset Pasar"
-                                                isActive={isActive("/layanan/riset")}
-                                            >
-                                                Riset dan analisis pasar properti
+                                                Layanan spesialisasi KJPP AKR
                                             </ListItem>
                                         </ul>
                                     </NavigationMenuContent>
@@ -312,6 +305,16 @@ export function Navbar() {
                                                 onClick={() => setIsOpen(false)}
                                             >
                                                 Konsultasi
+                                            </Link>
+                                            <Link
+                                                href="/layanan/spesialisasi"
+                                                className={cn(
+                                                    "block py-2 px-4 rounded-lg text-sm",
+                                                    isActive("/layanan/spesialisasi") ? "text-kjpp-red bg-red-50" : "text-gray-600 hover:bg-gray-100"
+                                                )}
+                                                onClick={() => setIsOpen(false)}
+                                            >
+                                                Spesialisasi
                                             </Link>
                                             <Link
                                                 href="/layanan/audit"

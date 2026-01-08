@@ -24,12 +24,20 @@ export default async function GalleryPage() {
                         Dokumentasi kegiatan perusahaan seperti rapat dan survei lapangan.
                     </p>
                 </div>
-                <Link href="/admin/gallery/create">
-                    <Button>
-                        <Plus className="mr-2 h-4 w-4" />
-                        Upload Foto
-                    </Button>
-                </Link>
+                <div className="flex gap-2">
+                    <Link href="/admin/gallery/albums/create">
+                        <Button variant="outline">
+                            <Plus className="mr-2 h-4 w-4" />
+                            Buat Album
+                        </Button>
+                    </Link>
+                    <Link href="/admin/gallery/create">
+                        <Button>
+                            <Plus className="mr-2 h-4 w-4" />
+                            Upload Foto
+                        </Button>
+                    </Link>
+                </div>
             </div>
 
             <div className="flex items-center gap-2 mb-4">
