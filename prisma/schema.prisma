@@ -141,3 +141,44 @@ model Gallery {
   @@index([eventDate])
   @@map("galleries")
 }
+// ==========================================
+// CLIENT MODEL
+// ==========================================
+model Client {
+  id          String         @id @default(cuid())
+  name        String
+  logo        String
+  category    ClientCategory
+  isPublished Boolean        @default(true)
+  sortOrder   Int            @default(0)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@index([category])
+  @@index([isPublished])
+  @@index([sortOrder])
+  @@map("clients")
+}
+
+enum ClientCategory {
+  BANK_BUMN_SWASTA
+  NON_BANK
+}
+
+// ==========================================
+// MANAGEMENT TEAM MODEL
+// ==========================================
+model ManagementTeam {
+  id          String   @id @default(cuid())
+  name        String
+  title       String
+  image       String?
+  description String   @db.Text
+  isMappiCert Boolean  @default(false)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("management_teams")
+  @@index([sortOrder])
+}

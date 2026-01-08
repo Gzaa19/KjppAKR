@@ -5,7 +5,6 @@ export interface Client {
     category: 'Bank BUMN/Swasta' | 'Non Bank';
 }
 
-// Bank BUMN/Swasta Clients
 export const bankClients: Client[] = [
     {
         id: 1,
@@ -39,7 +38,6 @@ export const bankClients: Client[] = [
     },
 ];
 
-// Non Bank Clients
 export const nonBankClients: Client[] = [
     {
         id: 6,
@@ -73,5 +71,4 @@ export const nonBankClients: Client[] = [
     },
 ];
 
-// All clients combined
 export const allClients: Client[] = [...bankClients, ...nonBankClients];
