@@ -9,7 +9,10 @@ import {
     LayoutDashboard,
     FileText,
     LogOut,
-    User
+    User,
+    Building2,
+    Users,
+    ChevronRight
 } from "lucide-react"
 
 import {
@@ -50,6 +53,11 @@ const navMain = [
         icon: LayoutDashboard,
     },
     {
+        title: "Klien",
+        url: "/admin/clients",
+        icon: Building2,
+    },
+    {
         title: "Galeri",
         url: "/admin/gallery",
         icon: Map,
@@ -58,6 +66,14 @@ const navMain = [
         title: "Berita",
         url: "/admin/news",
         icon: FileText,
+    },
+];
+
+const tentangKamiMenu = [
+    {
+        title: "Manajemen",
+        url: "/admin/management",
+        icon: Users,
     },
 ];
 
@@ -128,7 +144,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <SidebarGroup>
                     <SidebarGroupLabel>Platform</SidebarGroupLabel>
                     <SidebarMenu>
-                        {navMain.map((item) => {
+                        {navMain.slice(0, 1).map((item) => {
                             const isMainActive = item.url === pathname || (item.url !== "#" && pathname.startsWith(item.url));
 
                             return (
@@ -143,7 +159,46 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                             )
                         })}
                     </SidebarMenu>
+                </SidebarGroup>
 
+                <SidebarGroup>
+                    <SidebarGroupLabel>Tentang Kami</SidebarGroupLabel>
+                    <SidebarMenu>
+                        {tentangKamiMenu.map((item) => {
+                            const isMainActive = item.url === pathname || (item.url !== "#" && pathname.startsWith(item.url));
+
+                            return (
+                                <SidebarMenuItem key={item.title}>
+                                    <SidebarMenuButton asChild isActive={isMainActive} tooltip={item.title}>
+                                        <a href={item.url}>
+                                            <item.icon />
+                                            <span>{item.title}</span>
+                                        </a>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            )
+                        })}
+                    </SidebarMenu>
+                </SidebarGroup>
+
+                <SidebarGroup>
+                    <SidebarGroupLabel>Konten</SidebarGroupLabel>
+                    <SidebarMenu>
+                        {navMain.slice(1).map((item) => {
+                            const isMainActive = item.url === pathname || (item.url !== "#" && pathname.startsWith(item.url));
+
+                            return (
+                                <SidebarMenuItem key={item.title}>
+                                    <SidebarMenuButton asChild isActive={isMainActive} tooltip={item.title}>
+                                        <a href={item.url}>
+                                            <item.icon />
+                                            <span>{item.title}</span>
+                                        </a>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            )
+                        })}
+                    </SidebarMenu>
                 </SidebarGroup>
             </SidebarContent>
             <SidebarFooter>
@@ -154,6 +209,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                 <SidebarMenuButton
                                     size="lg"
                                     className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                                    suppressHydrationWarning
                                 >
                                     <Avatar className="h-8 w-8 rounded-lg">
                                         <AvatarImage src={user?.avatar || ""} alt={user?.name || "User"} />
