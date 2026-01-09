@@ -4,6 +4,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import prisma from "@/lib/prisma";
 import { GallerySection } from "@/components/gallery/GallerySection";
+import { ParallaxBackground } from "@/components/ui/ParallaxBackground";
 
 export const metadata: Metadata = {
     title: "Galeri Aktivitas | KJPP AKR",
@@ -42,19 +43,12 @@ export default async function GalleryPage() {
         <div className="min-h-screen bg-slate-50">
             <Navbar />
 
-            {/* Parallax Background Image */}
-            <div className="fixed inset-x-0 top-24 h-[60vh] z-0">
-                <Image
-                    src="https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop"
-                    alt="Gallery Background"
-                    fill
-                    className="object-cover"
-                    priority
-                />
-                <div className="absolute inset-0 bg-black/40" />
-            </div>
+            <ParallaxBackground
+                imageUrl="https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop"
+                alt="Gallery Background"
+            />
 
-            <main className="relative z-10 mt-[50vh] bg-white rounded-t-[3rem] shadow-2xl pt-24 pb-20 min-h-screen">
+            <main className="relative z-10 mt-[50vh] bg-white rounded-t-[3rem] shadow-2xl pt-24 pb-40 min-h-screen">
                 {/* Header */}
                 <div className="container mx-auto px-4 mb-16">
                     <div className="flex items-center gap-4 mb-6">
@@ -94,7 +88,7 @@ export default async function GalleryPage() {
                 </div>
             </main>
 
-            <div className="relative z-10">
+            <div className="relative z-10 -mt-20">
                 <Footer />
             </div>
         </div>

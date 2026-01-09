@@ -17,19 +17,8 @@ export default async function NewsDetailPage({ params, searchParams }: PageProps
     const { slug } = await params;
     const { from } = await searchParams;
 
-    const backLink = from === 'home' ? '/#recent-updates' : '/news';
-    const backLabel = "Back to all news"; // Keeping label consistent as per user screencap request, or we can change it to "Back" if preferred. User asked for behavior not generic label change, but logic implies 'Back'. Kept "Back to all news" as base style but behavior changes. Or better: "Back".
-    // Actually the user said "balik ke section recent updates section", so maybe "Back to Home" is better contextually if coming from home?
-    // Let's stick to the behavior requested. The label was "Back to all news" in the visual which is hardcoded. 
-    // I will dynamically set the HREF but I will keep the label generic or update it if needed. 
-    // Given the constraints, I will keep the label as "Back to all news" for consistency but change HREF.
-    // Wait, if I go back to home, "Back to all news" is misleading.
-    // Let's use a generic "Back" or conditional label?
-    // User request: "jika kalau ngebuka detail berita dari home maka balik ke section recent updates section"
-    // So HREF is the key. Label "Back" is safer. Or "Back to Home" vs "Back to all news".
-
-    // Let's declare the variable logic inside the component.
-
+    const backLink = from === 'home' ? '/#recent-updates' : '/berita';
+    const backLabel = "Kembali Ke Semua Berita";
     const article = await prisma.news.findUnique({
         where: {
             slug: slug,
@@ -71,8 +60,6 @@ export default async function NewsDetailPage({ params, searchParams }: PageProps
                         className="object-cover"
                         priority
                         style={{
-                            // Create the diagonal cut:
-                            // Top-Left (0,0), Top-Right (100,0), Bottom-Right (100, 85%), Bottom-Left (0, 100%)
                             clipPath: "polygon(0 0, 100% 0, 100% 85%, 0 100%)",
                         }}
                     />
@@ -93,7 +80,7 @@ export default async function NewsDetailPage({ params, searchParams }: PageProps
                             className="inline-flex items-center text-sm font-semibold text-slate-500 hover:text-kjpp-red transition-colors group"
                         >
                             <ChevronLeft className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" />
-                            {from === 'home' ? 'Back to Home' : 'Back to all news'}
+                            {from === 'home' ? 'Kembali Ke Beranda' : 'Kembali Ke Semua Berita'}
                         </Link>
                     </div>
 
@@ -106,7 +93,7 @@ export default async function NewsDetailPage({ params, searchParams }: PageProps
                                 className="inline-flex items-center text-sm font-semibold text-slate-500 hover:text-kjpp-red transition-colors"
                             >
                                 <ChevronLeft className="w-4 h-4 mr-2" />
-                                {from === 'home' ? 'Back to Home' : 'Back to all news'}
+                                {from === 'home' ? 'Kembali Ke Beranda' : 'Kembali Ke Semua Berita'}
                             </Link>
                         </div>
 
@@ -150,8 +137,8 @@ export default async function NewsDetailPage({ params, searchParams }: PageProps
                                 <div className="text-slate-400 font-medium text-sm uppercase tracking-wider mb-1">
                                     {formattedDate}
                                 </div>
-                                <div className="text-slate-400 text-xs uppercase tracking-wider">
-                                    WORDS BY {article.author.name}
+                                <div className="text-slate-400 text-xs tracking-wider">
+                                    Diterbitkan oleh {article.author.name}
                                 </div>
                             </div>
                         </div>

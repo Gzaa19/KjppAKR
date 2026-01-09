@@ -1,9 +1,4 @@
-export type ActionResponse<T = unknown> = {
-    success: boolean;
-    data?: T;
-    error?: string;
-};
-
+export * from "@/types/action-response";
 export * from "./auth";
 export * from "./news";
 export * from "./gallery";

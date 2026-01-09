@@ -4,16 +4,9 @@ import { Input } from "@/components/ui/input";
 import { Plus, Search, Calendar, MessageSquare, MoreHorizontal } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { getNews, deleteNews, togglePublishNews } from "@/actions/news";
+import { getNews } from "@/actions/news";
 import { formatDateShort } from "@/lib/helpers";
-import { DeleteNewsButton, TogglePublishButton } from "@/components/admin/news-actions";
+import { NewsActionMenu } from "@/components/admin/news-actions";
 
 
 export default async function NewsPage() {
@@ -104,26 +97,7 @@ export default async function NewsPage() {
                                             </span>
                                         </div>
 
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button variant="ghost" size="icon" className="h-8 w-8">
-                                                    <MoreHorizontal className="h-4 w-4" />
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end">
-                                                <DropdownMenuItem asChild>
-                                                    <Link href={`/admin/news/${item.id}/edit`}>Edit Post</Link>
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem asChild>
-                                                    <Link href={`/news/${item.slug}`} target="_blank">
-                                                        View Live
-                                                    </Link>
-                                                </DropdownMenuItem>
-                                                <TogglePublishButton id={item.id} isPublished={item.isPublished} />
-                                                <DropdownMenuSeparator />
-                                                <DeleteNewsButton id={item.id} />
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
+                                        <NewsActionMenu id={item.id} slug={item.slug} isPublished={item.isPublished} />
                                     </div>
                                 </div>
                             </div>

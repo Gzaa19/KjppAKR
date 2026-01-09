@@ -4,15 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Plus, Search, MoreHorizontal, Building2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { getClients } from "@/actions/client";
-import { DeleteClientButton, TogglePublishButton } from "@/components/admin/client-actions";
+import { ClientActionMenu } from "@/components/admin/client-actions";
 import Image from "next/image";
 
 export default async function ClientsPage() {
@@ -83,21 +76,7 @@ export default async function ClientsPage() {
                                                     <Badge variant={client.isPublished ? "default" : "secondary"} className="text-xs">
                                                         {client.isPublished ? "Published" : "Draft"}
                                                     </Badge>
-                                                    <DropdownMenu>
-                                                        <DropdownMenuTrigger asChild>
-                                                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                                                                <MoreHorizontal className="h-4 w-4" />
-                                                            </Button>
-                                                        </DropdownMenuTrigger>
-                                                        <DropdownMenuContent align="end">
-                                                            <DropdownMenuItem asChild>
-                                                                <Link href={`/admin/clients/${client.id}/edit`}>Edit</Link>
-                                                            </DropdownMenuItem>
-                                                            <TogglePublishButton id={client.id} isPublished={client.isPublished} />
-                                                            <DropdownMenuSeparator />
-                                                            <DeleteClientButton id={client.id} />
-                                                        </DropdownMenuContent>
-                                                    </DropdownMenu>
+                                                    <ClientActionMenu id={client.id} isPublished={client.isPublished} />
                                                 </div>
                                                 <h4 className="font-bold text-sm line-clamp-2">{client.name}</h4>
                                             </div>
@@ -133,21 +112,7 @@ export default async function ClientsPage() {
                                                     <Badge variant={client.isPublished ? "default" : "secondary"} className="text-xs">
                                                         {client.isPublished ? "Published" : "Draft"}
                                                     </Badge>
-                                                    <DropdownMenu>
-                                                        <DropdownMenuTrigger asChild>
-                                                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                                                                <MoreHorizontal className="h-4 w-4" />
-                                                            </Button>
-                                                        </DropdownMenuTrigger>
-                                                        <DropdownMenuContent align="end">
-                                                            <DropdownMenuItem asChild>
-                                                                <Link href={`/admin/clients/${client.id}/edit`}>Edit</Link>
-                                                            </DropdownMenuItem>
-                                                            <TogglePublishButton id={client.id} isPublished={client.isPublished} />
-                                                            <DropdownMenuSeparator />
-                                                            <DeleteClientButton id={client.id} />
-                                                        </DropdownMenuContent>
-                                                    </DropdownMenu>
+                                                    <ClientActionMenu id={client.id} isPublished={client.isPublished} />
                                                 </div>
                                                 <h4 className="font-bold text-sm line-clamp-2">{client.name}</h4>
                                             </div>

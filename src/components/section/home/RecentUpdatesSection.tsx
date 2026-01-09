@@ -70,10 +70,10 @@ export function RecentUpdatesSection() {
 
                     <div className="shrink-0 mb-2">
                         <Link
-                            href="/news"
+                            href="/berita"
                             className="hidden md:flex group items-center gap-2 px-6 py-3 bg-white border border-slate-200 rounded-full text-slate-700 font-semibold hover:border-slate-400 hover:shadow-md transition-all duration-300"
                         >
-                            Read More
+                            Lihat Semua
                             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </Link>
                     </div>
@@ -120,7 +120,7 @@ function NewsCard({ item, className }: { item: NewsItem; className?: string }) {
 
     return (
         <Link
-            href={`/news/${item.slug}?from=home`}
+            href={`/berita/${item.slug}?from=home`}
             className={cn("block group h-full", className)}
         >
             <Card className="relative h-full w-full overflow-hidden border-none rounded-xl bg-slate-900 shadow-none">

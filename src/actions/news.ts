@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import { createNewsSchema, updateNewsSchema, type CreateNewsInput, type UpdateNewsInput } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
-import type { ActionResponse } from "./index";
+import type { ActionResponse } from "@/types/action-response";
 
 
 // ============================================
@@ -187,7 +187,7 @@ export async function updateNews(
         });
 
         revalidatePath("/admin/news");
-        revalidatePath(`/news/${news.slug}`);
+        revalidatePath(`/berita/${news.slug}`);
         return { success: true, data: { id: news.id, slug: news.slug } };
     } catch (error) {
         console.error("Update news error:", error);

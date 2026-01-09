@@ -12,7 +12,7 @@ import {
     type UpdateGalleryInput,
 } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
-import type { ActionResponse } from "./index";
+import type { ActionResponse } from "@/types/action-response";
 
 
 // ============================================

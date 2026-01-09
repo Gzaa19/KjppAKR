@@ -4,7 +4,7 @@ import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { loginSchema, registerSchema, type LoginInput, type RegisterInput } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
-import type { ActionResponse } from "./index";
+import type { ActionResponse } from "@/types/action-response";
 
 export async function login(input: LoginInput): Promise<ActionResponse<{ id: string; email: string; name: string }>> {
     try {

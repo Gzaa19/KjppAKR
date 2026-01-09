@@ -7,11 +7,13 @@ import { z } from "zod";
 
 // Validation schema
 const clientSchema = z.object({
-    name: z.string().min(1, "Nama klien harus diisi"),
+    name: z.string().min(2, "Nama klien minimal 2 karakter").max(100, "Nama klien maksimal 100 karakter"),
     logo: z.string().url("Logo harus berupa URL yang valid"),
-    category: z.enum(["BANK_BUMN_SWASTA", "NON_BANK"]),
+    category: z.enum(["BANK_BUMN_SWASTA", "NON_BANK"], {
+        message: "Kategori harus dipilih",
+    }),
     isPublished: z.boolean().default(true),
-    sortOrder: z.number().int().default(0),
+    sortOrder: z.number().int().nonnegative("Urutan tidak boleh negatif").default(0),
 });
 
 type ClientInput = z.infer<typeof clientSchema>;

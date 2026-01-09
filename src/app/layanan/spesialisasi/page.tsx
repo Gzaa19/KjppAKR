@@ -1,7 +1,7 @@
 import { Metadata } from "next";
-import Image from "next/image";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { ParallaxBackground } from "@/components/ui/ParallaxBackground";
 
 export const metadata: Metadata = {
     title: "Spesialisasi | KJPP AKR",
@@ -19,17 +19,10 @@ export default function SpesialisasiPage() {
         <div className="min-h-screen bg-slate-50">
             <Navbar />
 
-            {/* Parallax Background Image */}
-            <div className="fixed inset-x-0 top-24 h-[60vh] z-0">
-                <Image
-                    src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop"
-                    alt="Specialization Background"
-                    fill
-                    className="object-cover"
-                    priority
-                />
-                <div className="absolute inset-0 bg-black/40" />
-            </div>
+            <ParallaxBackground
+                imageUrl="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop"
+                alt="Specialization Background"
+            />
 
             <main className="relative z-10 mt-[50vh] bg-white rounded-t-[3rem] shadow-2xl pt-24 pb-20 min-h-screen">
                 {/* Header */}
@@ -62,7 +55,7 @@ export default function SpesialisasiPage() {
                 </div>
             </main>
 
-            <div className="relative z-10">
+            <div className="relative z-10 -mt-20">
                 <Footer />
             </div>
         </div>

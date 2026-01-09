@@ -54,7 +54,7 @@ export function NewsListSection({ articles, currentPage, totalPages }: NewsListS
                     {articles.map((article) => (
                         <div key={article.id}>
                             <Link
-                                href={`/news/${article.slug}`}
+                                href={`/berita/${article.slug}`}
                                 className="group block py-10 hover:bg-slate-50/50 transition-colors"
                             >
                                 <div className="flex flex-col md:flex-row gap-8 items-start">
@@ -129,7 +129,7 @@ export function NewsListSection({ articles, currentPage, totalPages }: NewsListS
                         <div className="mt-16 flex justify-center items-center gap-3">
                             {/* Previous Button */}
                             <Link
-                                href={`/news?page=${currentPage - 1}#news-content`}
+                                href={`/berita?page=${currentPage - 1}#news-content`}
                                 className={currentPage <= 1 ? "pointer-events-none" : ""}
                                 aria-disabled={currentPage <= 1}
                             >
@@ -148,7 +148,7 @@ export function NewsListSection({ articles, currentPage, totalPages }: NewsListS
                                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
                                     <Link
                                         key={pageNum}
-                                        href={`/news?page=${pageNum}#news-content`}
+                                        href={`/berita?page=${pageNum}#news-content`}
                                     >
                                         <Button
                                             variant={currentPage === pageNum ? "default" : "ghost"}
@@ -168,7 +168,7 @@ export function NewsListSection({ articles, currentPage, totalPages }: NewsListS
 
                             {/* Next Button */}
                             <Link
-                                href={`/news?page=${currentPage + 1}#news-content`}
+                                href={`/berita?page=${currentPage + 1}#news-content`}
                                 className={currentPage >= totalPages ? "pointer-events-none" : ""}
                                 aria-disabled={currentPage >= totalPages}
                             >

@@ -95,7 +95,7 @@ export function Navbar() {
                                             isActive("/") && "text-kjpp-red"
                                         )}
                                     >
-                                        Home
+                                        Beranda
                                     </NavigationMenuLink>
                                 </NavigationMenuItem>
 
@@ -187,10 +187,10 @@ export function Navbar() {
 
                                 <NavigationMenuItem>
                                     <NavigationMenuLink
-                                        href="/news"
+                                        href="/berita"
                                         className={cn(
                                             navigationMenuTriggerStyle(),
-                                            isActive("/news") && "text-kjpp-red"
+                                            isActive("/berita") && "text-kjpp-red"
                                         )}
                                     >
                                         Berita
@@ -230,7 +230,7 @@ export function Navbar() {
                                         )}
                                         onClick={() => setIsOpen(false)}
                                     >
-                                        Home
+                                        Beranda
                                     </Link>
                                     <Collapsible>
                                         <CollapsibleTrigger className="flex items-center justify-between w-full text-lg font-semibold py-2 px-4 rounded-lg text-gray-700 hover:bg-gray-100">
@@ -239,14 +239,24 @@ export function Navbar() {
                                         </CollapsibleTrigger>
                                         <CollapsibleContent className="pl-4 mt-2 space-y-2">
                                             <Link
-                                                href="/tentang/profil"
+                                                href="/tentang-kami/sekapur-sirih"
                                                 className={cn(
                                                     "block py-2 px-4 rounded-lg text-sm",
-                                                    isActive("/tentang/profil") ? "text-kjpp-red bg-red-50" : "text-gray-600 hover:bg-gray-100"
+                                                    isActive("/tentang-kami/sekapur-sirih") ? "text-kjpp-red bg-red-50" : "text-gray-600 hover:bg-gray-100"
                                                 )}
                                                 onClick={() => setIsOpen(false)}
                                             >
-                                                Profil Perusahaan
+                                                Sekapur Sirih
+                                            </Link>
+                                            <Link
+                                                href="/tentang-kami/visi-misi"
+                                                className={cn(
+                                                    "block py-2 px-4 rounded-lg text-sm",
+                                                    isActive("/tentang-kami/visi-misi") ? "text-kjpp-red bg-red-50" : "text-gray-600 hover:bg-gray-100"
+                                                )}
+                                                onClick={() => setIsOpen(false)}
+                                            >
+                                                Visi Misi
                                             </Link>
                                             <Link
                                                 href="/tentang-kami/manajemen"
@@ -257,26 +267,6 @@ export function Navbar() {
                                                 onClick={() => setIsOpen(false)}
                                             >
                                                 Manajemen
-                                            </Link>
-                                            <Link
-                                                href="/tentang/sertifikasi"
-                                                className={cn(
-                                                    "block py-2 px-4 rounded-lg text-sm",
-                                                    isActive("/tentang/sertifikasi") ? "text-kjpp-red bg-red-50" : "text-gray-600 hover:bg-gray-100"
-                                                )}
-                                                onClick={() => setIsOpen(false)}
-                                            >
-                                                Sertifikasi
-                                            </Link>
-                                            <Link
-                                                href="/tentang/karir"
-                                                className={cn(
-                                                    "block py-2 px-4 rounded-lg text-sm",
-                                                    isActive("/tentang/karir") ? "text-kjpp-red bg-red-50" : "text-gray-600 hover:bg-gray-100"
-                                                )}
-                                                onClick={() => setIsOpen(false)}
-                                            >
-                                                Karir
                                             </Link>
                                         </CollapsibleContent>
                                     </Collapsible>
@@ -294,7 +284,7 @@ export function Navbar() {
                                                 )}
                                                 onClick={() => setIsOpen(false)}
                                             >
-                                                Penilaian Properti
+                                                Jasa Penilaian
                                             </Link>
                                             <Link
                                                 href="/layanan/konsultasi"
@@ -315,26 +305,6 @@ export function Navbar() {
                                                 onClick={() => setIsOpen(false)}
                                             >
                                                 Spesialisasi
-                                            </Link>
-                                            <Link
-                                                href="/layanan/audit"
-                                                className={cn(
-                                                    "block py-2 px-4 rounded-lg text-sm",
-                                                    isActive("/layanan/audit") ? "text-kjpp-red bg-red-50" : "text-gray-600 hover:bg-gray-100"
-                                                )}
-                                                onClick={() => setIsOpen(false)}
-                                            >
-                                                Audit Properti
-                                            </Link>
-                                            <Link
-                                                href="/layanan/riset"
-                                                className={cn(
-                                                    "block py-2 px-4 rounded-lg text-sm",
-                                                    isActive("/layanan/riset") ? "text-kjpp-red bg-red-50" : "text-gray-600 hover:bg-gray-100"
-                                                )}
-                                                onClick={() => setIsOpen(false)}
-                                            >
-                                                Riset Pasar
                                             </Link>
                                         </CollapsibleContent>
                                     </Collapsible>

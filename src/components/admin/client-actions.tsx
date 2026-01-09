@@ -1,10 +1,18 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { Trash2, Eye, EyeOff } from "lucide-react";
+import {
+    DropdownMenu,
+    DropdownMenuItem,
+    DropdownMenuContent,
+    DropdownMenuTrigger,
+    DropdownMenuSeparator
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Trash2, Eye, EyeOff, MoreHorizontal } from "lucide-react";
 import { deleteClient, togglePublishClient } from "@/actions/client";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -89,5 +97,25 @@ export function TogglePublishButton({ id, isPublished }: { id: string; isPublish
                 </>
             )}
         </DropdownMenuItem>
+    );
+}
+
+export function ClientActionMenu({ id, isPublished }: { id: string; isPublished: boolean }) {
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <MoreHorizontal className="h-4 w-4" />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+                <DropdownMenuItem asChild>
+                    <Link href={`/admin/clients/${id}/edit`}>Edit</Link>
+                </DropdownMenuItem>
+                <TogglePublishButton id={id} isPublished={isPublished} />
+                <DropdownMenuSeparator />
+                <DeleteClientButton id={id} />
+            </DropdownMenuContent>
+        </DropdownMenu>
     );
 }
