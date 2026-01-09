@@ -17,8 +17,8 @@ export default async function NewsDetailPage({ params, searchParams }: PageProps
     const { slug } = await params;
     const { from } = await searchParams;
 
-    const backLink = from === 'home' ? '/#recent-updates' : '/berita';
-    const backLabel = "Kembali Ke Semua Berita";
+    const backLink = from === 'home' ? '/#recent-updates' : '/publikasi';
+    const backLabel = "Kembali Ke Semua Publikasi";
     const article = await prisma.news.findUnique({
         where: {
             slug: slug,
@@ -80,7 +80,7 @@ export default async function NewsDetailPage({ params, searchParams }: PageProps
                             className="inline-flex items-center text-sm font-semibold text-slate-500 hover:text-kjpp-red transition-colors group"
                         >
                             <ChevronLeft className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" />
-                            {from === 'home' ? 'Kembali Ke Beranda' : 'Kembali Ke Semua Berita'}
+                            {from === 'home' ? 'Kembali Ke Beranda' : 'Kembali Ke Semua Publikasi'}
                         </Link>
                     </div>
 
@@ -93,7 +93,7 @@ export default async function NewsDetailPage({ params, searchParams }: PageProps
                                 className="inline-flex items-center text-sm font-semibold text-slate-500 hover:text-kjpp-red transition-colors"
                             >
                                 <ChevronLeft className="w-4 h-4 mr-2" />
-                                {from === 'home' ? 'Kembali Ke Beranda' : 'Kembali Ke Semua Berita'}
+                                {from === 'home' ? 'Kembali Ke Beranda' : 'Kembali Ke Semua Publikasi'}
                             </Link>
                         </div>
 

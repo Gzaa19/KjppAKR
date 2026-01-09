@@ -186,17 +186,10 @@ export function Navbar() {
 
                                 <NavigationMenuItem>
                                     <NavigationMenuLink
-<<<<<<< Updated upstream
-                                        href="/berita"
-                                        className={cn(
-                                            navigationMenuTriggerStyle(),
-                                            isActive("/berita") && "text-kjpp-red"
-=======
                                         href="/publikasi"
                                         className={cn(
                                             navigationMenuTriggerStyle(),
                                             isActive("/publikasi") && "text-kjpp-red"
->>>>>>> Stashed changes
                                         )}
                                     >
                                         Publikasi
