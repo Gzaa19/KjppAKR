@@ -7,6 +7,12 @@ import { WhyChooseUsSection } from "@/components/section/home/WhyChooseUsSection
 import { RecentUpdatesSection } from "@/components/section/home/RecentUpdatesSection";
 import { StatsSection } from "@/components/section/home/StatsSection";
 import { getPublishedClients } from "@/actions/client";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "KJPP AKR - Kantor Jasa Penilai Publik Anas Karim Rivai & Rekan",
+  description: "KJPP AKR adalah firma penilai properti profesional yang menyediakan jasa penilaian aset, konsultasi properti, dan manajemen aset dengan presisi dan keamanan terpercaya.",
+};
 
 export default async function Home() {
   const result = await getPublishedClients();

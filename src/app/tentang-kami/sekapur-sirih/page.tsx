@@ -4,8 +4,8 @@ import { ParallaxBackground } from "@/components/ui/ParallaxBackground";
 import { SekapurSirihSection } from "@/components/section/tentang-kami/SekapurSirihSection";
 
 export const metadata = {
-    title: "Sekapur Sirih - KJPP AKR",
-    description: "Sambutan dari Managing Partner KJPP Anas Karim Rivai & Rekan.",
+    title: "Sekapur Sirih - KJPP AKR | Sejarah & Profil Perusahaan",
+    description: "Mengenal lebih dekat KJPP AKR, sejarah perjalanan, dan komitmen kami dalam memberikan layanan penilaian properti profesional sejak berdiri.",
 };
 
 export default function SekapurSirihPage() {

@@ -4,8 +4,8 @@ import { ParallaxBackground } from "@/components/ui/ParallaxBackground";
 import { ManajemenSection } from "@/components/section/tentang-kami/ManajemenSection";
 
 export const metadata = {
-    title: "Manajemen - KJPP AKR",
-    description: "Profil Pimpinan dan Rekan di KJPP Anas Karim Rivai & Rekan.",
+    title: "Manajemen - KJPP AKR | Tim Profesional Berpengalaman",
+    description: "Profil pimpinan dan tim manajemen KJPP AKR yang berpengalaman dalam industri penilaian properti dan aset di Indonesia.",
 };
 
 export default function ManajemenPage() {

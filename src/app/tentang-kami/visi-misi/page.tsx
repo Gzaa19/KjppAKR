@@ -5,8 +5,8 @@ import { VisiMisiSection } from "@/components/section/tentang-kami/VisiMisiSecti
 import { BudayaSection } from "@/components/section/tentang-kami/BudayaSection";
 
 export const metadata = {
-    title: "Visi Misi - KJPP AKR",
-    description: "Visi, Misi, dan Budaya Perusahaan KJPP Anas Karim Rivai & Rekan.",
+    title: "Visi & Misi - KJPP AKR | Komitmen Profesionalisme",
+    description: "Visi dan misi KJPP AKR dalam memberikan layanan penilaian properti terbaik dengan integritas, profesionalisme, dan inovasi berkelanjutan.",
 };
 
 export default function VisiMisiPage() {

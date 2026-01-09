@@ -14,7 +14,6 @@ export const metadata: Metadata = {
 const INITIAL_ITEMS = 6;
 
 export default async function GalleryPage() {
-    // Fetch albums with their gallery items and total count
     const albums = await prisma.album.findMany({
         where: {
             isActive: true,
@@ -42,6 +41,7 @@ export default async function GalleryPage() {
     return (
         <div className="min-h-screen bg-slate-50">
             <Navbar />
+<<<<<<< Updated upstream
 
             <ParallaxBackground
                 imageUrl="https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop"
@@ -50,6 +50,20 @@ export default async function GalleryPage() {
 
             <main className="relative z-10 mt-[50vh] bg-white rounded-t-[3rem] shadow-2xl pt-24 pb-40 min-h-screen">
                 {/* Header */}
+=======
+            <div className="fixed inset-x-0 top-24 h-[60vh] z-0">
+                <Image
+                    src="https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop"
+                    alt="Gallery Background"
+                    fill
+                    className="object-cover"
+                    priority
+                />
+                <div className="absolute inset-0 bg-black/40" />
+            </div>
+
+            <main className="relative z-10 mt-[50vh] bg-white rounded-t-[3rem] shadow-2xl pt-24 pb-20 min-h-screen">
+>>>>>>> Stashed changes
                 <div className="container mx-auto px-4 mb-16">
                     <div className="flex items-center gap-4 mb-6">
                         <div className="w-1.5 h-12 bg-kjpp-red shrink-0" />
@@ -62,7 +76,6 @@ export default async function GalleryPage() {
                     </p>
                 </div>
 
-                {/* Albums */}
                 <div className="container mx-auto px-4">
                     {albums.map((album) => (
                         <GallerySection

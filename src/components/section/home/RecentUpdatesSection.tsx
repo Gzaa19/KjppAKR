@@ -54,14 +54,13 @@ export function RecentUpdatesSection() {
     return (
         <section id="recent-updates" className="py-20 bg-white">
             <div className="container mx-auto px-4">
-                {/* Header Section */}
                 <div className="flex flex-col lg:flex-row justify-between items-end mb-16 gap-8">
                     <div className="max-w-3xl">
                         <span className="text-kjpp-dark font-bold tracking-widest text-xs uppercase mb-3 block">
                             MEDIA INFORMASI
                         </span>
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-kjpp-dark leading-tight mb-6">
-                            KJPP AKR <span className="text-kjpp-red">Ruang Berita</span>
+                            KJPP AKR <span className="text-kjpp-red">Ruang Publikasi</span>
                         </h2>
                         <p className="text-kjpp-dark text-lg leading-relaxed max-w-2xl">
                             Sebagai konsultan jasa penilai publik terkemuka, KJPP AKR berkomitmen menyediakan informasi terpercaya mengenai perkembangan bisnis, inovasi, serta kontribusi perusahaan dalam keamanan energi dan pembangunan berkelanjutan.

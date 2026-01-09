@@ -35,20 +35,17 @@ export function NewsListSection({ articles, currentPage, totalPages }: NewsListS
             className="relative z-10 mt-[50vh] bg-white rounded-t-[3rem] shadow-2xl pt-24 pb-32 scroll-mt-24"
         >
             <div className="container mx-auto px-4">
-                {/* Page Header */}
                 <div className="mb-16">
                     <div className="flex items-center gap-4 mb-6">
                         <div className="w-1.5 h-12 bg-kjpp-red shrink-0" />
                         <h1 className="text-4xl md:text-5xl font-extrabold text-kjpp-dark tracking-tight uppercase">
-                            BERITA
+                            Publikasi
                         </h1>
                     </div>
                     <p className="text-kjpp-dark text-lg md:text-xl max-w-3xl leading-relaxed text-justify md:text-left">
-                        Informasi terkini mengenai kegiatan, pengumuman, dan wawasan terbaru dari KJPP AKR.
+                        Pusat informasi resmi seputar aktivitas perusahaan, pengumuman penting, serta wawasan industri dari KJPP AKR.
                     </p>
                 </div>
-
-                {/* News List */}
                 <div className="space-y-0">
                     <Separator className="bg-slate-100" />
                     {articles.map((article) => (
@@ -58,7 +55,6 @@ export function NewsListSection({ articles, currentPage, totalPages }: NewsListS
                                 className="group block py-10 hover:bg-slate-50/50 transition-colors"
                             >
                                 <div className="flex flex-col md:flex-row gap-8 items-start">
-                                    {/* Thumbnail */}
                                     <div className="relative w-full md:w-64 aspect-4/3 rounded-xl overflow-hidden shrink-0 shadow-sm transition-shadow group-hover:shadow-md">
                                         {article.coverImage ? (
                                             <Image
@@ -78,8 +74,6 @@ export function NewsListSection({ articles, currentPage, totalPages }: NewsListS
                                             </Badge>
                                         </div>
                                     </div>
-
-                                    {/* Content */}
                                     <div className="flex-1 space-y-3 pt-1">
                                         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] font-bold text-kjpp-dark uppercase tracking-[0.15em]">
                                             <div className="flex items-center gap-1.5">
@@ -97,11 +91,9 @@ export function NewsListSection({ articles, currentPage, totalPages }: NewsListS
                                             <span className="w-1 h-1 rounded-full bg-kjpp-dark hidden md:block" />
                                             <span>Oleh {article.author.name}</span>
                                         </div>
-
                                         <h3 className="text-xl md:text-2xl font-bold text-kjpp-dark group-hover:text-kjpp-red transition-colors leading-tight line-clamp-2 uppercase tracking-tight">
                                             {article.title}
                                         </h3>
-
                                         <p className="text-kjpp-dark text-sm leading-relaxed max-w-3xl whitespace-pre-line">
                                             {article.excerpt || "Klik untuk membaca selengkapnya mengenai perkembangan terbaru dan wawasan mendalam dari KJPP AKR..."}
                                         </p>
@@ -117,17 +109,14 @@ export function NewsListSection({ articles, currentPage, totalPages }: NewsListS
                         </div>
                     ))}
                 </div>
-
                 {articles.length === 0 ? (
                     <div className="py-24 text-center">
                         <h3 className="text-xl font-bold text-kjpp-dark mb-2">Belum ada konten</h3>
                         <p className="text-slate-500">Silakan kembali lagi nanti untuk update terbaru.</p>
                     </div>
                 ) : (
-                    // Pagination Controls
                     totalPages > 1 && (
                         <div className="mt-16 flex justify-center items-center gap-3">
-                            {/* Previous Button */}
                             <Link
                                 href={`/berita?page=${currentPage - 1}#news-content`}
                                 className={currentPage <= 1 ? "pointer-events-none" : ""}
@@ -142,8 +131,6 @@ export function NewsListSection({ articles, currentPage, totalPages }: NewsListS
                                     <ChevronLeft className="w-5 h-5" />
                                 </Button>
                             </Link>
-
-                            {/* Page Numbers */}
                             <div className="flex items-center gap-2 mx-2">
                                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
                                     <Link
@@ -165,8 +152,6 @@ export function NewsListSection({ articles, currentPage, totalPages }: NewsListS
                                     </Link>
                                 ))}
                             </div>
-
-                            {/* Next Button */}
                             <Link
                                 href={`/berita?page=${currentPage + 1}#news-content`}
                                 className={currentPage >= totalPages ? "pointer-events-none" : ""}

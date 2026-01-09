@@ -3,6 +3,12 @@ import { Footer } from "@/components/layout/Footer";
 import { ClientListSection } from "@/components/section/klien/ClientListSection";
 import { ParallaxBackground } from "@/components/ui/ParallaxBackground";
 import { getPublishedClients } from "@/actions/client";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Klien Kami - KJPP AKR | Dipercaya oleh Perusahaan Terkemuka",
+    description: "KJPP AKR dipercaya oleh berbagai institusi perbankan BUMN/Swasta dan perusahaan non-bank terkemuka untuk layanan penilaian properti profesional.",
+};
 
 export default async function Klien() {
     const result = await getPublishedClients();

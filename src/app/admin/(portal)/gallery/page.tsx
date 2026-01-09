@@ -1,19 +1,32 @@
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Plus, Trash2, Search, Image as ImageIcon } from "lucide-react";
+import { Plus, Search, MoreHorizontal, Image as ImageIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { getGalleries, getAlbums } from "@/actions/gallery";
 import { formatDateShort } from "@/lib/helpers";
 import { DeleteGalleryButton } from "@/components/admin/gallery-actions";
-import { Card } from "@/components/ui/card";
-
+import Image from "next/image";
 
 export default async function GalleryPage() {
     const [galleriesResult, albumsResult] = await Promise.all([getGalleries(), getAlbums()]);
 
     const galleries = galleriesResult.success ? galleriesResult.data?.galleries || [] : [];
     const albums = albumsResult.success ? albumsResult.data || [] : [];
+
+    // Group galleries by album
+    const galleriesByAlbum = albums.map(album => ({
+        album,
+        items: galleries.filter(g => g.albumId === album.id)
+    })).filter(group => group.items.length > 0);
 
     return (
         <div className="flex flex-1 flex-col gap-4">
@@ -40,20 +53,10 @@ export default async function GalleryPage() {
                 </div>
             </div>
 
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-2 mb-2">
                 <div className="relative flex-1 max-w-sm">
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input type="search" placeholder="Cari album atau foto..." className="pl-8" />
-                </div>
-                <div className="flex gap-2">
-                    <Badge variant="secondary" className="cursor-pointer hover:bg-secondary/80">
-                        Semua
-                    </Badge>
-                    {albums.map((album) => (
-                        <Badge key={album.id} variant="outline" className="cursor-pointer hover:bg-secondary/10">
-                            {album.name}
-                        </Badge>
-                    ))}
+                    <Input type="search" placeholder="Cari foto..." className="pl-8" />
                 </div>
             </div>
 
@@ -69,48 +72,63 @@ export default async function GalleryPage() {
                     </Link>
                 </Card>
             ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {galleries.map((gallery) => (
-                        <div
-                            key={gallery.id}
-                            className="group relative aspect-square bg-muted rounded-lg overflow-hidden border"
-                        >
-                            {gallery.imageUrl ? (
-                                <img
-                                    src={gallery.imageUrl}
-                                    alt={gallery.title}
-                                    className="w-full h-full object-cover"
-                                />
-                            ) : (
-                                <div className="absolute inset-0 flex items-center justify-center text-muted-foreground bg-muted/50">
-                                    <ImageIcon className="h-10 w-10 opacity-20" />
-                                </div>
-                            )}
-
-                            {!gallery.isPublished && (
-                                <Badge variant="secondary" className="absolute top-2 left-2 text-xs">
-                                    Draft
-                                </Badge>
-                            )}
-
-                            <div className="absolute inset-x-0 bottom-0 bg-black/60 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-200">
-                                <p className="text-white text-xs font-medium truncate">{gallery.title}</p>
-                                <div className="flex items-center justify-between mt-1">
-                                    <span className="text-[10px] text-gray-300">
-                                        {gallery.eventDate ? formatDateShort(gallery.eventDate) : formatDateShort(gallery.createdAt)}
-                                    </span>
-                                    <DeleteGalleryButton id={gallery.id} />
-                                </div>
+                <div className="space-y-8">
+                    {galleriesByAlbum.map(({ album, items }) => (
+                        <div key={album.id}>
+                            <div className="flex items-center gap-2 mb-4">
+                                <ImageIcon className="h-5 w-5 text-kjpp-red" />
+                                <h3 className="text-lg font-bold">{album.name}</h3>
+                                <Badge variant="secondary">{items.length}</Badge>
+                            </div>
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                                {items.map((gallery) => (
+                                    <Card key={gallery.id} className="overflow-hidden hover:shadow-md transition-shadow">
+                                        <div className="relative aspect-square bg-muted">
+                                            {gallery.imageUrl ? (
+                                                <Image
+                                                    src={gallery.imageUrl}
+                                                    alt={gallery.title}
+                                                    fill
+                                                    className="object-cover"
+                                                />
+                                            ) : (
+                                                <div className="absolute inset-0 flex items-center justify-center text-muted-foreground bg-muted/50">
+                                                    <ImageIcon className="h-10 w-10 opacity-20" />
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="p-3">
+                                            <div className="space-y-2">
+                                                <div className="flex items-center justify-between">
+                                                    <Badge variant={gallery.isPublished ? "default" : "secondary"} className="text-xs">
+                                                        {gallery.isPublished ? "Published" : "Draft"}
+                                                    </Badge>
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                                                                <MoreHorizontal className="h-4 w-4" />
+                                                            </Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="end">
+                                                            <DropdownMenuItem asChild>
+                                                                <Link href={`/admin/gallery/${gallery.id}/edit`}>Edit</Link>
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuSeparator />
+                                                            <DeleteGalleryButton id={gallery.id} />
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
+                                                </div>
+                                                <h4 className="font-bold text-sm line-clamp-2">{gallery.title}</h4>
+                                                <p className="text-xs text-muted-foreground">
+                                                    {gallery.eventDate ? formatDateShort(gallery.eventDate) : formatDateShort(gallery.createdAt)}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </Card>
+                                ))}
                             </div>
                         </div>
                     ))}
-
-                    <Link href="/admin/gallery/create" className="contents">
-                        <div className="aspect-square border-2 border-dashed rounded-lg flex flex-col items-center justify-center text-muted-foreground hover:bg-muted/50 cursor-pointer transition-colors">
-                            <Plus className="h-8 w-8 mb-2" />
-                            <span className="text-sm font-medium">Upload Baru</span>
-                        </div>
-                    </Link>
                 </div>
             )}
         </div>

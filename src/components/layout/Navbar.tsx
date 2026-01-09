@@ -45,8 +45,7 @@ export function Navbar() {
     };
 
     return (
-        <header className="w-full sticky top-0 z-50">
-            {/* Top Bar - Visible on all screens */}
+        <header className="w-full sticky top-0 z-50" suppressHydrationWarning>
             <div className="bg-navbar-topbar text-white py-2 md:py-3">
                 <div className="container mx-auto px-4">
                     <div className="flex flex-wrap items-center justify-end text-xs lg:text-sm gap-4 lg:gap-6">
@@ -187,13 +186,20 @@ export function Navbar() {
 
                                 <NavigationMenuItem>
                                     <NavigationMenuLink
+<<<<<<< Updated upstream
                                         href="/berita"
                                         className={cn(
                                             navigationMenuTriggerStyle(),
                                             isActive("/berita") && "text-kjpp-red"
+=======
+                                        href="/publikasi"
+                                        className={cn(
+                                            navigationMenuTriggerStyle(),
+                                            isActive("/publikasi") && "text-kjpp-red"
+>>>>>>> Stashed changes
                                         )}
                                     >
-                                        Berita
+                                        Publikasi
                                     </NavigationMenuLink>
                                 </NavigationMenuItem>
 
@@ -329,14 +335,14 @@ export function Navbar() {
                                         Galeri
                                     </Link>
                                     <Link
-                                        href="/berita"
+                                        href="/publikasi"
                                         className={cn(
                                             "text-lg font-semibold py-2 px-4 rounded-lg transition-colors",
-                                            isActive("/berita") ? "text-kjpp-red bg-red-50" : "text-gray-700 hover:bg-gray-100"
+                                            isActive("/publikasi") ? "text-kjpp-red bg-red-50" : "text-gray-700 hover:bg-gray-100"
                                         )}
                                         onClick={() => setIsOpen(false)}
                                     >
-                                        Berita
+                                        Publikasi
                                     </Link>
                                     <Link
                                         href="/hubungi-kami"
@@ -384,4 +390,5 @@ const ListItem = React.forwardRef<
         </li>
     );
 });
+
 ListItem.displayName = "ListItem";

@@ -177,3 +177,20 @@ model ManagementTeam {
   @@map("management_teams")
   @@index([sortOrder])
 }
+
+// ==========================================
+// HERO IMAGE MODEL
+// ==========================================
+model HeroImage {
+  id        String   @id @default(cuid())
+  imageUrl  String
+  altText   String
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([sortOrder])
+  @@index([isActive])
+  @@map("hero_images")
+}

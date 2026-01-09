@@ -6,7 +6,55 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Award } from "lucide-react";
 
+interface HeroImage {
+    id: string;
+    imageUrl: string;
+    altText: string;
+    sortOrder: number;
+}
+
 export default function HeroSection() {
+    const [heroImages, setHeroImages] = React.useState<HeroImage[]>([]);
+    const [loading, setLoading] = React.useState(true);
+
+    React.useEffect(() => {
+        fetchHeroImages();
+    }, []);
+
+    const fetchHeroImages = async () => {
+        try {
+            const response = await fetch("/api/hero-images");
+            if (!response.ok) throw new Error("Failed to fetch hero images");
+            const data = await response.json();
+            setHeroImages(data.slice(0, 3)); // Only take first 3 images
+        } catch (error) {
+            console.error("Error fetching hero images:", error);
+            // Fallback to default images if API fails
+            setHeroImages([
+                {
+                    id: "1",
+                    imageUrl: "/image/hero/hero1.png",
+                    altText: "KJPP AKR Team",
+                    sortOrder: 1,
+                },
+                {
+                    id: "2",
+                    imageUrl: "/image/hero/hero2.png",
+                    altText: "KJPP AKR Logo",
+                    sortOrder: 2,
+                },
+                {
+                    id: "3",
+                    imageUrl: "/image/hero/hero3.jpg",
+                    altText: "KJPP AKR Team",
+                    sortOrder: 3,
+                },
+            ]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <section className="relative w-full py-16 md:py-20 lg:py-24">
             <div className="container mx-auto px-4 md:px-6 lg:px-8">
@@ -29,31 +77,31 @@ export default function HeroSection() {
                     </div>
                     <div className="lg:col-span-4 flex justify-center">
                         <div className="w-full max-w-[350px] space-y-2">
-                            <div className="relative w-full h-[180px] rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
-                                <Image
-                                    src="/image/hero/hero1.jpg"
-                                    alt="KJPP AKR Team"
-                                    fill
-                                    className="object-cover"
-                                    priority
-                                />
-                            </div>
-                            <div className="relative w-full h-[180px] rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
-                                <Image
-                                    src="/image/hero/hero2.png"
-                                    alt="KJPP AKR Logo"
-                                    fill
-                                    className="object-cover"
-                                />
-                            </div>
-                            <div className="relative w-full h-[180px] rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
-                                <Image
-                                    src="/image/hero/hero3.jpg"
-                                    alt="KJPP AKR Team"
-                                    fill
-                                    className="object-cover"
-                                />
-                            </div>
+                            {loading ? (
+                                <>
+                                    {[1, 2, 3].map((i) => (
+                                        <div
+                                            key={i}
+                                            className="w-full h-[180px] rounded-2xl bg-muted animate-pulse"
+                                        />
+                                    ))}
+                                </>
+                            ) : (
+                                heroImages.map((image) => (
+                                    <div
+                                        key={image.id}
+                                        className="relative w-full h-[180px] rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow"
+                                    >
+                                        <Image
+                                            src={image.imageUrl}
+                                            alt={image.altText}
+                                            fill
+                                            className="object-cover"
+                                            priority={image.sortOrder === 1}
+                                        />
+                                    </div>
+                                ))
+                            )}
                         </div>
                     </div>
                     <div className="lg:col-span-4 space-y-6">

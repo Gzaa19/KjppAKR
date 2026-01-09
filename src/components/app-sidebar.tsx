@@ -2,6 +2,8 @@
 
 import * as React from "react"
 import { usePathname, useRouter } from "next/navigation"
+import { toast } from "sonner"
+import Image from "next/image"
 import {
     Command,
     Map,
@@ -12,7 +14,9 @@ import {
     User,
     Building2,
     Users,
-    ChevronRight
+    ChevronRight,
+    Home,
+    Image as ImageIcon
 } from "lucide-react"
 
 import {
@@ -63,9 +67,17 @@ const navMain = [
         icon: Map,
     },
     {
-        title: "Berita",
-        url: "/admin/news",
+        title: "publikasi",
+        url: "/admin/publikasi",
         icon: FileText,
+    },
+];
+
+const berandaMenu = [
+    {
+        title: "Hero Images",
+        url: "/admin/hero-images",
+        icon: ImageIcon,
     },
 ];
 
@@ -103,10 +115,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         setIsLoggingOut(true)
         try {
             await fetch("/api/auth/logout", { method: "POST" })
+            toast.success("Anda sudah selesai bekerja. Sampai jumpa kembali! 👋", {
+                description: "Terima kasih atas kerja keras Anda hari ini"
+            })
             router.push("/admin/login")
             router.refresh()
         } catch (error) {
             console.error("Logout failed:", error)
+            toast.error("Gagal logout. Silakan coba lagi.")
         } finally {
             setIsLoggingOut(false)
         }
@@ -128,8 +144,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
                             <a href="/admin/dashboard">
-                                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                                    <Command className="size-4" />
+                                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-white p-1">
+                                    <Image
+                                        src="/image/logoAKR.png"
+                                        alt="KJPP AKR Logo"
+                                        width={32}
+                                        height={32}
+                                        className="object-contain"
+                                    />
                                 </div>
                                 <div className="grid flex-1 text-left text-sm leading-tight">
                                     <span className="truncate font-semibold">KJPP AKR</span>
@@ -145,6 +167,26 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <SidebarGroupLabel>Platform</SidebarGroupLabel>
                     <SidebarMenu>
                         {navMain.slice(0, 1).map((item) => {
+                            const isMainActive = item.url === pathname || (item.url !== "#" && pathname.startsWith(item.url));
+
+                            return (
+                                <SidebarMenuItem key={item.title}>
+                                    <SidebarMenuButton asChild isActive={isMainActive} tooltip={item.title}>
+                                        <a href={item.url}>
+                                            <item.icon />
+                                            <span>{item.title}</span>
+                                        </a>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            )
+                        })}
+                    </SidebarMenu>
+                </SidebarGroup>
+
+                <SidebarGroup>
+                    <SidebarGroupLabel>Beranda</SidebarGroupLabel>
+                    <SidebarMenu>
+                        {berandaMenu.map((item) => {
                             const isMainActive = item.url === pathname || (item.url !== "#" && pathname.startsWith(item.url));
 
                             return (
@@ -244,15 +286,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                         </div>
                                     </div>
                                 </DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem>
-                                    <User className="mr-2" />
-                                    Account
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <Settings2 className="mr-2" />
-                                    Settings
-                                </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
                                     onClick={handleLogout}

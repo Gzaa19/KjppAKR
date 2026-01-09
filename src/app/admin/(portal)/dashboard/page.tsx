@@ -26,37 +26,6 @@ async function getDashboardStats() {
 export default async function DashboardPage() {
     const stats = await getDashboardStats();
 
-    const features = [
-        {
-            title: "Gallery",
-            description: "Kelola gambar dan aset media",
-            href: "/admin/gallery",
-            icon: ImageIcon,
-            color: "bg-gradient-to-br from-green-500 to-emerald-600",
-        },
-        {
-            title: "News",
-            description: "Kelola berita dan artikel",
-            href: "/admin/news",
-            icon: NewspaperIcon,
-            color: "bg-gradient-to-br from-blue-500 to-cyan-600",
-        },
-        {
-            title: "Manajemen",
-            description: "Kelola tim manajemen",
-            href: "/admin/management",
-            icon: UsersIcon,
-            color: "bg-gradient-to-br from-purple-500 to-violet-600",
-        },
-        {
-            title: "Klien",
-            description: "Kelola daftar klien",
-            href: "/admin/clients",
-            icon: Building2,
-            color: "bg-gradient-to-br from-orange-500 to-red-600",
-        },
-    ];
-
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -127,29 +96,6 @@ export default async function DashboardPage() {
                         <p className="text-xs text-muted-foreground">Berita dipublikasi</p>
                     </CardContent>
                 </Card>
-            </div>
-
-            <div>
-                <h2 className="text-xl font-semibold mb-4">Menu Fitur</h2>
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {features.map((feature) => (
-                        <Link key={feature.title} href={feature.href}>
-                            <Card className="hover:shadow-lg transition-all duration-300 hover:scale-[1.02] cursor-pointer group">
-                                <CardHeader className="flex flex-row items-center gap-4">
-                                    <div
-                                        className={`p-3 rounded-lg ${feature.color} text-white group-hover:scale-110 transition-transform`}
-                                    >
-                                        <feature.icon className="h-6 w-6" />
-                                    </div>
-                                    <div>
-                                        <CardTitle className="text-lg">{feature.title}</CardTitle>
-                                        <CardDescription>{feature.description}</CardDescription>
-                                    </div>
-                                </CardHeader>
-                            </Card>
-                        </Link>
-                    ))}
-                </div>
             </div>
         </div>
     );
