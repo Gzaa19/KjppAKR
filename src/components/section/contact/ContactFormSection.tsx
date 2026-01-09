@@ -29,10 +29,12 @@ const formSchema = z.object({
     mobile: z.string().optional(),
     email: z.string().email({ message: "Email tidak valid." }),
     website: z.string().optional(),
-    valuationCategory: z.enum(["Penilaian Properti/Aset", "Penilaian Bisnis"]),
-    objectDescription: z.string().optional(),
-    objectAddress: z.string().optional(),
-    valuationPurpose: z.string().optional(),
+    valuationCategory: z.enum(["Penilaian Properti/Aset", "Penilaian Bisnis"], {
+        message: "Kategori penilaian harus dipilih.",
+    }),
+    objectDescription: z.string().min(5, { message: "Deskripsi objek harus diisi." }),
+    objectAddress: z.string().min(5, { message: "Alamat objek harus diisi." }),
+    valuationPurpose: z.string().min(5, { message: "Tujuan penilaian harus diisi." }),
     additionalNotes: z.string().optional(),
 });
 
@@ -253,7 +255,7 @@ export function ContactFormSection() {
                                     name="objectDescription"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Objek Penilaian</FormLabel>
+                                            <FormLabel>Objek Penilaian <span className="text-kjpp-red">*</span></FormLabel>
                                             <FormControl>
                                                 <Textarea
                                                     placeholder="Deskripsikan objek penilaian disini..."
@@ -277,7 +279,7 @@ export function ContactFormSection() {
                                     name="objectAddress"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Alamat Properti</FormLabel>
+                                            <FormLabel>Alamat Properti <span className="text-kjpp-red">*</span></FormLabel>
                                             <FormControl>
                                                 <Textarea
                                                     placeholder="Masukkan alamat lengkap properti..."
@@ -301,7 +303,7 @@ export function ContactFormSection() {
                                     name="valuationPurpose"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Tujuan Penilaian</FormLabel>
+                                            <FormLabel>Tujuan Penilaian <span className="text-kjpp-red">*</span></FormLabel>
                                             <FormControl>
                                                 <Textarea
                                                     placeholder="Sebutkan tujuan dari penilaian ini..."
