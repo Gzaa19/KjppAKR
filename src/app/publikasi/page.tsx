@@ -3,6 +3,12 @@ import { Footer } from "@/components/layout/Footer";
 import { ParallaxBackground } from "@/components/ui/ParallaxBackground";
 import { NewsListSection } from "@/components/section/news/NewsListSection";
 import prisma from "@/lib/prisma";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Publikasi | KJPP AKR",
+    description: "Publikasi terbaru dari KJPP Anas, Karim & Rekan.",
+};
 
 interface PageProps {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -13,7 +19,6 @@ export default async function NewsListingPage({ searchParams }: PageProps) {
     const currentPage = Number(page) || 1;
     const itemsPerPage = 3;
 
-    // Get total count for pagination
     const totalCount = await prisma.news.count({
         where: { isPublished: true },
     });
