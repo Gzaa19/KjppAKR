@@ -142,23 +142,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
-                            <a href="/admin/dashboard">
-                                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-white p-1">
-                                    <Image
-                                        src="/image/logoAKR.png"
-                                        alt="KJPP AKR Logo"
-                                        width={32}
-                                        height={32}
-                                        className="object-contain"
-                                    />
-                                </div>
-                                <div className="grid flex-1 text-left text-sm leading-tight">
-                                    <span className="truncate font-semibold">KJPP AKR</span>
-                                    <span className="truncate text-xs">Admin Portal</span>
-                                </div>
-                            </a>
-                        </SidebarMenuButton>
+                        <div className="flex items-center gap-3 px-2 py-3">
+                            <div className="flex aspect-square size-12 items-center justify-center rounded-lg">
+                                <Image
+                                    src="/image/logoAKR.png"
+                                    alt="KJPP AKR Logo"
+                                    width={48}
+                                    height={48}
+                                    className="object-contain"
+                                />
+                            </div>
+                            <div className="grid flex-1 text-left leading-tight">
+                                <span className="truncate font-bold text-lg">KJPP AKR</span>
+                                <span className="truncate text-sm font-medium">Admin Portal</span>
+                            </div>
+                        </div>
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>
