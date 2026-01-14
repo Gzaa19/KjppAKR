@@ -194,3 +194,29 @@ model HeroImage {
   @@index([isActive])
   @@map("hero_images")
 }
+
+// ==========================================
+// CLIENT CONTACT MODEL (for Client Management)
+// ==========================================
+model ClientContact {
+  id        String     @id @default(cuid())
+  name      String
+  type      ClientType
+  address   String     @db.Text
+  picName   String
+  phone     String
+  email     String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([type])
+  @@index([createdAt])
+  @@map("client_contacts")
+}
+
+enum ClientType {
+  CORPORATE
+  PERORANGAN
+  SME
+  INSTANSI
+}

@@ -8,6 +8,8 @@ import {
     Settings2,
     FolderKanban,
     LogOut,
+    Users,
+    LayoutDashboard,
 } from "lucide-react"
 
 import {
@@ -40,12 +42,21 @@ type UserSession = {
     avatar: string | null;
 };
 
-// Define menu items for Tracking System
 const trackingMenu = [
+    {
+        title: "Dashboard",
+        url: "/admin/tracking",
+        icon: LayoutDashboard,
+    },
     {
         title: "Proyek",
         url: "/admin/tracking/projects",
         icon: FolderKanban,
+    },
+    {
+        title: "Klien",
+        url: "/admin/tracking/clients",
+        icon: Users,
     },
 ];
 
@@ -55,7 +66,6 @@ export function TrackingSidebar({ ...props }: React.ComponentProps<typeof Sideba
     const [user, setUser] = React.useState<UserSession | null>(null)
     const [isLoggingOut, setIsLoggingOut] = React.useState(false)
 
-    // Fetch user session
     React.useEffect(() => {
         async function fetchSession() {
             try {
@@ -127,7 +137,13 @@ export function TrackingSidebar({ ...props }: React.ComponentProps<typeof Sideba
                     <SidebarGroupLabel>Menu Utama</SidebarGroupLabel>
                     <SidebarMenu>
                         {trackingMenu.map((item) => {
-                            const isMainActive = item.url === pathname || (item.url !== "#" && pathname.startsWith(item.url));
+                            let isMainActive = false;
+
+                            if (item.url === "/admin/tracking") {
+                                isMainActive = pathname === "/admin/tracking";
+                            } else {
+                                isMainActive = pathname.startsWith(item.url);
+                            }
 
                             return (
                                 <SidebarMenuItem key={item.title}>

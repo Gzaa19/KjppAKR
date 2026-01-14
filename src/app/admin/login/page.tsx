@@ -37,7 +37,7 @@ export default function AdminLoginPage() {
                     toast.success("Login berhasil! Semangat bekerja! 🚀", {
                         description: "Selamat datang kembali di dashboard admin KJPP AKR"
                     });
-                    router.push("/admin/dashboard");
+                    router.push("/admin/portal-selection");
                     router.refresh();
                 } else {
                     setError(result.error || "Login gagal");
