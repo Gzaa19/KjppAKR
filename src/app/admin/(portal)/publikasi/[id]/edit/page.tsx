@@ -65,7 +65,7 @@ export default function EditNewsPage() {
                         isPublished: news.isPublished,
                     });
                 } else {
-                    setError(result.error || "Berita tidak ditemukan");
+                    setError(result.error || "Publikasi tidak ditemukan");
                 }
             } catch (err) {
                 console.error("Failed to fetch news:", err);
@@ -120,11 +120,11 @@ export default function EditNewsPage() {
             const result = await updateNews(newsId, input);
 
             if (result.success) {
-                setSuccess("Berita berhasil diperbarui!");
+                setSuccess("Publikasi berhasil diperbarui!");
                 router.refresh();
                 // Redirect after short delay to show success message
                 setTimeout(() => {
-                    router.push("/admin/news");
+                    router.push("/admin/publikasi");
                 }, 1000);
             } else {
                 setError(result.error || "Gagal memperbarui berita");
@@ -137,7 +137,7 @@ export default function EditNewsPage() {
             <div className="flex items-center justify-center min-h-[400px]">
                 <div className="flex flex-col items-center gap-4">
                     <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                    <p className="text-muted-foreground">Memuat data berita...</p>
+                    <p className="text-muted-foreground">Memuat data publikasi...</p>
                 </div>
             </div>
         );
@@ -146,14 +146,14 @@ export default function EditNewsPage() {
     return (
         <div className="max-w-4xl mx-auto">
             <div className="flex items-center gap-4 mb-8">
-                <Link href="/admin/news">
+                <Link href="/admin/publikasi">
                     <Button variant="outline" size="icon">
                         <ArrowLeft className="h-4 w-4" />
                     </Button>
                 </Link>
                 <div className="flex-1">
-                    <h1 className="text-2xl font-bold tracking-tight">Edit Berita</h1>
-                    <p className="text-muted-foreground">Perbarui konten berita yang sudah ada.</p>
+                    <h1 className="text-2xl font-bold tracking-tight">Edit Publikasi</h1>
+                    <p className="text-muted-foreground">Perbarui konten publikasi yang sudah ada.</p>
                 </div>
                 <div className="flex items-center gap-2">
                     {formData.isPublished ? (
@@ -186,15 +186,15 @@ export default function EditNewsPage() {
                 <div className="grid gap-8">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Konten Berita</CardTitle>
-                            <CardDescription>Informasi utama berita yang akan ditampilkan.</CardDescription>
+                            <CardTitle>Konten Publikasi</CardTitle>
+                            <CardDescription>Informasi utama publikasi yang akan ditampilkan.</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
                             <div className="space-y-2">
-                                <Label htmlFor="title">Judul Berita</Label>
+                                <Label htmlFor="title">Judul Publikasi</Label>
                                 <Input
                                     id="title"
-                                    placeholder="Masukkan judul berita yang menarik"
+                                    placeholder="Masukkan judul publikasi yang menarik"
                                     value={formData.title}
                                     onChange={handleTitleChange}
                                     required
@@ -220,7 +220,7 @@ export default function EditNewsPage() {
                                         Generate
                                     </Button>
                                 </div>
-                                <p className="text-xs text-muted-foreground">URL: /berita/{formData.slug || "slug-berita"}</p>
+                                <p className="text-xs text-muted-foreground">URL: /publikasi/{formData.slug || "slug-publikasi"}</p>
                             </div>
 
                             <div className="grid grid-cols-1 gap-4">
@@ -266,15 +266,15 @@ export default function EditNewsPage() {
                                     onChange={(e) => setFormData((prev) => ({ ...prev, excerpt: e.target.value }))}
                                 />
                                 <p className="text-xs text-muted-foreground">
-                                    Akan ditampilkan pada preview berita di halaman depan.
+                                    Akan ditampilkan pada preview publikasi di halaman depan.
                                 </p>
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="content">Isi Berita</Label>
+                                <Label htmlFor="content">Isi Publikasi</Label>
                                 <Textarea
                                     id="content"
-                                    placeholder="Tulis isi berita lengkap di sini..."
+                                    placeholder="Tulis isi publikasi lengkap di sini..."
                                     className="min-h-[300px]"
                                     value={formData.content}
                                     onChange={(e) => setFormData((prev) => ({ ...prev, content: e.target.value }))}
@@ -287,7 +287,7 @@ export default function EditNewsPage() {
                     <Card>
                         <CardHeader>
                             <CardTitle>Pengaturan Publikasi</CardTitle>
-                            <CardDescription>Atur status publikasi berita.</CardDescription>
+                            <CardDescription>Atur status publikasi.</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="flex items-center justify-between">
@@ -295,8 +295,8 @@ export default function EditNewsPage() {
                                     <Label htmlFor="published">Status Publikasi</Label>
                                     <p className="text-sm text-muted-foreground">
                                         {formData.isPublished
-                                            ? "Berita akan ditampilkan di halaman publik"
-                                            : "Berita disimpan sebagai draft dan tidak akan ditampilkan"}
+                                            ? "Publikasi akan ditampilkan di halaman publik"
+                                            : "Publikasi disimpan sebagai draft dan tidak akan ditampilkan"}
                                     </p>
                                 </div>
                                 <Switch
@@ -311,14 +311,14 @@ export default function EditNewsPage() {
                     </Card>
 
                     <div className="flex items-center justify-between">
-                        <Link href={`/berita/${formData.slug}`} target="_blank">
+                        <Link href={`/publikasi/${formData.slug}`} target="_blank">
                             <Button variant="outline" type="button" disabled={!formData.slug}>
                                 <Eye className="mr-2 h-4 w-4" />
                                 Lihat Preview
                             </Button>
                         </Link>
                         <div className="flex items-center gap-4">
-                            <Link href="/admin/news">
+                            <Link href="/admin/publikasi">
                                 <Button variant="ghost" type="button">
                                     Batal
                                 </Button>

@@ -51,23 +51,21 @@ export function Navbar() {
                     <div className="flex flex-wrap items-center justify-end text-xs lg:text-sm gap-4 lg:gap-6">
                         <div className="flex items-center gap-2">
                             <MapPin className="w-3 h-3 lg:w-4 lg:h-4 text-kjpp-red" />
-                            <span className="hidden lg:inline">Permata Kebayoran Plaza Blok A-11</span>
+                            <span className="hidden lg:inline">Permata Kebayoran Plaza Blok A-12A</span>
                             <span className="lg:hidden">Jakarta Selatan</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <Clock className="w-3 h-3 lg:w-4 lg:h-4 text-kjpp-red" />
-                            <span>Mon - Fri 8.00 - 17.00</span>
+                            <span>Sen - Jum 08.00 - 17.00</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <Phone className="w-3 h-3 lg:w-4 lg:h-4 text-kjpp-red" />
-                            <span className="hidden lg:inline">021-7268181 | 021-7227643</span>
-                            <span className="lg:hidden">021-7268181</span>
+                            <span className="whitespace-nowrap">021-7268181 | 021-7227643</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Main Navbar */}
             <div className={cn(
                 "bg-white border-b transition-shadow duration-300",
                 isScrolled ? "shadow-md" : "shadow-sm"
@@ -209,8 +207,6 @@ export function Navbar() {
                                 </NavigationMenuItem>
                             </NavigationMenuList>
                         </NavigationMenu>
-
-                        {/* Mobile Menu Button */}
                         <Sheet open={isOpen} onOpenChange={setIsOpen}>
                             <SheetTrigger asChild className="lg:hidden">
                                 <Button variant="ghost" size="icon">

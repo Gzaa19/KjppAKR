@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
     return (
-        <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900">
+        <div className="min-h-screen bg-bg-1 flex flex-col font-sans text-text-slate-9">
             <Navbar />
 
             <main className="flex-1 flex flex-col items-center justify-center px-4 py-20 md:py-32 relative overflow-hidden">
@@ -52,8 +52,6 @@ export default function NotFound() {
                     </div>
                 </div>
             </main>
-
-            <Footer />
         </div>
     );
 }

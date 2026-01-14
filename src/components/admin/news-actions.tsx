@@ -89,10 +89,10 @@ export function NewsActionMenu({ id, slug, isPublished }: { id: string; slug: st
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
                 <DropdownMenuItem asChild>
-                    <Link href={`/admin/news/${id}/edit`}>Edit Post</Link>
+                    <Link href={`/admin/publikasi/${id}/edit`}>Edit Post</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                    <Link href={`/news/${slug}`} target="_blank">
+                    <Link href={`/publikasi/${slug}`} target="_blank">
                         View Live
                     </Link>
                 </DropdownMenuItem>

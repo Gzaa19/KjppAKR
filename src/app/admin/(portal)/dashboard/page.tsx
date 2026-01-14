@@ -38,7 +38,7 @@ export default async function DashboardPage() {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Total Berita</CardTitle>
+                        <CardTitle className="text-sm font-medium">Total Publikasi</CardTitle>
                         <NewspaperIcon className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
@@ -84,16 +84,6 @@ export default async function DashboardPage() {
                     <CardContent>
                         <div className="text-2xl font-bold">{stats.clientCount}</div>
                         <p className="text-xs text-muted-foreground">klien terdaftar</p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Published</CardTitle>
-                        <BarChartIcon className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">{stats.publishedNewsCount}</div>
-                        <p className="text-xs text-muted-foreground">Berita dipublikasi</p>
                     </CardContent>
                 </Card>
             </div>

@@ -72,6 +72,7 @@ function NavigationMenuTrigger({
   return (
     <NavigationMenuPrimitive.Trigger
       data-slot="navigation-menu-trigger"
+      suppressHydrationWarning
       className={cn(navigationMenuTriggerStyle(), "group", className)}
       {...props}
     >

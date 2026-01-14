@@ -35,7 +35,7 @@ export async function createNews(
             },
         });
 
-        revalidatePath("/admin/news");
+        revalidatePath("/admin/publikasi");
         return { success: true, data: { id: news.id, slug: news.slug } };
     } catch (error) {
         console.error("Create news error:", error);
@@ -186,7 +186,7 @@ export async function updateNews(
             data: updateData,
         });
 
-        revalidatePath("/admin/news");
+        revalidatePath("/admin/publikasi");
         revalidatePath(`/berita/${news.slug}`);
         return { success: true, data: { id: news.id, slug: news.slug } };
     } catch (error) {
@@ -207,7 +207,7 @@ export async function deleteNews(id: string): Promise<ActionResponse> {
 
         await prisma.news.delete({ where: { id } });
 
-        revalidatePath("/admin/news");
+        revalidatePath("/admin/publikasi");
         return { success: true };
     } catch (error) {
         console.error("Delete news error:", error);
@@ -233,7 +233,7 @@ export async function togglePublishNews(id: string): Promise<ActionResponse> {
             },
         });
 
-        revalidatePath("/admin/news");
+        revalidatePath("/admin/publikasi");
         return { success: true };
     } catch (error) {
         console.error("Toggle publish error:", error);

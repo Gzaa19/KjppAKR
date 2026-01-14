@@ -11,8 +11,8 @@ export function ContactInfoSection() {
         {
             icon: Phone,
             title: "Telepon / WhatsApp",
-            content: "+62 21 7883 9696",
-            action: "tel:+622178839696"
+            content: "021-7268181 | 021-7227643",
+            action: "tel:021-7268181"
         },
         {
             icon: Mail,
