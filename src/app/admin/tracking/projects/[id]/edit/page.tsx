@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -18,12 +18,11 @@ import {
     ArrowLeft,
     Building2,
     FolderOpen,
-    MessageSquareText,
+    RefreshCw,
     Save,
     Loader2,
     CheckCircle2,
-    Copy,
-    ExternalLink
+    Copy
 } from "lucide-react"
 import {
     Breadcrumb,
@@ -34,14 +33,7 @@ import {
     BreadcrumbPage,
 } from "@/components/ui/breadcrumb"
 import { toast } from "sonner"
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog"
+import { Badge } from "@/components/ui/badge"
 
 // Types
 interface Client {
@@ -51,16 +43,43 @@ interface Client {
     type: string
 }
 
-export default function NewProjectPage() {
+interface Project {
+    id: string
+    projectId: string
+    trackingCode: string
+    proposalNo: string
+    clientId: string
+    client: Client
+    objectType: string
+    objective: string
+    address: string
+    status: string
+    progress: number
+    initialMessage: string | null
+    createdAt: string
+    updatedAt: string
+    completedAt: string | null
+}
+
+// Status config
+const statusConfig: Record<string, { label: string; color: string; bgColor: string }> = {
+    VERIFIKASI_DOKUMEN: { label: "Verifikasi Dokumen", color: "text-red-600", bgColor: "bg-red-100" },
+    INSPEKSI_LAPANGAN: { label: "Inspeksi Lapangan", color: "text-blue-600", bgColor: "bg-blue-100" },
+    PROSES_REVIEW: { label: "Proses Review", color: "text-orange-600", bgColor: "bg-orange-100" },
+    LAPORAN_FINAL: { label: "Laporan Final", color: "text-green-600", bgColor: "bg-green-100" },
+    SELESAI: { label: "Selesai", color: "text-emerald-700", bgColor: "bg-emerald-100" },
+}
+
+export default function EditProjectPage() {
     const router = useRouter()
+    const params = useParams()
+    const projectId = params.id as string
+
+    const [project, setProject] = React.useState<Project | null>(null)
     const [clients, setClients] = React.useState<Client[]>([])
-    const [loading, setLoading] = React.useState(false)
+    const [loading, setLoading] = React.useState(true)
+    const [saving, setSaving] = React.useState(false)
     const [loadingClients, setLoadingClients] = React.useState(true)
-    const [successDialogOpen, setSuccessDialogOpen] = React.useState(false)
-    const [createdProject, setCreatedProject] = React.useState<{
-        projectId: string
-        trackingCode: string
-    } | null>(null)
 
     // Form state
     const [formData, setFormData] = React.useState({
@@ -69,10 +88,44 @@ export default function NewProjectPage() {
         objectType: "",
         objective: "",
         address: "",
+        status: "",
         initialMessage: "",
     })
 
-    // Fetch clients on mount
+    // Fetch project data
+    React.useEffect(() => {
+        async function fetchProject() {
+            try {
+                const response = await fetch(`/api/tracking-projects/${projectId}`)
+                const data = await response.json()
+
+                if (data.success) {
+                    setProject(data.data)
+                    setFormData({
+                        proposalNo: data.data.proposalNo,
+                        clientId: data.data.clientId,
+                        objectType: data.data.objectType,
+                        objective: data.data.objective,
+                        address: data.data.address,
+                        status: data.data.status,
+                        initialMessage: data.data.initialMessage || "",
+                    })
+                } else {
+                    toast.error("Proyek tidak ditemukan")
+                    router.push("/admin/tracking/projects")
+                }
+            } catch (error) {
+                console.error("Error fetching project:", error)
+                toast.error("Gagal memuat data proyek")
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchProject()
+    }, [projectId, router])
+
+    // Fetch clients
     React.useEffect(() => {
         async function fetchClients() {
             try {
@@ -83,7 +136,6 @@ export default function NewProjectPage() {
                 }
             } catch (error) {
                 console.error("Error fetching clients:", error)
-                toast.error("Gagal memuat data klien")
             } finally {
                 setLoadingClients(false)
             }
@@ -95,16 +147,15 @@ export default function NewProjectPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
-        // Validation
         if (!formData.proposalNo || !formData.clientId || !formData.objectType || !formData.objective || !formData.address) {
             toast.error("Semua field wajib diisi")
             return
         }
 
-        setLoading(true)
+        setSaving(true)
         try {
-            const response = await fetch("/api/tracking-projects", {
-                method: "POST",
+            const response = await fetch(`/api/tracking-projects/${projectId}`, {
+                method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -114,30 +165,32 @@ export default function NewProjectPage() {
             const data = await response.json()
 
             if (data.success) {
-                setCreatedProject({
-                    projectId: data.data.projectId,
-                    trackingCode: data.data.trackingCode,
-                })
-                setSuccessDialogOpen(true)
+                toast.success("Proyek berhasil diupdate")
+                router.push("/admin/tracking/projects")
             } else {
-                toast.error(data.error || "Gagal membuat proyek")
+                toast.error(data.error || "Gagal mengupdate proyek")
             }
         } catch (error) {
-            console.error("Error creating project:", error)
-            toast.error("Terjadi kesalahan saat membuat proyek")
+            console.error("Error updating project:", error)
+            toast.error("Terjadi kesalahan saat mengupdate proyek")
         } finally {
-            setLoading(false)
+            setSaving(false)
         }
     }
 
-    // Auto-fill address when client is selected
-    const handleClientChange = (clientId: string) => {
-        setFormData((prev) => ({ ...prev, clientId }))
-        const selectedClient = clients.find((c) => c.id === clientId)
-        if (selectedClient && !formData.address) {
-            // Only auto-fill if address is empty
-        }
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-96">
+                <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+            </div>
+        )
     }
+
+    if (!project) {
+        return null
+    }
+
+    const currentStatus = statusConfig[formData.status] || statusConfig.VERIFIKASI_DOKUMEN
 
     return (
         <div className="space-y-6 max-w-5xl mx-auto pb-10">
@@ -155,11 +208,18 @@ export default function NewProjectPage() {
                             </BreadcrumbItem>
                             <BreadcrumbSeparator />
                             <BreadcrumbItem>
-                                <BreadcrumbPage>Tambah Proyek Baru</BreadcrumbPage>
+                                <BreadcrumbPage>Edit {project.projectId}</BreadcrumbPage>
                             </BreadcrumbItem>
                         </BreadcrumbList>
                     </Breadcrumb>
-                    <h1 className="text-2xl font-bold tracking-tight text-gray-900">Buat Proyek Penilaian</h1>
+                    <div className="flex items-center gap-3">
+                        <h1 className="text-2xl font-bold tracking-tight text-gray-900">
+                            Edit Proyek: {project.projectId}
+                        </h1>
+                        <Badge className={`${currentStatus.bgColor} ${currentStatus.color} hover:${currentStatus.bgColor}`}>
+                            {currentStatus.label}
+                        </Badge>
+                    </div>
                 </div>
                 <div className="flex items-center gap-2">
                     <Button variant="ghost" asChild className="text-gray-500 hover:text-gray-900">
@@ -201,38 +261,47 @@ export default function NewProjectPage() {
                             />
                         </div>
                         <div className="space-y-2">
+                            <Label className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                Kode Tracking <span className="text-gray-400 font-normal normal-case">(Read-only)</span>
+                            </Label>
+                            <div className="flex gap-2">
+                                <code className="flex-1 h-11 flex items-center px-3 rounded-md border border-input bg-gray-100 text-sm font-mono font-medium text-gray-900">
+                                    {project.trackingCode}
+                                </code>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="icon"
+                                    className="h-11 w-11 shrink-0"
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(project.trackingCode)
+                                        toast.success("Kode tracking berhasil disalin!")
+                                    }}
+                                >
+                                    <Copy className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        </div>
+                        <div className="space-y-2">
                             <Label htmlFor="client" className="text-xs font-bold text-gray-500 uppercase tracking-wider">
                                 Nama Client <span className="text-red-500">*</span>
                             </Label>
                             <Select
                                 value={formData.clientId}
-                                onValueChange={handleClientChange}
+                                onValueChange={(value) => setFormData((prev) => ({ ...prev, clientId: value }))}
                                 disabled={loadingClients}
                             >
                                 <SelectTrigger className="h-11 bg-gray-50/50">
                                     <SelectValue placeholder={loadingClients ? "Memuat..." : "Pilih Client..."} />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {clients.length === 0 ? (
-                                        <SelectItem value="no-client" disabled>
-                                            Tidak ada klien. Tambahkan klien terlebih dahulu.
+                                    {clients.map((client) => (
+                                        <SelectItem key={client.id} value={client.id}>
+                                            {client.name}
                                         </SelectItem>
-                                    ) : (
-                                        clients.map((client) => (
-                                            <SelectItem key={client.id} value={client.id}>
-                                                {client.name}
-                                            </SelectItem>
-                                        ))
-                                    )}
+                                    ))}
                                 </SelectContent>
                             </Select>
-                            {clients.length === 0 && !loadingClients && (
-                                <p className="text-xs text-amber-600">
-                                    <Link href="/admin/tracking/clients/new" className="underline">
-                                        Klik di sini untuk menambahkan klien baru
-                                    </Link>
-                                </p>
-                            )}
                         </div>
                     </div>
                 </div>
@@ -303,39 +372,6 @@ export default function NewProjectPage() {
                     </div>
                 </div>
 
-                {/* Card 3: Diskusi Proyek */}
-                <div className="rounded-xl border bg-white p-6 shadow-sm">
-                    <div className="mb-6 flex items-start gap-4">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-50 text-red-600">
-                            <MessageSquareText className="h-5 w-5" />
-                        </div>
-                        <div>
-                            <h2 className="text-lg font-semibold text-gray-900">Diskusi Proyek</h2>
-                            <p className="text-sm text-gray-500">Mulai diskusi atau berikan instruksi awal kepada klien</p>
-                        </div>
-                    </div>
-
-                    <div className="space-y-6">
-                        <div className="rounded-lg border border-dashed border-gray-200 bg-gray-50/50 p-8 text-center">
-                            <p className="text-sm italic text-gray-500">
-                                Belum ada diskusi dimulai. Anda dapat mengirimkan pesan pembuka di bawah ini.
-                            </p>
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="message" className="text-xs font-bold text-gray-500 uppercase tracking-wider">Pesan Pembuka (Opsional)</Label>
-                            <Textarea
-                                id="message"
-                                placeholder="Contoh: Selamat pagi, kami telah menerima aplikasi Anda. Mohon lengkapi dokumen berikut..."
-                                className="min-h-[100px] bg-gray-50/50"
-                                value={formData.initialMessage}
-                                onChange={(e) => setFormData((prev) => ({ ...prev, initialMessage: e.target.value }))}
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                {/* Action Buttons */}
                 <div className="flex items-center justify-end gap-4 pt-4">
                     <Button
                         type="button"
@@ -343,7 +379,7 @@ export default function NewProjectPage() {
                         size="lg"
                         className="h-12 w-32"
                         onClick={() => router.push("/admin/tracking/projects")}
-                        disabled={loading}
+                        disabled={saving}
                     >
                         Batal
                     </Button>
@@ -351,9 +387,9 @@ export default function NewProjectPage() {
                         type="submit"
                         size="lg"
                         className="h-12 w-48 bg-blue-950 text-white hover:bg-blue-900"
-                        disabled={loading}
+                        disabled={saving}
                     >
-                        {loading ? (
+                        {saving ? (
                             <>
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                 Menyimpan...
@@ -361,101 +397,12 @@ export default function NewProjectPage() {
                         ) : (
                             <>
                                 <Save className="mr-2 h-4 w-4" />
-                                Buat Proyek
+                                Simpan Perubahan
                             </>
                         )}
                     </Button>
                 </div>
             </form>
-
-            {/* Success Dialog */}
-            <Dialog open={successDialogOpen} onOpenChange={setSuccessDialogOpen}>
-                <DialogContent className="sm:max-w-md">
-                    <DialogHeader>
-                        <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                            <CheckCircle2 className="w-8 h-8 text-green-600" />
-                        </div>
-                        <DialogTitle className="text-center text-xl">Proyek Berhasil Dibuat!</DialogTitle>
-                        <DialogDescription className="text-center">
-                            Proyek penilaian baru telah berhasil dibuat. Berikan kode tracking berikut kepada klien untuk melacak status proyek.
-                        </DialogDescription>
-                    </DialogHeader>
-
-                    {createdProject && (
-                        <div className="space-y-4 py-4">
-                            <div className="bg-gray-50 rounded-lg p-4 space-y-3">
-                                <div>
-                                    <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">ID Proyek</p>
-                                    <p className="font-semibold text-gray-900">{createdProject.projectId}</p>
-                                </div>
-                                <div>
-                                    <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Kode Tracking</p>
-                                    <div className="flex items-center gap-2">
-                                        <code className="flex-1 bg-blue-50 text-blue-700 px-4 py-3 rounded-lg text-xl font-bold font-mono text-center tracking-wider">
-                                            {createdProject.trackingCode}
-                                        </code>
-                                        <Button
-                                            type="button"
-                                            variant="outline"
-                                            size="icon"
-                                            className="shrink-0"
-                                            onClick={() => {
-                                                navigator.clipboard.writeText(createdProject.trackingCode)
-                                                toast.success("Kode tracking berhasil disalin!")
-                                            }}
-                                        >
-                                            <Copy className="h-4 w-4" />
-                                        </Button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-                                <p className="text-sm text-amber-800">
-                                    <strong>Penting:</strong> Klien dapat melacak status proyek di halaman{" "}
-                                    <Link href="/lacak-status" target="_blank" className="underline inline-flex items-center gap-1">
-                                        Lacak Status
-                                        <ExternalLink className="h-3 w-3" />
-                                    </Link>{" "}
-                                    menggunakan kode tracking di atas.
-                                </p>
-                            </div>
-                        </div>
-                    )}
-
-                    <DialogFooter className="flex gap-2 sm:gap-0">
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => {
-                                setSuccessDialogOpen(false)
-                                // Reset form
-                                setFormData({
-                                    proposalNo: "",
-                                    clientId: "",
-                                    objectType: "",
-                                    objective: "",
-                                    address: "",
-                                    initialMessage: "",
-                                })
-                                setCreatedProject(null)
-                            }}
-                        >
-                            Buat Proyek Lainnya
-                        </Button>
-                        <Button
-                            type="button"
-                            className="bg-blue-950 hover:bg-blue-900"
-                            onClick={() => {
-                                setSuccessDialogOpen(false)
-                                router.push("/admin/tracking/projects")
-                            }}
-                        >
-                            Lihat Daftar Proyek
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
         </div>
     )
 }

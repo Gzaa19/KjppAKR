@@ -3,241 +3,485 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
     CheckCircle2,
     FileText,
     MapPin,
-    Calendar,
-    Clock,
-    Image as ImageIcon,
+    Eye,
     FileCheck,
-    Send,
-    Info,
+    Flag,
     MessageSquare,
+    Loader2,
+    Search,
+    AlertCircle,
+    Clock,
+    Copy,
+    Check,
+    ArrowLeft,
+    Info,
 } from "lucide-react";
 
-const progressSteps = [
-    { id: 1, name: "Pembuatan Penilaian", status: "completed", date: "01/12/24" },
-    { id: 2, name: "Proposal Penilaian", status: "completed", date: "02/12/24" },
-    { id: 3, name: "Verifikasi Dokumen", status: "in-progress", date: "SEDANG DIPROSES" },
-    { id: 4, name: "Penjadwalan Inspeksi", status: "pending", date: "MENUNGGU" },
-    { id: 5, name: "Proses Penilaian", status: "pending", date: "MENUNGGU" },
-    { id: 6, name: "Proses Review Internal", status: "pending", date: "MENUNGGU" },
-    { id: 7, name: "Resuma Nilai", status: "pending", date: "MENUNGGU" },
-    { id: 8, name: "Laporan Final", status: "pending", date: "MENUNGGU" },
-];
+const stageIcons: Record<number, React.ElementType> = {
+    1: FileText,
+    2: MapPin,
+    3: Eye,
+    4: FileCheck,
+    5: Flag,
+};
 
-const documents = [
-    { name: "Sertifikat Tanah (SHM/HGB)", checked: true },
-    { name: "IMB / PBB", checked: true },
-    { name: "PBB Tahun Terkini (Belum Ada)", checked: true },
-    { name: "Denah / Layout Bangunan", checked: true },
-];
+interface SubStep {
+    id: string;
+    name: string;
+    status: "PENDING" | "IN_PROGRESS" | "COMPLETED";
+    startDate: string | null;
+    endDate: string | null;
+}
+
+interface Stage {
+    id: number;
+    name: string;
+    status: "PENDING" | "IN_PROGRESS" | "COMPLETED";
+    completedCount: number;
+    totalCount: number;
+    currentSubStep: string | null;
+    startDate: string | null;
+    endDate: string | null;
+    subSteps: SubStep[];
+}
+
+interface ProjectData {
+    trackingCode: string;
+    projectId: string;
+    clientName: string;
+    objectType: string;
+    objective: string;
+    location: string;
+    status: string;
+    progress: number;
+    createdAt: string;
+    updatedAt: string;
+    completedAt: string | null;
+    adminMessage: string | null;
+    stages: Stage[];
+}
 
 export function LacakStatusSection() {
-    const [projectId, setProjectId] = useState("");
-    const [message, setMessage] = useState("");
+    const [trackingCode, setTrackingCode] = useState("");
+    const [projectData, setProjectData] = useState<ProjectData | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [hasSearched, setHasSearched] = useState(false);
+    const [copied, setCopied] = useState(false);
 
-    const handleSearch = () => {
+    const handleSearch = async () => {
+        if (!trackingCode.trim()) {
+            setError("Silakan masukkan kode tracking");
+            return;
+        }
+
         setIsLoading(true);
-        setTimeout(() => {
+        setError(null);
+        setProjectData(null);
+        setHasSearched(true);
+
+        try {
+            const [response] = await Promise.all([
+                fetch(`/api/public/tracking/${trackingCode.trim()}`),
+                new Promise(resolve => setTimeout(resolve, 1500))
+            ]);
+
+            const data = await response.json();
+
+            if (data.success) {
+                setProjectData(data.data);
+            } else {
+                setError(data.error || "Proyek tidak ditemukan");
+            }
+        } catch (err) {
+            console.error("Error tracking:", err);
+            setError("Terjadi kesalahan. Silakan coba lagi.");
+        } finally {
             setIsLoading(false);
-        }, 1000);
-    };
-
-    const getStepIcon = (index: number) => {
-        const icons = [
-            CheckCircle2,
-            FileText,
-            FileCheck,
-            Calendar,
-            Clock,
-            ImageIcon,
-            FileText,
-            CheckCircle2,
-        ];
-        const Icon = icons[index];
-        return <Icon className="w-6 h-6" />;
-    };
-
-    const getStepColor = (status: string) => {
-        switch (status) {
-            case "completed":
-                return "bg-green-500 text-white border-green-500";
-            case "in-progress":
-                return "bg-red-500 text-white border-red-500";
-            default:
-                return "bg-gray-200 text-gray-400 border-gray-300";
         }
     };
 
-    return (
-        <div className="container mx-auto px-4 py-12 max-w-7xl">
-            <div className="mb-12">
-                <div className="flex items-center gap-4 mb-6">
-                    <div className="w-1.5 h-12 bg-kjpp-red shrink-0" />
-                    <h1 className="text-4xl md:text-5xl font-extrabold text-kjpp-dark tracking-tight uppercase">
-                        Lacak Proyek Anda
-                    </h1>
-                </div>
-                <p className="text-kjpp-dark text-lg md:text-xl max-w-3xl leading-relaxed mb-8">
-                    Masukkan ID Proyek atau Nomor Proposal Anda untuk memantau
-                    perkembangan proses penilaian properti secara real-time.
-                </p>
-                <div className="bg-gray-50 rounded-lg p-6 max-w-2xl">
-                    <div className="flex gap-3">
-                        <Input
-                            type="text"
-                            placeholder="Masukkan ID Proyek (Contoh: PRJ-2023-001)"
-                            value={projectId}
-                            onChange={(e) => setProjectId(e.target.value)}
-                            className="flex-1 bg-white"
-                        />
-                        <Button
-                            onClick={handleSearch}
-                            disabled={isLoading}
-                            className="bg-gray-900 hover:bg-gray-800 text-white px-8"
-                        >
-                            {isLoading ? "Mencari..." : "Cari"}
-                        </Button>
-                    </div>
-                </div>
-            </div>
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-                <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                        <div className="w-1 h-6 bg-kjpp-red rounded-full"></div>
-                        Progress Penilaian
-                    </h2>
-                    <span className="text-xs font-semibold text-green-700 bg-green-50 px-3 py-1 rounded border border-green-200">
-                        STATUS: ON PROGRESS
-                    </span>
-                </div>
-                <div className="relative">
-                    <div className="flex justify-between items-start">
-                        {progressSteps.map((step, index) => (
-                            <div key={step.id} className="flex items-start flex-1">
-                                <div className="flex flex-col items-center text-center flex-1">
-                                    <div
-                                        className={`w-16 h-16 rounded-full border-2 flex items-center justify-center mb-2 relative z-10 ${getStepColor(
-                                            step.status
-                                        )}`}
-                                    >
-                                        {getStepIcon(index)}
-                                    </div>
-                                    <p className="text-xs font-semibold text-gray-900 mb-1 leading-tight px-1">
-                                        {step.name}
-                                    </p>
-                                    <p
-                                        className={`text-xs ${step.status === "in-progress"
-                                            ? "text-red-600 font-semibold"
-                                            : "text-gray-500"
-                                            }`}
-                                    >
-                                        {step.date}
-                                    </p>
-                                </div>
-                                {index < progressSteps.length - 1 && (
-                                    <div className="flex items-center" style={{ marginTop: "32px" }}>
-                                        <div className="w-full h-0 border-t-2 border-dotted border-gray-300 min-w-[20px]"></div>
-                                    </div>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex gap-3 mt-4">
-                    <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                    <div>
-                        <p className="text-sm font-semibold text-blue-900 mb-1">
-                            Catatan Status Terkini:
-                        </p>
-                        <p className="text-sm text-blue-800">
-                            Dokumen lengkap & penurunan proses penilaian sedang
-                            dilakukan oleh tim admin kami.
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2 space-y-6">
-                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                        <h2 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-                            <div className="w-1 h-6 bg-kjpp-red rounded-full"></div>
-                            Project Summary
-                        </h2>
+    const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            handleSearch();
+        }
+    };
 
-                        <div className="grid grid-cols-2 gap-6">
-                            <div>
-                                <p className="text-xs text-gray-500 mb-1 uppercase">
-                                    No. Proposal
-                                </p>
-                                <p className="text-sm font-semibold text-gray-900">
-                                    PROP/AKR/2023/X/045
-                                </p>
-                            </div>
-                            <div>
-                                <p className="text-xs text-gray-500 mb-1 uppercase">
-                                    Order Dari Klien
-                                </p>
-                                <p className="text-sm font-semibold text-gray-900">
-                                    Bangunan Kantor & Tanah (Ruko)
-                                </p>
-                            </div>
-                            <div>
-                                <p className="text-xs text-gray-500 mb-1 uppercase">
-                                    Nama Klien
-                                </p>
-                                <p className="text-sm font-semibold text-gray-900">
-                                    PT. Bank Mandiri (Persero) Tbk.
-                                </p>
-                            </div>
-                            <div>
-                                <p className="text-xs text-gray-500 mb-1 uppercase">Alamat</p>
-                                <p className="text-sm font-semibold text-gray-900">
-                                    Jl. Kebayoran Lama No. 12, Kebayoran Baru, Jakarta
-                                    Selatan, DKI Jakarta 12120
-                                </p>
-                            </div>
-                            <div className="col-span-2">
-                                <p className="text-xs text-gray-500 mb-1 uppercase">
-                                    Tujuan Penilaian
-                                </p>
-                                <p className="text-sm font-semibold text-gray-900">
-                                    Penjaminan Hutang / Kredit Bank
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="space-y-6">
-                    <div className="bg-kjpp-red text-white rounded-lg p-6">
-                        <h3 className="text-lg font-bold mb-2">Butuh Bantuan?</h3>
-                        <p className="text-sm mb-4 text-white/90 leading-relaxed">
-                            Jika Anda memiliki pertanyaan mengenai status proyek penilaian
-                            Anda, silakan hubungi Customer Service kami.
+    const handleBack = () => {
+        setProjectData(null);
+        setHasSearched(false);
+        setError(null);
+    };
+
+    const copyToClipboard = (text: string) => {
+        navigator.clipboard.writeText(text);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
+    const formatDate = (dateString: string | null) => {
+        if (!dateString) return "-";
+        const date = new Date(dateString);
+        return date.toLocaleDateString("id-ID", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+        });
+    };
+
+    // Calculate estimated completion date (14 days from creation)
+    const getEstimatedDate = () => {
+        if (!projectData?.createdAt) return "-";
+        const created = new Date(projectData.createdAt);
+        const estimated = new Date(created.getTime() + 14 * 24 * 60 * 60 * 1000);
+        return formatDate(estimated.toISOString());
+    };
+
+    // Determine schedule status
+    const getScheduleStatus = () => {
+        if (projectData?.status === "SELESAI") return { label: "Selesai", color: "bg-green-100 text-green-700" };
+        if (!projectData?.createdAt) return { label: "On Schedule", color: "bg-green-100 text-green-700" };
+
+        const created = new Date(projectData.createdAt);
+        const estimated = new Date(created.getTime() + 14 * 24 * 60 * 60 * 1000);
+        const now = new Date();
+
+        if (now > estimated) {
+            return { label: "Terlambat", color: "bg-red-100 text-red-700" };
+        }
+        return { label: "On Schedule", color: "bg-green-100 text-green-700" };
+    };
+
+    // Get current active sub-step info
+    const getCurrentProcess = () => {
+        if (!projectData?.stages) return null;
+
+        for (const stage of projectData.stages) {
+            if (stage.status === "IN_PROGRESS") {
+                const activeSubStep = stage.subSteps.find(s => s.status === "IN_PROGRESS");
+                if (activeSubStep) {
+                    return {
+                        stageName: stage.name,
+                        subStepName: activeSubStep.name,
+                        startDate: activeSubStep.startDate
+                    };
+                }
+            }
+        }
+        return null;
+    };
+
+    return (
+        <div className="min-h-screen flex items-center justify-center pt-24 pb-48 px-4">
+            <div className="w-full max-w-5xl">
+                {!projectData && !isLoading && (
+                    <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 max-w-3xl mx-auto text-center">
+                        {/* Red Accent Line */}
+                        <div className="w-16 h-1 bg-kjpp-red mx-auto mb-6"></div>
+
+                        <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4 uppercase tracking-wide">
+                            Lacak Proyek Anda
+                        </h1>
+
+                        <p className="text-gray-600 mb-8 max-w-lg mx-auto">
+                            Masukkan Kode Tracking yang Anda terima untuk memantau perkembangan proses penilaian properti secara real-time.
                         </p>
-                        <Button className="w-full bg-white hover:bg-gray-100 text-kjpp-red font-semibold rounded-full">
-                            <MessageSquare className="w-4 h-4 mr-2" />
-                            Hubungi via WhatsApp
-                        </Button>
-                    </div>
-                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                        <h3 className="text-base font-bold text-gray-900 mb-4">
-                            Dokumen yang Dibutuhkan
-                        </h3>
-                        <div className="space-y-3">
-                            {documents.map((doc, index) => (
-                                <div key={index} className="flex items-start gap-2">
-                                    <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
-                                    <span className="text-sm text-gray-700">{doc.name}</span>
+
+                        {/* Search Box */}
+                        <div className="flex gap-3 max-w-xl mx-auto mb-4">
+                            <div className="relative flex-1">
+                                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                <Input
+                                    type="text"
+                                    placeholder="AKR-XXXXXX"
+                                    value={trackingCode}
+                                    onChange={(e) => setTrackingCode(e.target.value.toUpperCase())}
+                                    onKeyPress={handleKeyPress}
+                                    className="pl-12 h-14 text-lg border-gray-200 rounded-xl bg-gray-50 focus:bg-white uppercase"
+                                />
+                            </div>
+                            <Button
+                                onClick={handleSearch}
+                                disabled={isLoading}
+                                className="bg-gray-900 hover:bg-gray-800 text-white px-8 h-14 rounded-xl font-semibold"
+                            >
+                                Lacak
+                            </Button>
+                        </div>
+                        <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
+                            <Info className="w-4 h-4" />
+                            <span>Kode tracking diberikan saat proyek penilaian Anda dibuat.</span>
+                        </div>
+                        {error && hasSearched && (
+                            <div className="mt-6 bg-red-50 border border-red-200 rounded-xl p-4 text-left">
+                                <div className="flex items-start gap-3">
+                                    <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                                    <div>
+                                        <p className="font-semibold text-red-800">{error}</p>
+                                        <p className="text-sm text-red-600 mt-1">
+                                            Pastikan kode tracking yang Anda masukkan benar.
+                                        </p>
+                                    </div>
                                 </div>
-                            ))}
+                            </div>
+                        )}
+                    </div>
+                )}
+                {isLoading && (
+                    <div className="bg-white rounded-2xl shadow-xl p-12 max-w-3xl mx-auto text-center">
+                        <div className="flex flex-col items-center justify-center">
+                            <div className="relative">
+                                <div className="w-16 h-16 border-4 border-gray-200 rounded-full"></div>
+                                <div className="w-16 h-16 border-4 border-kjpp-red border-t-transparent rounded-full animate-spin absolute top-0 left-0"></div>
+                            </div>
+                            <h3 className="text-xl font-semibold text-gray-900 mt-6 mb-2">
+                                Mencari Proyek...
+                            </h3>
+                            <p className="text-gray-500">
+                                Mohon tunggu sebentar, kami sedang mengambil data proyek Anda.
+                            </p>
                         </div>
                     </div>
-                </div>
+                )}
+                {projectData && !isLoading && (
+                    <div className="bg-white rounded-2xl shadow-xl p-8 md:p-10 max-w-5xl mx-auto">
+                        <div className="w-16 h-1 bg-kjpp-red mx-auto mb-6"></div>
+                        <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-8 uppercase tracking-wide text-center">
+                            Status Pelacakan Proyek
+                        </h1>
+                        <div className="mb-8 w-full overflow-hidden">
+                            <div className="overflow-x-auto pb-4 -mx-4 px-4 md:overflow-visible md:pb-0 md:px-0 hide-scrollbar scroll-smooth">
+                                <div className="flex items-start justify-start md:justify-center min-w-max md:min-w-0 mx-auto w-fit md:w-full pt-4">
+                                    {projectData.stages.map((stage, index) => {
+                                        const Icon = stageIcons[stage.id] || FileText;
+                                        const isCompleted = stage.status === "COMPLETED";
+                                        const isActive = stage.status === "IN_PROGRESS";
+                                        return (
+                                            <div key={stage.id} className="flex items-start flex-1 last:flex-none">
+                                                <div className="flex flex-col items-center relative z-10 w-24 md:w-32 group">
+                                                    <div
+                                                        className={`w-10 h-10 md:w-14 md:h-14 rounded-full flex items-center justify-center border-2 transition-all duration-300 shadow-sm ${isCompleted
+                                                            ? "bg-green-500 border-green-500 text-white shadow-green-200"
+                                                            : isActive
+                                                                ? "bg-amber-500 border-amber-500 text-white shadow-amber-200 scale-110"
+                                                                : "bg-white border-gray-300 text-gray-300"
+                                                            }`}
+                                                    >
+                                                        {isCompleted ? (
+                                                            <CheckCircle2 className="w-5 h-5 md:w-7 md:h-7" />
+                                                        ) : (
+                                                            <Icon className={`w-4 h-4 md:w-6 md:h-6 ${!isActive && "opacity-50"}`} />
+                                                        )}
+                                                    </div>
+                                                    <span
+                                                        className={`text-[10px] md:text-sm mt-3 text-center font-medium leading-tight px-1 transition-colors duration-300 ${isCompleted
+                                                            ? "text-green-600"
+                                                            : isActive
+                                                                ? "text-amber-600 font-bold"
+                                                                : "text-gray-400"
+                                                            }`}
+                                                    >
+                                                        {stage.name}
+                                                    </span>
+                                                </div>
+                                                {index < projectData.stages.length - 1 && (
+                                                    <div className="flex-none md:flex-1 w-8 md:w-auto mt-[19px] md:mt-[27px] mx-1 md:mx-4">
+                                                        <div
+                                                            className={`h-0.5 w-full rounded-full transition-all duration-500 ${isCompleted ? "bg-green-500" : "bg-gray-300"
+                                                                }`}
+                                                        ></div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
+                            <div className="lg:col-span-3">
+                                <div className="bg-gray-50 rounded-xl p-6">
+                                    <div className="flex items-center gap-2 mb-6">
+                                        <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                                            <FileText className="w-4 h-4 text-green-600" />
+                                        </div>
+                                        <h2 className="text-lg font-bold text-gray-900">Detail Proyek</h2>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-6 mb-6">
+                                        <div>
+                                            <p className="text-xs text-gray-500 mb-1">Tracking Code</p>
+                                            <div className="flex items-center gap-2">
+                                                <span className="font-bold text-gray-900 font-mono">
+                                                    {projectData.trackingCode}
+                                                </span>
+                                                <button
+                                                    onClick={() => copyToClipboard(projectData.trackingCode)}
+                                                    className="p-1 hover:bg-gray-200 rounded transition-colors"
+                                                >
+                                                    {copied ? (
+                                                        <Check className="w-4 h-4 text-green-600" />
+                                                    ) : (
+                                                        <Copy className="w-4 h-4 text-gray-400" />
+                                                    )}
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-gray-500 mb-1">Project ID</p>
+                                            <span className="font-bold text-gray-900">{projectData.projectId}</span>
+                                        </div>
+                                    </div>
+                                    <div className="mb-6">
+                                        <p className="text-xs text-gray-500 mb-1">Nama Klien</p>
+                                        <span className="font-bold text-gray-900">{projectData.clientName}</span>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-gray-500 mb-2">Lokasi Aset</p>
+                                        <div className="bg-white rounded-lg p-4 border border-gray-200">
+                                            <div className="flex items-start gap-3">
+                                                <MapPin className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+                                                <span className="text-gray-700 break-all">{projectData.location}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {projectData.adminMessage && (
+                                        <div className="mt-6 pt-6 border-t border-gray-200">
+                                            <p className="text-xs text-gray-500 mb-2">Pesan untuk Klien</p>
+                                            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                                                <p className="text-amber-800 text-sm whitespace-pre-wrap">
+                                                    {projectData.adminMessage}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            <div className="lg:col-span-2 space-y-6">
+                                <div className="bg-gray-50 rounded-xl p-6">
+                                    <div className="flex items-center gap-2 mb-5">
+                                        <Clock className="w-5 h-5 text-gray-600" />
+                                        <h2 className="text-lg font-bold text-gray-900">Progress Proyek</h2>
+                                    </div>
+
+                                    <div className="text-center mb-6">
+                                        <span className="text-4xl font-bold text-blue-600">{projectData.progress}%</span>
+                                        <p className="text-sm text-gray-500 mt-1">Selesai</p>
+                                    </div>
+
+                                    <div className="w-full bg-gray-200 rounded-full h-3 mb-6">
+                                        <div
+                                            className="bg-blue-600 h-3 rounded-full transition-all duration-500"
+                                            style={{ width: `${projectData.progress}%` }}
+                                        ></div>
+                                    </div>
+
+                                    <div className="flex flex-col items-center gap-3">
+                                        <span className={`text-xs font-semibold px-3 py-1 rounded-full ${getScheduleStatus().color}`}>
+                                            {getScheduleStatus().label}
+                                        </span>
+                                        <p className="text-xs text-gray-500">
+                                            Estimasi Selesai: <span className="font-medium text-gray-900">{getEstimatedDate()}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="bg-kjpp-red rounded-xl p-6 text-white">
+                                    <h3 className="text-xl font-bold mb-2">Butuh Bantuan?</h3>
+                                    <p className="text-white/90 text-sm mb-4">
+                                        Tim support kami siap membantu kendala pelacakan Anda.
+                                    </p>
+                                    <Button
+                                        className="w-full bg-white hover:bg-gray-100 text-kjpp-red font-semibold rounded-lg"
+                                        asChild
+                                    >
+                                        <a href="https://wa.me/628123456789" target="_blank" rel="noopener noreferrer">
+                                            <MessageSquare className="w-4 h-4 mr-2" />
+                                            Hubungi WhatsApp
+                                        </a>
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="bg-gray-50 rounded-xl p-6 mb-6">
+                            <div className="flex items-center gap-2 mb-5">
+                                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <FileCheck className="w-4 h-4 text-blue-600" />
+                                </div>
+                                <h2 className="text-lg font-bold text-gray-900">Rincian Aktivitas</h2>
+                            </div>
+                            <div className="space-y-0">
+                                {projectData.stages.flatMap((stage) =>
+                                    stage.subSteps.filter(s => s.status !== "PENDING").map((subStep) => (
+                                        <div
+                                            key={subStep.id}
+                                            className="flex items-center gap-3 py-3 border-b border-gray-200 last:border-b-0"
+                                        >
+                                            <div className={`w-3 h-3 rounded-full shrink-0 ${subStep.status === "COMPLETED"
+                                                ? "bg-green-500"
+                                                : "bg-amber-500 animate-pulse"
+                                                }`} />
+                                            <div className="flex-1">
+                                                <span className={`${subStep.status === "COMPLETED"
+                                                    ? "text-gray-700"
+                                                    : "text-amber-700 font-medium"
+                                                    }`}>
+                                                    {subStep.name}
+                                                </span>
+                                                {subStep.status === "COMPLETED" && (subStep.startDate || subStep.endDate) && (
+                                                    <p className="text-xs text-gray-500 mt-0.5">
+                                                        Selesai: {subStep.endDate ? formatDate(subStep.endDate) : formatDate(subStep.startDate)}
+                                                    </p>
+                                                )}
+                                                {subStep.status === "IN_PROGRESS" && subStep.startDate && (
+                                                    <p className="text-xs text-amber-600 mt-0.5">
+                                                        Dimulai: {formatDate(subStep.startDate)}
+                                                    </p>
+                                                )}
+                                            </div>
+                                            {subStep.status === "COMPLETED" ? (
+                                                <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                                    <Check className="w-4 h-4 text-white" />
+                                                </div>
+                                            ) : (
+                                                <div className="w-6 h-6 border-2 border-amber-500 rounded-full flex items-center justify-center">
+                                                    <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))
+                                )}
+                                {(() => {
+                                    const allSubSteps = projectData.stages.flatMap(s => s.subSteps);
+                                    const firstPending = allSubSteps.find(s => s.status === "PENDING");
+                                    if (firstPending && allSubSteps.some(s => s.status !== "PENDING")) {
+                                        return (
+                                            <div className="flex items-center gap-3 py-3 border-b border-gray-200 last:border-b-0">
+                                                <div className="w-3 h-3 rounded-full shrink-0 bg-gray-300" />
+                                                <span className="flex-1 text-gray-400">
+                                                    {firstPending.name}
+                                                </span>
+                                                <div className="w-6 h-6 border-2 border-gray-300 rounded-full" />
+                                            </div>
+                                        );
+                                    }
+                                    return null;
+                                })()}
+                            </div>
+                        </div>
+                        <div className="text-center">
+                            <button
+                                onClick={handleBack}
+                                className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+                            >
+                                <ArrowLeft className="w-4 h-4" />
+                                <span>Kembali ke Pencarian</span>
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

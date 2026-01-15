@@ -42,21 +42,24 @@ type UserSession = {
     avatar: string | null;
 };
 
-const trackingMenu = [
+const trackingPlatformMenu = [
     {
         title: "Dashboard",
         url: "/admin/tracking",
         icon: LayoutDashboard,
     },
-    {
-        title: "Proyek",
-        url: "/admin/tracking/projects",
-        icon: FolderKanban,
-    },
+];
+
+const trackingMasterDataMenu = [
     {
         title: "Klien",
         url: "/admin/tracking/clients",
         icon: Users,
+    },
+    {
+        title: "Proyek",
+        url: "/admin/tracking/projects",
+        icon: FolderKanban,
     },
 ];
 
@@ -107,79 +110,99 @@ export function TrackingSidebar({ ...props }: React.ComponentProps<typeof Sideba
             .slice(0, 2)
     }
 
+    const menuButtonClass = "text-slate-600 hover:text-slate-900 hover:bg-slate-100 data-[active=true]:bg-[#1e293b] data-[active=true]:text-white data-[active=true]:hover:bg-[#1e293b] data-[active=true]:hover:text-white font-medium transition-all duration-200";
+    const groupLabelClass = "text-xs font-bold uppercase tracking-wider text-slate-400 px-4 mb-2 mt-4";
+    const logoTextClass = "text-slate-800 font-bold";
+    const subTextClass = "text-slate-500 font-medium";
+
+    const renderMenu = (items: any[]) => (
+        <SidebarMenu className="px-2">
+            {items.map((item) => {
+                let isMainActive = false;
+
+                if (item.url === "/admin/tracking") {
+                    isMainActive = pathname === "/admin/tracking";
+                } else {
+                    isMainActive = pathname.startsWith(item.url);
+                }
+
+                return (
+                    <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton
+                            asChild
+                            isActive={isMainActive}
+                            tooltip={item.title}
+                            className={menuButtonClass}
+                        >
+                            <a href={item.url}>
+                                <item.icon className="h-5 w-5" />
+                                <span>{item.title}</span>
+                            </a>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                )
+            })}
+        </SidebarMenu>
+    );
+
     return (
-        <Sidebar collapsible="icon" {...props}>
-            <SidebarHeader>
+        <Sidebar collapsible="icon" className="bg-white border-r border-slate-100" {...props}>
+            <SidebarHeader className="p-4 pb-2 group-data-[collapsible=icon]:p-2">
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
-                            <a href="/admin/tracking/projects">
-                                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-white p-1">
+                        <SidebarMenuButton size="lg" asChild className="hover:bg-transparent">
+                            <a href="/admin/tracking/projects" className="flex items-center gap-3">
+                                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-white border border-slate-100 shadow-sm p-1 md:size-10 md:rounded-xl md:p-1.5">
                                     <Image
                                         src="/image/logoAKR.png"
                                         alt="KJPP AKR Logo"
-                                        width={32}
-                                        height={32}
+                                        width={40}
+                                        height={40}
                                         className="object-contain"
                                     />
                                 </div>
-                                <div className="grid flex-1 text-left text-sm leading-tight">
-                                    <span className="truncate font-semibold">KJPP AKR</span>
-                                    <span className="truncate text-xs">Tracking System</span>
+                                <div className="grid flex-1 text-left leading-tight">
+                                    <span className={logoTextClass}>KJPP AKR</span>
+                                    <span className={subTextClass + " text-xs"}>Tracking System</span>
                                 </div>
                             </a>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>
-            <SidebarContent>
-                <SidebarGroup>
-                    <SidebarGroupLabel>Menu Utama</SidebarGroupLabel>
-                    <SidebarMenu>
-                        {trackingMenu.map((item) => {
-                            let isMainActive = false;
+            <SidebarContent className="px-2 group-data-[collapsible=icon]:px-0">
+                <SidebarGroup className="p-0">
+                    <SidebarGroupLabel className={groupLabelClass}>Platform</SidebarGroupLabel>
+                    {renderMenu(trackingPlatformMenu)}
+                </SidebarGroup>
 
-                            if (item.url === "/admin/tracking") {
-                                isMainActive = pathname === "/admin/tracking";
-                            } else {
-                                isMainActive = pathname.startsWith(item.url);
-                            }
-
-                            return (
-                                <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton asChild isActive={isMainActive} tooltip={item.title}>
-                                        <a href={item.url}>
-                                            <item.icon />
-                                            <span>{item.title}</span>
-                                        </a>
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
-                            )
-                        })}
-                    </SidebarMenu>
+                <SidebarGroup className="p-0">
+                    <SidebarGroupLabel className={groupLabelClass}>Master Data</SidebarGroupLabel>
+                    {renderMenu(trackingMasterDataMenu)}
                 </SidebarGroup>
             </SidebarContent>
-            <SidebarFooter>
+
+            <SidebarFooter className="p-4 pt-2 group-data-[collapsible=icon]:p-2">
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <SidebarMenuButton
                                     size="lg"
-                                    className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                                    className="data-[state=open]:bg-slate-100 data-[state=open]:text-slate-900 bg-slate-50 hover:bg-slate-100 rounded-xl px-3"
                                     suppressHydrationWarning
                                 >
-                                    <Avatar className="h-8 w-8 rounded-lg">
+                                    <Avatar className="h-8 w-8 rounded-full border border-white shadow-sm">
                                         <AvatarImage src={user?.avatar || ""} alt={user?.name || "User"} />
-                                        <AvatarFallback className="rounded-lg">
+                                        <AvatarFallback className="rounded-full bg-slate-200 text-slate-600">
                                             {user ? getInitials(user.name) : "AD"}
                                         </AvatarFallback>
                                     </Avatar>
-                                    <div className="grid flex-1 text-left text-sm leading-tight">
-                                        <span className="truncate font-semibold">{user?.name || "Loading..."}</span>
-                                        <span className="truncate text-xs">{user?.email || ""}</span>
+                                    <div className="grid flex-1 text-left text-sm leading-tight ml-1">
+                                        <span className="truncate font-bold text-slate-800">{user?.name || "Loading..."}</span>
+                                        <span className="truncate text-xs text-slate-500">{user?.email || ""}</span>
                                     </div>
-                                    <Settings2 className="ml-auto size-4" />
+                                    <Settings2 className="ml-auto size-4 text-slate-400" />
                                 </SidebarMenuButton>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent

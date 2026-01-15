@@ -124,19 +124,15 @@ export default function ClientsPage() {
 
     return (
         <div className="space-y-6">
-            {/* Header */}
             <div className="space-y-2">
-                <h1 className="text-3xl font-bold text-gray-900">Daftar Master Klien</h1>
+                <h1 className="text-3xl font-bold text-gray-900">Daftar Klien Tracking</h1>
                 <p className="text-gray-600">
-                    Kelola dan pantau seluruh data master klien perusahaan untuk keperluan
+                    Kelola dan pantau seluruh data klien tracking perusahaan untuk keperluan
                     operasional dan logistik secara terpusat.
                 </p>
             </div>
-
-            {/* Filters and Actions */}
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div className="flex flex-col gap-3 md:flex-row md:items-center">
-                    {/* Search */}
                     <div className="relative w-full md:w-96">
                         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                         <Input
@@ -150,7 +146,6 @@ export default function ClientsPage() {
                         />
                     </div>
 
-                    {/* Type Filter */}
                     <Select
                         value={selectedType}
                         onValueChange={(value) => {
@@ -170,10 +165,7 @@ export default function ClientsPage() {
                         </SelectContent>
                     </Select>
                 </div>
-                <Button
-                    asChild
-                    className="bg-blue-950 hover:bg-blue-900 text-white"
-                >
+                <Button asChild>
                     <Link href="/admin/tracking/clients/new">
                         <UserPlus className="mr-2 h-4 w-4" />
                         Tambah Klien Baru

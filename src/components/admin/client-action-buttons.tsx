@@ -1,17 +1,10 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import {
-    DropdownMenu,
-    DropdownMenuItem,
-    DropdownMenuContent,
-    DropdownMenuTrigger,
-    DropdownMenuSeparator
-} from "@/components/ui/dropdown-menu";
-import { deleteNews, togglePublishNews } from "@/actions/news";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, Pencil, Eye, EyeOff, Trash2, ExternalLink } from "lucide-react";
+import { Trash2, Pencil, Eye, EyeOff, MoreHorizontal } from "lucide-react";
+import { deleteClient, togglePublishClient } from "@/actions/client";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
     AlertDialog,
@@ -23,35 +16,33 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { toast } from "sonner";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+    DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
-export function NewsActionMenu({ id, slug, isPublished }: { id: string; slug: string; isPublished: boolean }) {
+export function ClientActionButtons({ id, isPublished }: { id: string; isPublished: boolean }) {
     const [isPending, startTransition] = useTransition();
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const router = useRouter();
 
     const handleDelete = () => {
         startTransition(async () => {
-            const result = await deleteNews(id);
+            const result = await deleteClient(id);
             if (result.success) {
                 setShowDeleteDialog(false);
-                toast.success("Publikasi berhasil dihapus");
                 router.refresh();
-            } else {
-                toast.error(result.error || "Gagal menghapus publikasi");
             }
         });
     };
 
     const handleTogglePublish = () => {
         startTransition(async () => {
-            const result = await togglePublishNews(id);
-            if (result.success) {
-                toast.success(isPublished ? "Publikasi disembunyikan" : "Publikasi diterbitkan");
-                router.refresh();
-            } else {
-                toast.error(result.error || "Gagal mengubah status publikasi");
-            }
+            await togglePublishClient(id, !isPublished);
+            router.refresh();
         });
     };
 
@@ -65,16 +56,9 @@ export function NewsActionMenu({ id, slug, isPublished }: { id: string; slug: st
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                     <DropdownMenuItem asChild>
-                        <Link href={`/admin/publikasi/${id}/edit`} className="cursor-pointer">
+                        <Link href={`/admin/clients/${id}/edit`} className="cursor-pointer">
                             <Pencil className="mr-2 h-4 w-4" />
                             Edit
-                        </Link>
-                    </DropdownMenuItem>
-
-                    <DropdownMenuItem asChild>
-                        <Link href={`/publikasi/${slug}`} target="_blank" className="cursor-pointer">
-                            <ExternalLink className="mr-2 h-4 w-4" />
-                            Lihat Live
                         </Link>
                     </DropdownMenuItem>
 
@@ -117,9 +101,9 @@ export function NewsActionMenu({ id, slug, isPublished }: { id: string; slug: st
             <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Hapus Publikasi</AlertDialogTitle>
+                        <AlertDialogTitle>Hapus Klien</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Apakah Anda yakin ingin menghapus publikasi ini? Tindakan ini tidak dapat dibatalkan.
+                            Apakah Anda yakin ingin menghapus klien ini? Tindakan ini tidak dapat dibatalkan.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
@@ -137,6 +121,3 @@ export function NewsActionMenu({ id, slug, isPublished }: { id: string; slug: st
         </>
     );
 }
-
-export function DeleteNewsButton() { return null; }
-export function TogglePublishButton() { return null; }

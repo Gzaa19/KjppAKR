@@ -5,7 +5,7 @@ import { Plus, Search, MoreHorizontal, Building2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { getClients } from "@/actions/client";
-import { ClientActionMenu } from "@/components/admin/client-actions";
+import { ClientActionButtons } from "@/components/admin/client-action-buttons";
 import Image from "next/image";
 
 export default async function ClientsPage() {
@@ -17,12 +17,17 @@ export default async function ClientsPage() {
 
     return (
         <div className="flex flex-1 flex-col gap-4">
-            <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                    <h2 className="text-2xl font-bold tracking-tight">Klien</h2>
-                    <p className="text-sm text-muted-foreground">
-                        Kelola daftar klien KJPP AKR.
-                    </p>
+            <div className="space-y-2">
+                <h1 className="text-3xl font-bold text-gray-900">Klien</h1>
+                <p className="text-gray-600">
+                    Kelola daftar klien KJPP AKR.
+                </p>
+            </div>
+
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div className="relative flex-1 max-w-sm">
+                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input type="search" placeholder="Cari nama klien..." className="pl-8 bg-white" />
                 </div>
                 <Link href="/admin/clients/create">
                     <Button>
@@ -30,13 +35,6 @@ export default async function ClientsPage() {
                         Tambah Klien
                     </Button>
                 </Link>
-            </div>
-
-            <div className="flex items-center gap-2 mb-2">
-                <div className="relative flex-1 max-w-sm">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input type="search" placeholder="Cari nama klien..." className="pl-8" />
-                </div>
             </div>
 
             {clients.length === 0 ? (
@@ -51,7 +49,6 @@ export default async function ClientsPage() {
                 </Card>
             ) : (
                 <div className="space-y-8">
-                    {/* Bank BUMN/Swasta Section */}
                     {bankClients.length > 0 && (
                         <div>
                             <div className="flex items-center gap-2 mb-4">
@@ -76,7 +73,7 @@ export default async function ClientsPage() {
                                                     <Badge variant={client.isPublished ? "default" : "secondary"} className="text-xs">
                                                         {client.isPublished ? "Published" : "Draft"}
                                                     </Badge>
-                                                    <ClientActionMenu id={client.id} isPublished={client.isPublished} />
+                                                    <ClientActionButtons id={client.id} isPublished={client.isPublished} />
                                                 </div>
                                                 <h4 className="font-bold text-sm line-clamp-2">{client.name}</h4>
                                             </div>
@@ -87,7 +84,6 @@ export default async function ClientsPage() {
                         </div>
                     )}
 
-                    {/* Non Bank Section */}
                     {nonBankClients.length > 0 && (
                         <div>
                             <div className="flex items-center gap-2 mb-4">
@@ -112,7 +108,7 @@ export default async function ClientsPage() {
                                                     <Badge variant={client.isPublished ? "default" : "secondary"} className="text-xs">
                                                         {client.isPublished ? "Published" : "Draft"}
                                                     </Badge>
-                                                    <ClientActionMenu id={client.id} isPublished={client.isPublished} />
+                                                    <ClientActionButtons id={client.id} isPublished={client.isPublished} />
                                                 </div>
                                                 <h4 className="font-bold text-sm line-clamp-2">{client.name}</h4>
                                             </div>

@@ -30,8 +30,8 @@ export default async function DashboardPage() {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Dashboard Admin</h1>
-                    <p className="text-muted-foreground">Selamat datang di panel admin KJPP AKR</p>
+                    <h1 className="text-3xl font-bold tracking-tight">Dashboard Content Manager</h1>
+                    <p className="text-muted-foreground">Selamat datang di panel admin Content Manager KJPP AKR</p>
                 </div>
             </div>
 
