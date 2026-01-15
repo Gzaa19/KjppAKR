@@ -83,7 +83,6 @@ export default function PenilaianPage() {
                 alt="Property Valuation Background"
             />
             <main className="relative z-10 mt-[50vh] bg-white rounded-t-[3rem] shadow-2xl pt-24 pb-40 min-h-screen">
-                {/* Header */}
                 <div className="container mx-auto px-4 mb-16">
                     <div className="flex items-center gap-4 mb-6">
                         <div className="w-1.5 h-12 bg-kjpp-red shrink-0" />
@@ -97,7 +96,6 @@ export default function PenilaianPage() {
                     </p>
                 </div>
 
-                {/* Valuation Services Grid */}
                 <div className="container mx-auto px-4">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         {valuationServices.map((service) => {
@@ -107,15 +105,12 @@ export default function PenilaianPage() {
                                     key={service.id}
                                     className={`bg-white rounded-2xl border-l-4 ${service.borderColor} shadow-md hover:shadow-xl transition-shadow duration-300 p-8`}
                                 >
-                                    {/* Header */}
                                     <div className="flex items-center gap-4 mb-6">
                                         <div className={`${service.bgColor} p-3 rounded-lg`}>
                                             <IconComponent className="w-6 h-6 text-kjpp-dark" />
                                         </div>
                                         <h2 className="text-xl font-bold text-kjpp-dark">{service.title}</h2>
                                     </div>
-
-                                    {/* Items */}
                                     {service.id === 3 ? (
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3">
                                             {service.items.map((item, index) => (

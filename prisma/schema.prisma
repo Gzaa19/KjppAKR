@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -136,6 +135,7 @@ model Gallery {
   @@index([eventDate])
   @@map("galleries")
 }
+
 // ==========================================
 // CLIENT MODEL
 // ==========================================
@@ -174,8 +174,8 @@ model ManagementTeam {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  @@map("management_teams")
   @@index([sortOrder])
+  @@map("management_teams")
 }
 
 // ==========================================
@@ -193,4 +193,126 @@ model HeroImage {
   @@index([sortOrder])
   @@index([isActive])
   @@map("hero_images")
+}
+
+// ==========================================
+// CLIENT CONTACT MODEL (for Client Management)
+// ==========================================
+model ClientContact {
+  id               String            @id @default(cuid())
+  name             String
+  type             ClientType
+  address          String            @db.Text
+  picName          String
+  phone            String
+  email            String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  trackingProjects TrackingProject[]
+
+  @@index([type])
+  @@index([createdAt])
+  @@map("client_contacts")
+}
+
+enum ClientType {
+  CORPORATE
+  PERORANGAN
+  SME
+  INSTANSI
+}
+
+// ==========================================
+// TRACKING PROJECT MODEL
+// ==========================================
+model TrackingProject {
+  id           String @id @default(cuid())
+  projectId    String @unique // e.g., PRJ-2024-001
+  proposalNo   String // e.g., PROP/AKR/2024/I/001
+  trackingCode String @unique // e.g., AKR-A1B2C3 - untuk tracking publik
+
+  // Client relation
+  clientId String
+  client   ClientContact @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  // Object details
+  objectType PropertyObjectType
+  objective  String // Tujuan penilaian
+  address    String             @db.Text
+
+  // Progress tracking
+  status   ProjectStatus @default(VERIFIKASI_DOKUMEN)
+  progress Int           @default(0) // 0-100
+
+  // Discussion
+  initialMessage String? @db.Text
+
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  completedAt DateTime?
+
+  // Relations
+  projectProgresses ProjectProgress[]
+
+  @@index([clientId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([trackingCode])
+  @@map("tracking_projects")
+}
+
+enum ProjectStatus {
+  VERIFIKASI_DOKUMEN
+  INSPEKSI_LAPANGAN
+  PROSES_REVIEW
+  LAPORAN_FINAL
+  SELESAI
+}
+
+enum PropertyObjectType {
+  RUMAH_TINGGAL
+  RUKO_KANTOR
+  TANAH_KOSONG
+  GUDANG
+  APARTEMEN
+  PABRIK
+  LAINNYA
+}
+
+// ==========================================
+// PROJECT PROGRESS MODEL (for detailed tracking)
+// ==========================================
+model ProjectProgress {
+  id        String @id @default(cuid())
+  projectId String
+
+  // Stage info
+  stageId     Int // 1-5 main stages
+  stageName   String
+  subStepId   String // e.g., "1a", "1b", "2a"
+  subStepName String
+
+  // Status tracking
+  status    ProgressStatus @default(PENDING)
+  startDate DateTime?
+  endDate   DateTime?
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relation
+  project TrackingProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, subStepId])
+  @@index([projectId])
+  @@index([status])
+  @@map("project_progress")
+}
+
+enum ProgressStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
 }

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
     // Redirect /admin to /admin/login
@@ -31,15 +31,13 @@ export function middleware(request: NextRequest) {
         }
     }
 
-    // If logged in user tries to access login page, redirect to dashboard
     if (pathname === '/admin/login') {
         const sessionCookie = request.cookies.get('admin_session');
         if (sessionCookie) {
             try {
                 JSON.parse(sessionCookie.value);
-                return NextResponse.redirect(new URL('/admin/dashboard', request.url));
+                return NextResponse.redirect(new URL('/admin/portal-selection', request.url));
             } catch {
-                // Invalid session, let them login
             }
         }
     }

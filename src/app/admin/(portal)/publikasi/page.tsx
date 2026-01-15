@@ -26,12 +26,17 @@ export default async function PublikasiPage() {
 
     return (
         <div className="flex flex-1 flex-col gap-4">
-            <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                    <h2 className="text-2xl font-bold tracking-tight">Publikasi</h2>
-                    <p className="text-sm text-muted-foreground">
-                        Kelola artikel, berita, kegiatan, dan pengumuman KJPP AKR.
-                    </p>
+            <div className="space-y-2">
+                <h1 className="text-3xl font-bold text-gray-900">Publikasi</h1>
+                <p className="text-gray-600">
+                    Kelola artikel, berita, kegiatan, dan pengumuman KJPP AKR.
+                </p>
+            </div>
+
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div className="relative flex-1 max-w-sm">
+                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input type="search" placeholder="Cari publikasi..." className="pl-8 bg-white" />
                 </div>
                 <Link href="/admin/publikasi/create">
                     <Button>
@@ -39,13 +44,6 @@ export default async function PublikasiPage() {
                         Tambah Publikasi
                     </Button>
                 </Link>
-            </div>
-
-            <div className="flex items-center gap-2 mb-2">
-                <div className="relative flex-1 max-w-sm">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input type="search" placeholder="Cari publikasi..." className="pl-8" />
-                </div>
             </div>
 
             {publications.length === 0 ? (

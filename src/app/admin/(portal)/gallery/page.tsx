@@ -4,16 +4,10 @@ import { Input } from "@/components/ui/input";
 import { Plus, Search, MoreHorizontal, Image as ImageIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import { getGalleries, getAlbums } from "@/actions/gallery";
 import { formatDateShort } from "@/lib/helpers";
-import { DeleteGalleryButton } from "@/components/admin/gallery-actions";
+import { GalleryActionMenu } from "@/components/admin/gallery-actions";
 import Image from "next/image";
 
 export default async function GalleryPage() {
@@ -22,7 +16,6 @@ export default async function GalleryPage() {
     const galleries = galleriesResult.success ? galleriesResult.data?.galleries || [] : [];
     const albums = albumsResult.success ? albumsResult.data || [] : [];
 
-    // Group galleries by album
     const galleriesByAlbum = albums.map(album => ({
         album,
         items: galleries.filter(g => g.albumId === album.id)
@@ -30,12 +23,17 @@ export default async function GalleryPage() {
 
     return (
         <div className="flex flex-1 flex-col gap-4">
-            <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                    <h2 className="text-2xl font-bold tracking-tight">Galeri Foto</h2>
-                    <p className="text-sm text-muted-foreground">
-                        Dokumentasi kegiatan perusahaan seperti rapat dan survei lapangan.
-                    </p>
+            <div className="space-y-2">
+                <h1 className="text-3xl font-bold text-gray-900">Galeri Foto</h1>
+                <p className="text-gray-600">
+                    Dokumentasi kegiatan perusahaan seperti rapat dan survei lapangan.
+                </p>
+            </div>
+
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div className="relative flex-1 max-w-sm">
+                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input type="search" placeholder="Cari foto..." className="pl-8 bg-white" />
                 </div>
                 <div className="flex gap-2">
                     <Link href="/admin/gallery/albums/create">
@@ -50,13 +48,6 @@ export default async function GalleryPage() {
                             Upload Foto
                         </Button>
                     </Link>
-                </div>
-            </div>
-
-            <div className="flex items-center gap-2 mb-2">
-                <div className="relative flex-1 max-w-sm">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input type="search" placeholder="Cari foto..." className="pl-8" />
                 </div>
             </div>
 
@@ -103,20 +94,7 @@ export default async function GalleryPage() {
                                                     <Badge variant={gallery.isPublished ? "default" : "secondary"} className="text-xs">
                                                         {gallery.isPublished ? "Published" : "Draft"}
                                                     </Badge>
-                                                    <DropdownMenu>
-                                                        <DropdownMenuTrigger asChild>
-                                                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                                                                <MoreHorizontal className="h-4 w-4" />
-                                                            </Button>
-                                                        </DropdownMenuTrigger>
-                                                        <DropdownMenuContent align="end">
-                                                            <DropdownMenuItem asChild>
-                                                                <Link href={`/admin/gallery/${gallery.id}/edit`}>Edit</Link>
-                                                            </DropdownMenuItem>
-                                                            <DropdownMenuSeparator />
-                                                            <DeleteGalleryButton id={gallery.id} />
-                                                        </DropdownMenuContent>
-                                                    </DropdownMenu>
+                                                    <GalleryActionMenu id={gallery.id} />
                                                 </div>
                                                 <h4 className="font-bold text-sm line-clamp-2">{gallery.title}</h4>
                                                 <p className="text-xs text-muted-foreground">

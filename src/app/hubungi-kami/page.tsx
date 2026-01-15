@@ -7,7 +7,7 @@ import { ContactInfoSection } from "@/components/section/contact/ContactInfoSect
 
 export const metadata: Metadata = {
     title: "Hubungi Kami | KJPP AKR",
-    description: "Hubungi KJPP Amin, Nirwan, Alfiantori & Rekan untuk konsultasi jasa penilaian dan konsultansi properti terpercaya.",
+    description: "Hubungi KJPP Anas, Karim & Rekan untuk konsultasi jasa penilaian dan konsultansi properti terpercaya.",
 };
 
 export default function ContactPage() {

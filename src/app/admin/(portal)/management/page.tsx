@@ -3,15 +3,9 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Plus, Search, MoreHorizontal, Users } from "lucide-react";
 import Link from "next/link";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import { getManagementTeams } from "@/actions/management";
-import { DeleteManagementButton } from "@/components/admin/management-actions";
+import { ManagementActionButtons } from "@/components/admin/management-action-buttons";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 
@@ -21,12 +15,17 @@ export default async function ManagementPage() {
 
     return (
         <div className="flex flex-1 flex-col gap-4">
-            <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                    <h2 className="text-2xl font-bold tracking-tight">Manajemen Tim</h2>
-                    <p className="text-sm text-muted-foreground">
-                        Kelola daftar kepemimpinan dan manajemen KJPP AKR.
-                    </p>
+            <div className="space-y-2">
+                <h1 className="text-3xl font-bold text-gray-900">Manajemen Tim</h1>
+                <p className="text-gray-600">
+                    Kelola daftar kepemimpinan dan manajemen KJPP AKR.
+                </p>
+            </div>
+
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div className="relative flex-1 max-w-sm">
+                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input type="search" placeholder="Cari nama..." className="pl-8 bg-white" />
                 </div>
                 <Link href="/admin/management/create">
                     <Button>
@@ -34,13 +33,6 @@ export default async function ManagementPage() {
                         Tambah Anggota Tim
                     </Button>
                 </Link>
-            </div>
-
-            <div className="flex items-center gap-2 mb-2">
-                <div className="relative flex-1 max-w-sm">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input type="search" placeholder="Cari nama..." className="pl-8" />
-                </div>
             </div>
 
             {teams.length === 0 ? (
@@ -89,20 +81,7 @@ export default async function ManagementPage() {
                                     </p>
 
                                     <div className="flex items-center justify-end">
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button variant="ghost" size="icon" className="h-8 w-8">
-                                                    <MoreHorizontal className="h-4 w-4" />
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end">
-                                                <DropdownMenuItem asChild>
-                                                    <Link href={`/admin/management/${member.id}/edit`}>Edit</Link>
-                                                </DropdownMenuItem>
-                                                <DropdownMenuSeparator />
-                                                <DeleteManagementButton id={member.id} />
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
+                                        <ManagementActionButtons id={member.id} />
                                     </div>
                                 </div>
                             </div>

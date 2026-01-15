@@ -3,8 +3,7 @@ import prisma from "@/lib/prisma";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
-import { DeleteHeroImageButton } from "@/components/admin/DeleteHeroImageButton";
-import { EditHeroImageDialog } from "@/components/admin/EditHeroImageDialog";
+import { HeroImageActionMenu } from "@/components/admin/hero-image-actions";
 
 export default async function HeroImagesPage() {
     const heroImages = await prisma.heroImage.findMany({
@@ -13,9 +12,9 @@ export default async function HeroImagesPage() {
 
     return (
         <div className="space-y-6">
-            <div className="space-y-1">
-                <h2 className="text-2xl font-bold tracking-tight">Hero Images</h2>
-                <p className="text-sm text-muted-foreground">
+            <div className="space-y-2">
+                <h1 className="text-3xl font-bold text-gray-900">Hero Images</h1>
+                <p className="text-gray-600">
                     Kelola gambar slide show di halaman depan. (Maksimal 3 gambar)
                 </p>
             </div>
@@ -40,8 +39,7 @@ export default async function HeroImagesPage() {
                                 {image.isActive ? "Active" : "Inactive"}
                             </Badge>
                             <div className="flex gap-2">
-                                <EditHeroImageDialog image={image} />
-                                <DeleteHeroImageButton id={image.id} />
+                                <HeroImageActionMenu image={image} />
                             </div>
                         </CardContent>
                     </Card>

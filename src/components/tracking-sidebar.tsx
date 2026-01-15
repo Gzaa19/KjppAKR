@@ -5,14 +5,11 @@ import { usePathname, useRouter } from "next/navigation"
 import { toast } from "sonner"
 import Image from "next/image"
 import {
-    LayoutDashboard,
-    FileText,
+    Settings2,
+    FolderKanban,
     LogOut,
-    Building2,
     Users,
-    Map,
-    Image as ImageIcon,
-    Settings2
+    LayoutDashboard,
 } from "lucide-react"
 
 import {
@@ -45,47 +42,28 @@ type UserSession = {
     avatar: string | null;
 };
 
-// Define menu items
-const platformMenu = [
+const trackingPlatformMenu = [
     {
         title: "Dashboard",
-        url: "/admin/dashboard",
+        url: "/admin/tracking",
         icon: LayoutDashboard,
     },
 ];
 
-const masterDataMenu = [
+const trackingMasterDataMenu = [
     {
-        title: "Manajemen",
-        url: "/admin/management",
+        title: "Klien",
+        url: "/admin/tracking/clients",
         icon: Users,
     },
     {
-        title: "Klien",
-        url: "/admin/clients",
-        icon: Building2,
+        title: "Proyek",
+        url: "/admin/tracking/projects",
+        icon: FolderKanban,
     },
 ];
 
-const cmsMenu = [
-    {
-        title: "Publikasi",
-        url: "/admin/publikasi",
-        icon: FileText,
-    },
-    {
-        title: "Galeri",
-        url: "/admin/gallery",
-        icon: Map,
-    },
-    {
-        title: "Hero Images",
-        url: "/admin/hero-images",
-        icon: ImageIcon,
-    },
-];
-
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function TrackingSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const pathname = usePathname()
     const router = useRouter()
     const [user, setUser] = React.useState<UserSession | null>(null)
@@ -137,10 +115,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const logoTextClass = "text-slate-800 font-bold";
     const subTextClass = "text-slate-500 font-medium";
 
-    const renderMenu = (items: typeof platformMenu) => (
+    const renderMenu = (items: any[]) => (
         <SidebarMenu className="px-2">
             {items.map((item) => {
-                const isMainActive = item.url === pathname || (item.url !== "#" && pathname.startsWith(item.url));
+                let isMainActive = false;
+
+                if (item.url === "/admin/tracking") {
+                    isMainActive = pathname === "/admin/tracking";
+                } else {
+                    isMainActive = pathname.startsWith(item.url);
+                }
 
                 return (
                     <SidebarMenuItem key={item.title}>
@@ -167,7 +151,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild className="hover:bg-transparent">
-                            <a href="/admin/dashboard" className="flex items-center gap-3">
+                            <a href="/admin/tracking/projects" className="flex items-center gap-3">
                                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-white border border-slate-100 shadow-sm p-1 md:size-10 md:rounded-xl md:p-1.5">
                                     <Image
                                         src="/image/logoAKR.png"
@@ -179,7 +163,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                 </div>
                                 <div className="grid flex-1 text-left leading-tight">
                                     <span className={logoTextClass}>KJPP AKR</span>
-                                    <span className={subTextClass + " text-xs"}>Admin Portal</span>
+                                    <span className={subTextClass + " text-xs"}>Tracking System</span>
                                 </div>
                             </a>
                         </SidebarMenuButton>
@@ -189,17 +173,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarContent className="px-2 group-data-[collapsible=icon]:px-0">
                 <SidebarGroup className="p-0">
                     <SidebarGroupLabel className={groupLabelClass}>Platform</SidebarGroupLabel>
-                    {renderMenu(platformMenu)}
+                    {renderMenu(trackingPlatformMenu)}
                 </SidebarGroup>
 
                 <SidebarGroup className="p-0">
                     <SidebarGroupLabel className={groupLabelClass}>Master Data</SidebarGroupLabel>
-                    {renderMenu(masterDataMenu)}
-                </SidebarGroup>
-
-                <SidebarGroup className="p-0">
-                    <SidebarGroupLabel className={groupLabelClass}>Website CMS</SidebarGroupLabel>
-                    {renderMenu(cmsMenu)}
+                    {renderMenu(trackingMasterDataMenu)}
                 </SidebarGroup>
             </SidebarContent>
 

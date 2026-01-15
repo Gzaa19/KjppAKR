@@ -4,7 +4,7 @@ import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { MapPin, Clock, Phone, Menu, X, ChevronDown } from "lucide-react";
+import { MapPin, Clock, Phone, Menu, X, ChevronDown, Clock3 } from "lucide-react";
 import {
     NavigationMenu,
     NavigationMenuContent,
@@ -207,6 +207,12 @@ export function Navbar() {
                                 </NavigationMenuItem>
                             </NavigationMenuList>
                         </NavigationMenu>
+                        <Link href="/lacak-status" className="hidden lg:block ml-4">
+                            <Button className="bg-kjpp-red hover:bg-kjpp-red/90 text-white rounded-full px-6 py-2 flex items-center gap-2">
+                                <Clock3 className="w-4 h-4" />
+                                Lacak Status
+                            </Button>
+                        </Link>
                         <Sheet open={isOpen} onOpenChange={setIsOpen}>
                             <SheetTrigger asChild className="lg:hidden">
                                 <Button variant="ghost" size="icon">
@@ -342,6 +348,16 @@ export function Navbar() {
                                         onClick={() => setIsOpen(false)}
                                     >
                                         Hubungi Kami
+                                    </Link>
+                                    <Link
+                                        href="/lacak-status"
+                                        className="mt-4"
+                                        onClick={() => setIsOpen(false)}
+                                    >
+                                        <Button className="w-full bg-kjpp-red hover:bg-kjpp-red/90 text-white rounded-full px-6 py-3 flex items-center justify-center gap-2">
+                                            <Clock3 className="w-4 h-4" />
+                                            Lacak Status
+                                        </Button>
                                     </Link>
                                 </nav>
                             </SheetContent>
