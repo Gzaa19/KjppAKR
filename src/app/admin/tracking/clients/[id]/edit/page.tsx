@@ -1,5 +1,6 @@
 "use client";
 
+import { getTrackingClientById, updateTrackingClient } from "@/actions/tracking-clients";
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -40,20 +41,19 @@ export default function EditClientPage({ params }: { params: Promise<{ id: strin
     React.useEffect(() => {
         const fetchClient = async () => {
             try {
-                const response = await fetch(`/api/tracking-clients/${id}`);
-                const data = await response.json();
+                const result = await getTrackingClientById(id);
 
-                if (data.success) {
+                if (result.success && result.data) {
                     setFormData({
-                        name: data.data.name,
-                        type: data.data.type,
-                        address: data.data.address,
-                        picName: data.data.picName,
-                        phone: data.data.phone,
-                        email: data.data.email,
+                        name: result.data.name,
+                        type: result.data.type,
+                        address: result.data.address,
+                        picName: result.data.picName,
+                        phone: result.data.phone,
+                        email: result.data.email,
                     });
                 } else {
-                    toast.error("Gagal memuat data klien");
+                    toast.error(result.error || "Gagal memuat data klien");
                     router.push("/admin/tracking/clients");
                 }
             } catch (error) {
@@ -82,21 +82,13 @@ export default function EditClientPage({ params }: { params: Promise<{ id: strin
         setIsSubmitting(true);
 
         try {
-            const response = await fetch(`/api/tracking-clients/${id}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(formData),
-            });
+            const result = await updateTrackingClient(id, formData as any);
 
-            const data = await response.json();
-
-            if (data.success) {
+            if (result.success) {
                 toast.success("Klien berhasil diperbarui");
                 router.push("/admin/tracking/clients");
             } else {
-                toast.error(data.error || "Gagal memperbarui klien");
+                toast.error(result.error || "Gagal memperbarui klien");
                 setIsSubmitting(false);
             }
         } catch (error) {
@@ -190,7 +182,6 @@ export default function EditClientPage({ params }: { params: Promise<{ id: strin
                         </div>
                     </div>
 
-                    {/* Kontak Person (PIC) Section */}
                     <div className="bg-white rounded-lg border p-6 space-y-6">
                         <div className="flex items-center gap-3 pb-4 border-b">
                             <div className="w-10 h-10 rounded-lg bg-blue-950 flex items-center justify-center">

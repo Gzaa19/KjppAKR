@@ -1,5 +1,6 @@
 "use client";
 
+import { getTrackingClients, deleteTrackingClient } from "@/actions/tracking-clients";
 import * as React from "react";
 import {
     Table,
@@ -71,20 +72,19 @@ export default function ClientsPage() {
     const fetchClients = React.useCallback(async () => {
         setLoading(true);
         try {
-            const params = new URLSearchParams({
-                page: page.toString(),
-                limit: "10",
-                ...(searchQuery && { search: searchQuery }),
-                ...(selectedType !== "all" && { type: selectedType }),
+            const result = await getTrackingClients({
+                page,
+                limit: 10,
+                search: searchQuery,
+                type: selectedType,
             });
 
-            const response = await fetch(`/api/tracking-clients?${params}`);
-            const data = await response.json();
-
-            if (data.success) {
-                setClients(data.data);
-                setTotalPages(data.pagination.totalPages);
-                setTotal(data.pagination.total);
+            if (result.success && result.data) {
+                setClients(result.data.clients);
+                setTotalPages(result.data.pagination.totalPages);
+                setTotal(result.data.pagination.total);
+            } else {
+                toast.error(result.error || "Gagal memuat data klien");
             }
         } catch (error) {
             console.error("Error fetching clients:", error);
@@ -102,17 +102,13 @@ export default function ClientsPage() {
         if (!deleteId) return;
 
         try {
-            const response = await fetch(`/api/tracking-clients/${deleteId}`, {
-                method: "DELETE",
-            });
+            const result = await deleteTrackingClient(deleteId);
 
-            const data = await response.json();
-
-            if (data.success) {
+            if (result.success) {
                 toast.success("Klien berhasil dihapus");
                 fetchClients();
             } else {
-                toast.error(data.error || "Gagal menghapus klien");
+                toast.error(result.error || "Gagal menghapus klien");
             }
         } catch (error) {
             console.error("Error deleting client:", error);

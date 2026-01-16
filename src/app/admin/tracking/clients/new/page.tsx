@@ -1,5 +1,6 @@
 "use client";
 
+import { createTrackingClient } from "@/actions/tracking-clients";
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -49,21 +50,13 @@ export default function NewClientPage() {
         setIsSubmitting(true);
 
         try {
-            const response = await fetch("/api/tracking-clients", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(formData),
-            });
+            const result = await createTrackingClient(formData as any);
 
-            const data = await response.json();
-
-            if (data.success) {
+            if (result.success) {
                 toast.success("Klien berhasil ditambahkan");
                 router.push("/admin/tracking/clients");
             } else {
-                toast.error(data.error || "Gagal menambahkan klien");
+                toast.error(result.error || "Gagal menambahkan klien");
                 setIsSubmitting(false);
             }
         } catch (error) {
