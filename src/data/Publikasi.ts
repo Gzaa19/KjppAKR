@@ -1,32 +1,5 @@
 import prisma from "@/lib/prisma";
-import type { NewsCategory } from "@/generated/prisma";
-
-export interface Publikasi {
-    id: string;
-    title: string;
-    slug: string;
-    excerpt: string | null;
-    content: string;
-    coverImage: string | null;
-    category: NewsCategory;
-    isPublished: boolean;
-    publishedAt: Date | null;
-    views: number;
-    authorId: string;
-    createdAt: Date;
-    updatedAt: Date;
-    author?: {
-        id: string;
-        name: string;
-    };
-}
-
-export interface PublikasiPagination {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-}
+import type { Publikasi, PublikasiListResult } from "@/types";
 
 export async function getPublikasi(options?: {
     published?: boolean;
@@ -34,8 +7,8 @@ export async function getPublikasi(options?: {
     page?: number;
     authorId?: string;
 }) {
-    const defaultResult = {
-        publikasi: [] as Publikasi[],
+    const defaultResult: PublikasiListResult = {
+        publikasi: [],
         pagination: { total: 0, page: 1, limit: 20, totalPages: 0 },
     };
 
