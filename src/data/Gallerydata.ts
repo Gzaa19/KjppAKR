@@ -1,10 +1,3 @@
-/**
- * Data Access Layer (DAL) for Gallery
- *
- * This file contains functions that directly access the database
- * for gallery-related data. Use these in Server Components.
- */
-
 import prisma from "@/lib/prisma";
 
 export interface Album {
@@ -23,16 +16,15 @@ export interface Album {
 
 export interface Gallery {
     id: string;
+    title: string;
+    description: string | null;
     imageUrl: string;
     thumbnailUrl: string | null;
-    title: string | null;
-    caption: string | null;
-    location: string | null;
-    takenAt: Date | null;
-    sortOrder: number;
+    eventDate: Date | null;
     isPublished: boolean;
+    sortOrder: number;
     albumId: string | null;
-    uploadedById: string | null;
+    uploadedById: string;
     createdAt: Date;
     updatedAt: Date;
     album?: {
@@ -43,7 +35,7 @@ export interface Gallery {
     uploadedBy?: {
         id: string;
         name: string;
-    } | null;
+    };
 }
 
 export interface GalleryPagination {
@@ -58,14 +50,6 @@ export interface GalleryListResult {
     pagination: GalleryPagination;
 }
 
-// ============================================
-// ALBUM DATA ACCESS
-// ============================================
-
-/**
- * Fetch all albums from the database
- * Returns empty array on error
- */
 export async function getAlbums(activeOnly: boolean = false): Promise<Album[]> {
     try {
         const albums = await prisma.album.findMany({
@@ -83,11 +67,7 @@ export async function getAlbums(activeOnly: boolean = false): Promise<Album[]> {
     }
 }
 
-/**
- * Fetch a single album by slug
- * Returns null if not found or on error
- */
-export async function getAlbumBySlug(slug: string): Promise<(Album & { galleries: Gallery[] }) | null> {
+export async function getAlbumBySlug(slug: string) {
     try {
         const album = await prisma.album.findUnique({
             where: { slug },
@@ -106,10 +86,6 @@ export async function getAlbumBySlug(slug: string): Promise<(Album & { galleries
     }
 }
 
-/**
- * Fetch a single album by ID
- * Returns null if not found or on error
- */
 export async function getAlbumById(id: string): Promise<Album | null> {
     try {
         const album = await prisma.album.findUnique({
@@ -126,22 +102,14 @@ export async function getAlbumById(id: string): Promise<Album | null> {
     }
 }
 
-// ============================================
-// GALLERY DATA ACCESS
-// ============================================
-
-/**
- * Fetch galleries with optional filtering and pagination
- * Returns empty result on error
- */
 export async function getGalleries(options?: {
     published?: boolean;
     albumId?: string;
     limit?: number;
     page?: number;
-}): Promise<GalleryListResult> {
-    const defaultResult: GalleryListResult = {
-        galleries: [],
+}) {
+    const defaultResult = {
+        galleries: [] as Gallery[],
         pagination: { total: 0, page: 1, limit: 20, totalPages: 0 },
     };
 
@@ -183,11 +151,7 @@ export async function getGalleries(options?: {
     }
 }
 
-/**
- * Fetch a single gallery by ID
- * Returns null if not found or on error
- */
-export async function getGalleryById(id: string): Promise<Gallery | null> {
+export async function getGalleryById(id: string) {
     try {
         const gallery = await prisma.gallery.findUnique({
             where: { id },
@@ -204,11 +168,7 @@ export async function getGalleryById(id: string): Promise<Gallery | null> {
     }
 }
 
-/**
- * Fetch published galleries for public display
- * Returns empty array on error
- */
-export async function getPublishedGalleries(limit?: number): Promise<Gallery[]> {
+export async function getPublishedGalleries(limit?: number) {
     try {
         const galleries = await prisma.gallery.findMany({
             where: { isPublished: true },
@@ -226,14 +186,10 @@ export async function getPublishedGalleries(limit?: number): Promise<Gallery[]> 
     }
 }
 
-/**
- * Fetch galleries by album ID
- * Returns empty array on error
- */
 export async function getGalleriesByAlbumId(
     albumId: string,
     publishedOnly: boolean = true
-): Promise<Gallery[]> {
+) {
     try {
         const galleries = await prisma.gallery.findMany({
             where: {
@@ -254,10 +210,6 @@ export async function getGalleriesByAlbumId(
     }
 }
 
-/**
- * Get gallery statistics
- * Returns default values on error
- */
 export async function getGalleryStats(): Promise<{
     totalAlbums: number;
     totalGalleries: number;

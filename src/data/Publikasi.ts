@@ -1,11 +1,5 @@
-/**
- * Data Access Layer (DAL) for Publikasi (News)
- *
- * This file contains functions that directly access the database
- * for publikasi/news-related data. Use these in Server Components.
- */
-
 import prisma from "@/lib/prisma";
+import type { NewsCategory } from "@/generated/prisma";
 
 export interface Publikasi {
     id: string;
@@ -14,15 +8,17 @@ export interface Publikasi {
     excerpt: string | null;
     content: string;
     coverImage: string | null;
+    category: NewsCategory;
     isPublished: boolean;
     publishedAt: Date | null;
-    authorId: string | null;
+    views: number;
+    authorId: string;
     createdAt: Date;
     updatedAt: Date;
     author?: {
         id: string;
         name: string;
-    } | null;
+    };
 }
 
 export interface PublikasiPagination {
@@ -32,27 +28,14 @@ export interface PublikasiPagination {
     totalPages: number;
 }
 
-export interface PublikasiListResult {
-    publikasi: Publikasi[];
-    pagination: PublikasiPagination;
-}
-
-// ============================================
-// PUBLIKASI DATA ACCESS
-// ============================================
-
-/**
- * Fetch all publikasi with optional filtering and pagination
- * Returns empty result on error
- */
 export async function getPublikasi(options?: {
     published?: boolean;
     limit?: number;
     page?: number;
     authorId?: string;
-}): Promise<PublikasiListResult> {
-    const defaultResult: PublikasiListResult = {
-        publikasi: [],
+}) {
+    const defaultResult = {
+        publikasi: [] as Publikasi[],
         pagination: { total: 0, page: 1, limit: 20, totalPages: 0 },
     };
 
@@ -93,11 +76,7 @@ export async function getPublikasi(options?: {
     }
 }
 
-/**
- * Fetch a single publikasi by slug
- * Returns null if not found or on error
- */
-export async function getPublikasiBySlug(slug: string): Promise<Publikasi | null> {
+export async function getPublikasiBySlug(slug: string) {
     try {
         const publikasi = await prisma.news.findUnique({
             where: { slug },
@@ -113,11 +92,7 @@ export async function getPublikasiBySlug(slug: string): Promise<Publikasi | null
     }
 }
 
-/**
- * Fetch a single publikasi by ID
- * Returns null if not found or on error
- */
-export async function getPublikasiById(id: string): Promise<Publikasi | null> {
+export async function getPublikasiById(id: string) {
     try {
         const publikasi = await prisma.news.findUnique({
             where: { id },
@@ -133,11 +108,7 @@ export async function getPublikasiById(id: string): Promise<Publikasi | null> {
     }
 }
 
-/**
- * Fetch published publikasi for public display
- * Returns empty array on error
- */
-export async function getPublishedPublikasi(limit?: number): Promise<Publikasi[]> {
+export async function getPublishedPublikasi(limit?: number) {
     try {
         const publikasi = await prisma.news.findMany({
             where: { isPublished: true },
@@ -155,11 +126,7 @@ export async function getPublishedPublikasi(limit?: number): Promise<Publikasi[]
     }
 }
 
-/**
- * Fetch latest publikasi
- * Returns empty array on error
- */
-export async function getLatestPublikasi(count: number = 5): Promise<Publikasi[]> {
+export async function getLatestPublikasi(count: number = 5) {
     try {
         const publikasi = await prisma.news.findMany({
             where: { isPublished: true },
@@ -177,14 +144,10 @@ export async function getLatestPublikasi(count: number = 5): Promise<Publikasi[]
     }
 }
 
-/**
- * Fetch related publikasi (excluding current one)
- * Returns empty array on error
- */
 export async function getRelatedPublikasi(
     currentSlug: string,
     limit: number = 3
-): Promise<Publikasi[]> {
+) {
     try {
         const publikasi = await prisma.news.findMany({
             where: {
@@ -205,10 +168,6 @@ export async function getRelatedPublikasi(
     }
 }
 
-/**
- * Get publikasi statistics
- * Returns default values on error
- */
 export async function getPublikasiStats(): Promise<{
     totalPublikasi: number;
     publishedPublikasi: number;
@@ -235,14 +194,10 @@ export async function getPublikasiStats(): Promise<{
     }
 }
 
-/**
- * Search publikasi by title or content
- * Returns empty array on error
- */
 export async function searchPublikasi(
     query: string,
     publishedOnly: boolean = true
-): Promise<Publikasi[]> {
+) {
     try {
         const publikasi = await prisma.news.findMany({
             where: {
