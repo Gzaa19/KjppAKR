@@ -1,4 +1,4 @@
-import { TrackingSidebar } from "@/components/tracking-sidebar"
+import { AppSidebar } from "@/components/app-sidebar"
 import {
     SidebarInset,
     SidebarProvider,
@@ -12,7 +12,7 @@ export default function TrackingLayout({
 }) {
     return (
         <SidebarProvider>
-            <TrackingSidebar />
+            <AppSidebar portalType="tracking" />
             <SidebarInset>
                 <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 bg-background">
                     <div className="flex items-center gap-2 px-4">

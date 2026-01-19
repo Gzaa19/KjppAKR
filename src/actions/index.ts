@@ -1,4 +1,4 @@
-export * from "@/types/action-response";
+export * from "@/types/types";
 export * from "./auth";
 export * from "./news";
 export * from "./gallery";

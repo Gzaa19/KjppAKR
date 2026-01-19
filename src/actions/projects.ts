@@ -13,7 +13,7 @@ import {
     type ProjectStatus,
 } from "@/lib/validations/projects";
 import { revalidatePath } from "next/cache";
-import type { ActionResponse } from "@/types/action-response";
+import type { ActionResponse } from "@/types/types";
 
 // ============================================
 // HELPER FUNCTIONS

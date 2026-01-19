@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import type { Album, Gallery, GalleryListResult } from "@/types";
+import type { Album, Gallery, GalleryListResult } from "@/types/types";
 
 export async function getAlbums(activeOnly: boolean = false): Promise<Album[]> {
     try {

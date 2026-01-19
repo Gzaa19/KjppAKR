@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import { createNewsSchema, updateNewsSchema, type CreateNewsInput, type UpdateNewsInput } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
-import type { ActionResponse } from "@/types/action-response";
+import type { ActionResponse } from "@/types/types";
 
 
 // ============================================

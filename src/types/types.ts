@@ -1,3 +1,11 @@
+import type { NewsCategory } from "@/generated/prisma";
+
+export type ActionResponse<T = unknown> = {
+    success: boolean;
+    data?: T;
+    error?: string;
+};
+
 export interface Album {
     id: string;
     name: string;
@@ -46,4 +54,36 @@ export interface GalleryPagination {
 export interface GalleryListResult {
     galleries: Gallery[];
     pagination: GalleryPagination;
+}
+
+export interface Publikasi {
+    id: string;
+    title: string;
+    slug: string;
+    excerpt: string | null;
+    content: string;
+    coverImage: string | null;
+    category: NewsCategory;
+    isPublished: boolean;
+    publishedAt: Date | null;
+    views: number;
+    authorId: string;
+    createdAt: Date;
+    updatedAt: Date;
+    author?: {
+        id: string;
+        name: string;
+    };
+}
+
+export interface PublikasiPagination {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+}
+
+export interface PublikasiListResult {
+    publikasi: Publikasi[];
+    pagination: PublikasiPagination;
 }

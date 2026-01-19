@@ -12,7 +12,8 @@ import {
     Users,
     Map,
     Image as ImageIcon,
-    Settings2
+    Settings2,
+    FolderKanban,
 } from "lucide-react"
 
 import {
@@ -45,51 +46,90 @@ type UserSession = {
     avatar: string | null;
 };
 
-// Define menu items
-const platformMenu = [
+type MenuItem = {
+    title: string;
+    url: string;
+    icon: React.ElementType;
+};
+
+type MenuGroup = {
+    label: string;
+    items: MenuItem[];
+};
+
+// Portal menu configuration
+const portalMenuConfig: MenuGroup[] = [
     {
-        title: "Dashboard",
-        url: "/admin/dashboard",
-        icon: LayoutDashboard,
+        label: "Platform",
+        items: [
+            { title: "Dashboard", url: "/admin/dashboard", icon: LayoutDashboard },
+        ],
+    },
+    {
+        label: "Master Data",
+        items: [
+            { title: "Manajemen", url: "/admin/management", icon: Users },
+            { title: "Klien", url: "/admin/clients", icon: Building2 },
+        ],
+    },
+    {
+        label: "Website CMS",
+        items: [
+            { title: "Publikasi", url: "/admin/publikasi", icon: FileText },
+            { title: "Galeri", url: "/admin/gallery", icon: Map },
+            { title: "Hero Images", url: "/admin/hero-images", icon: ImageIcon },
+        ],
     },
 ];
 
-const masterDataMenu = [
+// Tracking menu configuration
+const trackingMenuConfig: MenuGroup[] = [
     {
-        title: "Manajemen",
-        url: "/admin/management",
-        icon: Users,
+        label: "Platform",
+        items: [
+            { title: "Dashboard", url: "/admin/tracking", icon: LayoutDashboard },
+        ],
     },
     {
-        title: "Klien",
-        url: "/admin/clients",
-        icon: Building2,
-    },
-];
-
-const cmsMenu = [
-    {
-        title: "Publikasi",
-        url: "/admin/publikasi",
-        icon: FileText,
-    },
-    {
-        title: "Galeri",
-        url: "/admin/gallery",
-        icon: Map,
-    },
-    {
-        title: "Hero Images",
-        url: "/admin/hero-images",
-        icon: ImageIcon,
+        label: "Master Data",
+        items: [
+            { title: "Klien", url: "/admin/tracking/clients", icon: Users },
+            { title: "Proyek", url: "/admin/tracking/projects", icon: FolderKanban },
+        ],
     },
 ];
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+// Sidebar variant configurations
+const sidebarConfig = {
+    portal: {
+        subtitle: "Admin Portal",
+        homeUrl: "/admin/dashboard",
+        menuGroups: portalMenuConfig,
+        logoSize: { expanded: 12, collapsed: 8 },
+        logoStyle: "static", // static = larger logo, clickable = smaller with link
+    },
+    tracking: {
+        subtitle: "Tracking System",
+        homeUrl: "/admin/tracking",
+        menuGroups: trackingMenuConfig,
+        logoSize: { expanded: 12, collapsed: 8 },
+        logoStyle: "static",
+    },
+};
+
+type PortalType = keyof typeof sidebarConfig;
+
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+    portalType?: PortalType;
+}
+
+export function AppSidebar({ portalType = "portal", ...props }: AppSidebarProps) {
     const pathname = usePathname()
     const router = useRouter()
     const [user, setUser] = React.useState<UserSession | null>(null)
     const [isLoggingOut, setIsLoggingOut] = React.useState(false)
+
+    const config = sidebarConfig[portalType];
 
     React.useEffect(() => {
         async function fetchSession() {
@@ -134,19 +174,25 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
     const menuButtonClass = "text-slate-600 hover:text-slate-900 hover:bg-slate-100 data-[active=true]:bg-[#1e293b] data-[active=true]:text-white data-[active=true]:hover:bg-[#1e293b] data-[active=true]:hover:text-white font-medium transition-all duration-200";
     const groupLabelClass = "text-xs font-bold uppercase tracking-wider text-slate-400 px-4 mb-2 mt-4";
-    const logoTextClass = "text-slate-800 font-bold";
-    const subTextClass = "text-slate-500 font-medium";
 
-    const renderMenu = (items: typeof platformMenu) => (
+    const isMenuActive = (url: string) => {
+        // Special handling for dashboard routes (exact match)
+        if (url === "/admin/dashboard" || url === "/admin/tracking") {
+            return pathname === url;
+        }
+        return pathname.startsWith(url);
+    };
+
+    const renderMenu = (items: MenuItem[]) => (
         <SidebarMenu className="px-2">
             {items.map((item) => {
-                const isMainActive = item.url === pathname || (item.url !== "#" && pathname.startsWith(item.url));
+                const isActive = isMenuActive(item.url);
 
                 return (
                     <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton
                             asChild
-                            isActive={isMainActive}
+                            isActive={isActive}
                             tooltip={item.title}
                             className={menuButtonClass}
                         >
@@ -161,46 +207,65 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
     );
 
+    const renderLogo = () => {
+        if (config.logoStyle === "static") {
+            return (
+                <div className="flex items-center gap-3 px-2 py-3 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center">
+                    <div className="flex aspect-square size-12 group-data-[collapsible=icon]:size-8 items-center justify-center rounded-lg shrink-0">
+                        <Image
+                            src="/image/logoAKR.png"
+                            alt="KJPP AKR Logo"
+                            width={48}
+                            height={48}
+                            className="object-contain"
+                        />
+                    </div>
+                    <div className="grid flex-1 text-left leading-tight group-data-[collapsible=icon]:hidden">
+                        <span className="truncate font-bold text-lg">KJPP AKR</span>
+                        <span className="truncate text-sm font-medium">{config.subtitle}</span>
+                    </div>
+                </div>
+            );
+        }
+
+        // Clickable logo style
+        return (
+            <SidebarMenuButton size="lg" asChild className="hover:bg-transparent">
+                <a href={config.homeUrl} className="flex items-center gap-3">
+                    <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-white border border-slate-100 shadow-sm p-1 md:size-10 md:rounded-xl md:p-1.5 shrink-0">
+                        <Image
+                            src="/image/logoAKR.png"
+                            alt="KJPP AKR Logo"
+                            width={40}
+                            height={40}
+                            className="object-contain"
+                        />
+                    </div>
+                    <div className="grid flex-1 text-left leading-tight group-data-[collapsible=icon]:hidden">
+                        <span className="text-slate-800 font-bold">KJPP AKR</span>
+                        <span className="text-slate-500 font-medium text-xs">{config.subtitle}</span>
+                    </div>
+                </a>
+            </SidebarMenuButton>
+        );
+    };
+
     return (
         <Sidebar collapsible="icon" className="bg-white border-r border-slate-100" {...props}>
             <SidebarHeader className="p-4 pb-2 group-data-[collapsible=icon]:p-2">
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild className="hover:bg-transparent">
-                            <a href="/admin/dashboard" className="flex items-center gap-3">
-                                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-white border border-slate-100 shadow-sm p-1 md:size-10 md:rounded-xl md:p-1.5">
-                                    <Image
-                                        src="/image/logoAKR.png"
-                                        alt="KJPP AKR Logo"
-                                        width={40}
-                                        height={40}
-                                        className="object-contain"
-                                    />
-                                </div>
-                                <div className="grid flex-1 text-left leading-tight">
-                                    <span className={logoTextClass}>KJPP AKR</span>
-                                    <span className={subTextClass + " text-xs"}>Admin Portal</span>
-                                </div>
-                            </a>
-                        </SidebarMenuButton>
+                        {renderLogo()}
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>
             <SidebarContent className="px-2 group-data-[collapsible=icon]:px-0">
-                <SidebarGroup className="p-0">
-                    <SidebarGroupLabel className={groupLabelClass}>Platform</SidebarGroupLabel>
-                    {renderMenu(platformMenu)}
-                </SidebarGroup>
-
-                <SidebarGroup className="p-0">
-                    <SidebarGroupLabel className={groupLabelClass}>Master Data</SidebarGroupLabel>
-                    {renderMenu(masterDataMenu)}
-                </SidebarGroup>
-
-                <SidebarGroup className="p-0">
-                    <SidebarGroupLabel className={groupLabelClass}>Website CMS</SidebarGroupLabel>
-                    {renderMenu(cmsMenu)}
-                </SidebarGroup>
+                {config.menuGroups.map((group: MenuGroup) => (
+                    <SidebarGroup key={group.label} className="p-0">
+                        <SidebarGroupLabel className={groupLabelClass}>{group.label}</SidebarGroupLabel>
+                        {renderMenu(group.items)}
+                    </SidebarGroup>
+                ))}
             </SidebarContent>
 
             <SidebarFooter className="p-4 pt-2 group-data-[collapsible=icon]:p-2">

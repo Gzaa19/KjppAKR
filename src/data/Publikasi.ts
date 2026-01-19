@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import type { Publikasi, PublikasiListResult } from "@/types";
+import type { Publikasi, PublikasiListResult } from "@/types/types";
 
 export async function getPublikasi(options?: {
     published?: boolean;

@@ -2,7 +2,7 @@
 
 import { createNews, updateNews, deleteNews, togglePublishNews } from "./news";
 import type { CreateNewsInput, UpdateNewsInput } from "@/lib/validations";
-import type { ActionResponse } from "@/types/action-response";
+import type { ActionResponse } from "@/types/types";
 import { cookies } from "next/headers";
 
 // Wrapper untuk createNews yang menangani session
