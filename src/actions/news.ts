@@ -5,10 +5,6 @@ import { createNewsSchema, updateNewsSchema, type CreateNewsInput, type UpdateNe
 import { revalidatePath } from "next/cache";
 import type { ActionResponse } from "@/types/action-response";
 
-
-// ============================================
-// CREATE
-// ============================================
 export async function createNews(
     input: CreateNewsInput,
     authorId: string
@@ -136,7 +132,6 @@ export async function getNewsBySlug(slug: string) {
             return { success: false, error: "Berita tidak ditemukan" };
         }
 
-        // Increment views
         await prisma.news.update({
             where: { id: news.id },
             data: { views: { increment: 1 } },
@@ -149,9 +144,6 @@ export async function getNewsBySlug(slug: string) {
     }
 }
 
-// ============================================
-// UPDATE
-// ============================================
 export async function updateNews(
     id: string,
     input: UpdateNewsInput
@@ -215,9 +207,6 @@ export async function deleteNews(id: string): Promise<ActionResponse> {
     }
 }
 
-// ============================================
-// TOGGLE PUBLISH
-// ============================================
 export async function togglePublishNews(id: string): Promise<ActionResponse> {
     try {
         const existing = await prisma.news.findUnique({ where: { id } });

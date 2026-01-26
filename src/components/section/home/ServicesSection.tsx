@@ -44,14 +44,6 @@ export function ServicesSection() {
                             analisis data mendalam, dan teknologi modern.
                         </p>
                     </div>
-
-                    <Link
-                        href="/layanan"
-                        className="hidden md:flex group items-center gap-2 px-6 py-3 bg-white border border-slate-200 rounded-full text-slate-700 font-semibold hover:border-slate-400 hover:shadow-md transition-all duration-300"
-                    >
-                        Lihat Semua Layanan
-                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </Link>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {services.map((service, index) => {
@@ -78,15 +70,6 @@ export function ServicesSection() {
                             </Card>
                         );
                     })}
-                </div>
-                <div className="mt-12 md:hidden flex justify-center">
-                    <Link
-                        href="/layanan"
-                        className="flex items-center gap-2 text-slate-600 font-semibold"
-                    >
-                        Lihat Semua Layanan
-                        <ArrowRight className="w-4 h-4" />
-                    </Link>
                 </div>
             </div>
         </section>

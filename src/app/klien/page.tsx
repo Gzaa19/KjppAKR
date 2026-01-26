@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default async function Klien() {
     const result = await getPublishedClients();
-    const { allClients = [], bankClients = [], nonBankClients = [] } = result.success ? result.data! : {};
+    const { allClients = [], groupedByCategory = {} } = result.success ? result.data! : {};
 
     return (
         <div className="min-h-screen bg-slate-50">
@@ -24,8 +24,7 @@ export default async function Klien() {
 
             <ClientListSection
                 allClients={allClients}
-                bankClients={bankClients}
-                nonBankClients={nonBankClients}
+                groupedByCategory={groupedByCategory}
             />
 
             <div className="relative z-10 -mt-20">

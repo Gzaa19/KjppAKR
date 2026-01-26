@@ -9,11 +9,9 @@ import { z } from "zod";
 const clientSchema = z.object({
     name: z.string().min(2, "Nama klien minimal 2 karakter").max(100, "Nama klien maksimal 100 karakter"),
     logo: z.string().url("Logo harus berupa URL yang valid"),
-    category: z.enum(["BANK_BUMN_SWASTA", "NON_BANK"], {
-        message: "Kategori harus dipilih",
-    }),
+    categoryId: z.string().min(1, "Kategori harus dipilih"),
     isPublished: z.boolean().default(true),
-    sortOrder: z.number().int().nonnegative("Urutan tidak boleh negatif").default(0),
+    sortOrder: z.number().int().min(1, "Urutan tampilan minimal 1").default(1),
 });
 
 type ClientInput = z.infer<typeof clientSchema>;
@@ -23,6 +21,9 @@ export async function getClients() {
     try {
         const clients = await prisma.client.findMany({
             orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+            include: {
+                category: true,
+            },
         });
 
         return { success: true, data: { clients } };
@@ -38,17 +39,29 @@ export async function getPublishedClients() {
         const clients = await prisma.client.findMany({
             where: { isPublished: true },
             orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+            include: {
+                category: true,
+            },
         });
 
-        const bankClients = clients.filter((c) => c.category === "BANK_BUMN_SWASTA");
-        const nonBankClients = clients.filter((c) => c.category === "NON_BANK");
+        // Group by category
+        const groupedByCategory = clients.reduce((acc, client) => {
+            const categoryId = client.category.id;
+            if (!acc[categoryId]) {
+                acc[categoryId] = {
+                    category: client.category,
+                    clients: [],
+                };
+            }
+            acc[categoryId].clients.push(client);
+            return acc;
+        }, {} as Record<string, { category: any; clients: typeof clients }>);
 
         return {
             success: true,
             data: {
                 allClients: clients,
-                bankClients,
-                nonBankClients,
+                groupedByCategory,
             },
         };
     } catch (error) {

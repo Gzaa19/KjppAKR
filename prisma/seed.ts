@@ -1,4 +1,4 @@
-import { PrismaClient, ClientCategory, NewsCategory } from "../src/generated/prisma";
+import { PrismaClient, NewsCategory } from "../src/generated/prisma";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import bcrypt from "bcryptjs";
@@ -167,38 +167,71 @@ async function main() {
     }
     console.log(`✅ Seeded ${heroImages.length} hero images`);
 
-    // Seed Clients
-    console.log("\n🌱 Seeding Clients...");
-    const clients = [
-        // Bank BUMN/Swasta
-        { name: "PT. Bank Central Asia (Persero) Tbk", logo: "/image/client/bumn/bca.png", category: ClientCategory.BANK_BUMN_SWASTA, sortOrder: 1 },
-        { name: "PT. Bank Rakyat Indonesia (Persero) Tbk", logo: "/image/client/bumn/bri.png", category: ClientCategory.BANK_BUMN_SWASTA, sortOrder: 2 },
-        { name: "PT. Bank Syariah Indonesia Tbk", logo: "/image/client/bumn/bsi.png", category: ClientCategory.BANK_BUMN_SWASTA, sortOrder: 3 },
-        { name: "PT. Bank Tabungan Negara (Persero) Tbk", logo: "/image/client/bumn/btn.png", category: ClientCategory.BANK_BUMN_SWASTA, sortOrder: 4 },
-        { name: "PT. Bank Mandiri (Persero) Tbk", logo: "/image/client/bumn/mandiri.png", category: ClientCategory.BANK_BUMN_SWASTA, sortOrder: 5 },
-        // Non Bank
-        { name: "PT. Pertamina (Persero)", logo: "/image/client/nonBank/pertamina.png", category: ClientCategory.NON_BANK, sortOrder: 1 },
-        { name: "PT. Pertamina Hulu Energi", logo: "/image/client/nonBank/pertaminahe.png", category: ClientCategory.NON_BANK, sortOrder: 2 },
-        { name: "Dana Pensiun Pertamina", logo: "/image/client/nonBank/dppertamina.png", category: ClientCategory.NON_BANK, sortOrder: 3 },
-        { name: "PT. Pertamina Internasional EP", logo: "/image/client/nonBank/pertaminiep.png", category: ClientCategory.NON_BANK, sortOrder: 4 },
-        { name: "PT. Multimedia Nusantara (Telkom Metra)", logo: "/image/client/nonBank/telkommetra.png", category: ClientCategory.NON_BANK, sortOrder: 5 },
+    // Seed Client Categories
+    console.log("\n🌱 Seeding Client Categories...");
+    const clientCategories = [
+        { name: "Bank BUMN/Swasta", slug: "bank-bumn-swasta", sortOrder: 1, isActive: true },
+        { name: "Non Bank", slug: "non-bank", sortOrder: 2, isActive: true },
+        { name: "Instansi Pemerintah", slug: "instansi-pemerintah", sortOrder: 3, isActive: true },
+        { name: "Perusahaan Swasta", slug: "perusahaan-swasta", sortOrder: 4, isActive: true },
+        { name: "BUMN", slug: "bumn", sortOrder: 5, isActive: true },
+        { name: "Perorangan", slug: "perorangan", sortOrder: 6, isActive: true },
     ];
 
-    for (const client of clients) {
-        const existingClient = await prisma.client.findFirst({
-            where: { name: client.name }
+    for (const category of clientCategories) {
+        await prisma.clientCategory.upsert({
+            where: { slug: category.slug },
+            update: { name: category.name, sortOrder: category.sortOrder, isActive: category.isActive },
+            create: category,
         });
-
-        if (!existingClient) {
-            await prisma.client.create({
-                data: {
-                    ...client,
-                    isPublished: true
-                }
-            });
-        }
     }
-    console.log(`✅ Seeded ${clients.length} clients`);
+    console.log(`✅ Seeded ${clientCategories.length} client categories`);
+
+    // Seed Clients
+    console.log("\n🌱 Seeding Clients...");
+
+    // Get category IDs for reference
+    const bankCategory = await prisma.clientCategory.findUnique({
+        where: { slug: "bank-bumn-swasta" }
+    });
+    const nonBankCategory = await prisma.clientCategory.findUnique({
+        where: { slug: "non-bank" }
+    });
+
+    if (!bankCategory || !nonBankCategory) {
+        console.error("⚠️  Warning: Categories not found, skipping client seeding");
+    } else {
+        const clients = [
+            // Bank BUMN/Swasta
+            { name: "PT. Bank Central Asia (Persero) Tbk", logo: "/image/client/bumn/bca.png", categoryId: bankCategory.id, sortOrder: 1 },
+            { name: "PT. Bank Rakyat Indonesia (Persero) Tbk", logo: "/image/client/bumn/bri.png", categoryId: bankCategory.id, sortOrder: 2 },
+            { name: "PT. Bank Syariah Indonesia Tbk", logo: "/image/client/bumn/bsi.png", categoryId: bankCategory.id, sortOrder: 3 },
+            { name: "PT. Bank Tabungan Negara (Persero) Tbk", logo: "/image/client/bumn/btn.png", categoryId: bankCategory.id, sortOrder: 4 },
+            { name: "PT. Bank Mandiri (Persero) Tbk", logo: "/image/client/bumn/mandiri.png", categoryId: bankCategory.id, sortOrder: 5 },
+            // Non Bank
+            { name: "PT. Pertamina (Persero)", logo: "/image/client/nonBank/pertamina.png", categoryId: nonBankCategory.id, sortOrder: 1 },
+            { name: "PT. Pertamina Hulu Energi", logo: "/image/client/nonBank/pertaminahe.png", categoryId: nonBankCategory.id, sortOrder: 2 },
+            { name: "Dana Pensiun Pertamina", logo: "/image/client/nonBank/dppertamina.png", categoryId: nonBankCategory.id, sortOrder: 3 },
+            { name: "PT. Pertamina Internasional EP", logo: "/image/client/nonBank/pertaminiep.png", categoryId: nonBankCategory.id, sortOrder: 4 },
+            { name: "PT. Multimedia Nusantara (Telkom Metra)", logo: "/image/client/nonBank/telkommetra.png", categoryId: nonBankCategory.id, sortOrder: 5 },
+        ];
+
+        for (const client of clients) {
+            const existingClient = await prisma.client.findFirst({
+                where: { name: client.name }
+            });
+
+            if (!existingClient) {
+                await prisma.client.create({
+                    data: {
+                        ...client,
+                        isPublished: true
+                    }
+                });
+            }
+        }
+        console.log(`✅ Seeded ${clients.length} clients`);
+    }
 
     // Get admin user ID for news
     const admin = await prisma.user.findUnique({

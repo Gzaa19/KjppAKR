@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,19 +11,36 @@ import { Switch } from "@/components/ui/switch";
 import { ArrowLeft, Save } from "lucide-react";
 import Link from "next/link";
 import { createClient } from "@/actions/client";
+import { getActiveClientCategories } from "@/actions/client-category";
 import { toast } from "sonner";
 import { ImageUpload } from "@/components/admin/image-upload";
 
 export default function CreateClientPage() {
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
+    const [categories, setCategories] = useState<any[]>([]);
+    const [loadingCategories, setLoadingCategories] = useState(true);
     const [formData, setFormData] = useState({
         name: "",
         logo: "",
-        category: "BANK_BUMN_SWASTA" as "BANK_BUMN_SWASTA" | "NON_BANK",
+        categoryId: "",
         isPublished: true,
-        sortOrder: 0,
+        sortOrder: 1,
     });
+
+    useEffect(() => {
+        async function fetchCategories() {
+            const result = await getActiveClientCategories();
+            if (result.success && result.data) {
+                setCategories(result.data.categories);
+                if (result.data.categories.length > 0) {
+                    setFormData(prev => ({ ...prev, categoryId: result.data.categories[0].id }));
+                }
+            }
+            setLoadingCategories(false);
+        }
+        fetchCategories();
+    }, []);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -40,6 +57,30 @@ export default function CreateClientPage() {
             }
         });
     };
+
+    if (loadingCategories) {
+        return (
+            <div className="flex flex-1 items-center justify-center">
+                <p className="text-muted-foreground">Loading...</p>
+            </div>
+        );
+    }
+
+    if (categories.length === 0) {
+        return (
+            <div className="flex flex-1 items-center justify-center">
+                <Card className="p-8 max-w-md text-center">
+                    <h2 className="text-xl font-bold mb-2">Belum Ada Kategori</h2>
+                    <p className="text-muted-foreground mb-4">
+                        Anda perlu membuat kategori klien terlebih dahulu sebelum menambah klien.
+                    </p>
+                    <Link href="/admin/clients/categories/create">
+                        <Button>Buat Kategori Klien</Button>
+                    </Link>
+                </Card>
+            </div>
+        );
+    }
 
     return (
         <div className="flex flex-1 flex-col gap-4">
@@ -85,33 +126,20 @@ export default function CreateClientPage() {
                         <div className="space-y-2">
                             <Label htmlFor="category">Kategori *</Label>
                             <Select
-                                value={formData.category}
-                                onValueChange={(value: "BANK_BUMN_SWASTA" | "NON_BANK") =>
-                                    setFormData({ ...formData, category: value })
-                                }
+                                value={formData.categoryId}
+                                onValueChange={(value) => setFormData({ ...formData, categoryId: value })}
                             >
                                 <SelectTrigger>
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="BANK_BUMN_SWASTA">Bank BUMN/Swasta</SelectItem>
-                                    <SelectItem value="NON_BANK">Non Bank</SelectItem>
+                                    {categories.map((category) => (
+                                        <SelectItem key={category.id} value={category.id}>
+                                            {category.name}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="sortOrder">Urutan Tampilan</Label>
-                            <Input
-                                id="sortOrder"
-                                type="number"
-                                value={formData.sortOrder}
-                                onChange={(e) => setFormData({ ...formData, sortOrder: parseInt(e.target.value) || 0 })}
-                                placeholder="0"
-                            />
-                            <p className="text-xs text-muted-foreground">
-                                Angka lebih kecil akan ditampilkan lebih dulu
-                            </p>
                         </div>
 
                         <div className="flex items-center justify-between">

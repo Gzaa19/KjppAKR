@@ -16,13 +16,13 @@ export const metadata: Metadata = {
 
 export default async function Home() {
   const result = await getPublishedClients();
-  const { bankClients = [], nonBankClients = [] } = result.success ? result.data! : {};
+  const { groupedByCategory = {} } = result.success ? result.data! : {};
 
   return (
     <div className="min-h-screen bg-bg-1">
       <Navbar />
       <HeroSection />
-      <TrustedClientsSection bankClients={bankClients} nonBankClients={nonBankClients} />
+      <TrustedClientsSection groupedByCategory={groupedByCategory} />
       <ServicesSection />
       <RecentUpdatesSection />
       <WhyChooseUsSection />

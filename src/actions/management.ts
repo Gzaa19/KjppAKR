@@ -11,7 +11,7 @@ const managementSchema = z.object({
     image: z.string().optional().or(z.literal("")),
     description: z.string().min(1, "Deskripsi harus diisi"),
     isMappiCert: z.boolean().default(false),
-    sortOrder: z.coerce.number().int().default(0),
+    sortOrder: z.coerce.number().int().min(1, "Urutan tampilan minimal 1").default(1),
 });
 
 type ManagementInput = z.infer<typeof managementSchema>;
@@ -53,6 +53,15 @@ export async function createManagementTeam(data: ManagementInput) {
     try {
         const validated = managementSchema.parse(data);
 
+        // Check for duplicate sortOrder
+        const existingSortOrder = await prisma.managementTeam.findFirst({
+            where: { sortOrder: validated.sortOrder },
+        });
+
+        if (existingSortOrder) {
+            return { success: false, error: `Urutan tampilan ${validated.sortOrder} sudah digunakan oleh anggota tim lain` };
+        }
+
         const team = await prisma.managementTeam.create({
             data: validated,
         });
@@ -73,6 +82,20 @@ export async function createManagementTeam(data: ManagementInput) {
 // Update management team member
 export async function updateManagementTeam(id: string, data: Partial<ManagementInput>) {
     try {
+        // Check for duplicate sortOrder if it's being updated
+        if (data.sortOrder !== undefined) {
+            const existingSortOrder = await prisma.managementTeam.findFirst({
+                where: {
+                    sortOrder: data.sortOrder,
+                    NOT: { id }, // Exclude current team member
+                },
+            });
+
+            if (existingSortOrder) {
+                return { success: false, error: `Urutan tampilan ${data.sortOrder} sudah digunakan oleh anggota tim lain` };
+            }
+        }
+
         const team = await prisma.managementTeam.update({
             where: { id },
             data,

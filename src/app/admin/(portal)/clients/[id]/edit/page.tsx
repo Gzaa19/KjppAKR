@@ -11,6 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { ArrowLeft, Save } from "lucide-react";
 import Link from "next/link";
 import { updateClient } from "@/actions/client";
+import { getActiveClientCategories } from "@/actions/client-category";
 import { toast } from "sonner";
 import { ImageUpload } from "@/components/admin/image-upload";
 
@@ -18,7 +19,7 @@ interface Client {
     id: string;
     name: string;
     logo: string;
-    category: "BANK_BUMN_SWASTA" | "NON_BANK";
+    categoryId: string;
     isPublished: boolean;
     sortOrder: number;
 }
@@ -32,12 +33,13 @@ export default function EditClientPage({ params }: EditClientPageProps) {
     const [isPending, startTransition] = useTransition();
     const [loading, setLoading] = useState(true);
     const [clientId, setClientId] = useState<string>("");
+    const [categories, setCategories] = useState<any[]>([]);
     const [formData, setFormData] = useState({
         name: "",
         logo: "",
-        category: "BANK_BUMN_SWASTA" as "BANK_BUMN_SWASTA" | "NON_BANK",
+        categoryId: "",
         isPublished: true,
-        sortOrder: 0,
+        sortOrder: 1,
     });
 
     useEffect(() => {
@@ -45,27 +47,28 @@ export default function EditClientPage({ params }: EditClientPageProps) {
             const resolvedParams = await params;
             setClientId(resolvedParams.id);
 
-            try {
-                const response = await fetch(`/api/clients/${resolvedParams.id}`);
-                if (!response.ok) throw new Error("Failed to fetch client");
+            const [clientResult, categoriesResult] = await Promise.all([
+                fetch(`/api/clients/${resolvedParams.id}`).then(r => r.json()),
+                getActiveClientCategories(),
+            ]);
 
-                const result = await response.json();
-                if (result.success && result.data) {
-                    const client = result.data;
-                    setFormData({
-                        name: client.name,
-                        logo: client.logo,
-                        category: client.category,
-                        isPublished: client.isPublished,
-                        sortOrder: client.sortOrder,
-                    });
-                }
-            } catch (error) {
-                console.error("Error loading client:", error);
-                toast.error("Gagal memuat data klien");
-            } finally {
-                setLoading(false);
+            if (categoriesResult.success && categoriesResult.data) {
+                setCategories(categoriesResult.data.categories);
             }
+
+            if (clientResult.success && clientResult.data) {
+                const client = clientResult.data;
+                setFormData({
+                    name: client.name,
+                    logo: client.logo,
+                    categoryId: client.categoryId,
+                    isPublished: client.isPublished,
+                    sortOrder: client.sortOrder,
+                });
+            } else {
+                toast.error("Gagal memuat data klien");
+            }
+            setLoading(false);
         }
 
         loadClient();
@@ -139,33 +142,20 @@ export default function EditClientPage({ params }: EditClientPageProps) {
                         <div className="space-y-2">
                             <Label htmlFor="category">Kategori *</Label>
                             <Select
-                                value={formData.category}
-                                onValueChange={(value: "BANK_BUMN_SWASTA" | "NON_BANK") =>
-                                    setFormData({ ...formData, category: value })
-                                }
+                                value={formData.categoryId}
+                                onValueChange={(value) => setFormData({ ...formData, categoryId: value })}
                             >
                                 <SelectTrigger>
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="BANK_BUMN_SWASTA">Bank BUMN/Swasta</SelectItem>
-                                    <SelectItem value="NON_BANK">Non Bank</SelectItem>
+                                    {categories.map((category) => (
+                                        <SelectItem key={category.id} value={category.id}>
+                                            {category.name}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="sortOrder">Urutan Tampilan</Label>
-                            <Input
-                                id="sortOrder"
-                                type="number"
-                                value={formData.sortOrder}
-                                onChange={(e) => setFormData({ ...formData, sortOrder: parseInt(e.target.value) || 0 })}
-                                placeholder="0"
-                            />
-                            <p className="text-xs text-muted-foreground">
-                                Angka lebih kecil akan ditampilkan lebih dulu
-                            </p>
                         </div>
 
                         <div className="flex items-center justify-between">

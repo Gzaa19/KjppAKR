@@ -23,7 +23,7 @@ export default function CreateManagementPage() {
         image: "",
         description: "",
         isMappiCert: false,
-        sortOrder: 0,
+        sortOrder: 1,
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -113,12 +113,13 @@ export default function CreateManagementPage() {
                                 <Input
                                     id="sortOrder"
                                     type="number"
+                                    min="1"
                                     value={formData.sortOrder}
-                                    onChange={(e) => setFormData({ ...formData, sortOrder: parseInt(e.target.value) || 0 })}
-                                    placeholder="0"
+                                    onChange={(e) => setFormData({ ...formData, sortOrder: Math.max(1, parseInt(e.target.value) || 1) })}
+                                    placeholder="1"
                                 />
                                 <p className="text-xs text-muted-foreground">
-                                    Angka lebih kecil akan ditampilkan lebih dulu
+                                    Angka lebih kecil akan ditampilkan lebih dulu (minimal 1)
                                 </p>
                             </div>
 

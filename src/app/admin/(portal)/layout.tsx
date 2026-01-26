@@ -5,7 +5,6 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { Toaster } from "@/components/ui/sonner"
 
 export default function DashboardLayout({
     children,
@@ -25,7 +24,6 @@ export default function DashboardLayout({
                     {children}
                 </div>
             </SidebarInset>
-            <Toaster />
         </SidebarProvider>
     )
 }
