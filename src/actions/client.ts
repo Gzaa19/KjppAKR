@@ -37,7 +37,12 @@ export async function getClients() {
 export async function getPublishedClients() {
     try {
         const clients = await prisma.client.findMany({
-            where: { isPublished: true },
+            where: {
+                isPublished: true,
+                category: {
+                    isActive: true
+                }
+            },
             orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
             include: {
                 category: true,
