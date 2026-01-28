@@ -34,6 +34,15 @@ export async function createAlbum(input: CreateAlbumInput): Promise<ActionRespon
             return { success: false, error: "Slug album sudah digunakan" };
         }
 
+        // Check for duplicate sort order
+        const existingSortOrder = await prisma.album.findFirst({
+            where: { sortOrder: validated.data.sortOrder },
+        });
+
+        if (existingSortOrder) {
+            return { success: false, error: `Urutan ${validated.data.sortOrder} sudah digunakan oleh album lain` };
+        }
+
         const album = await prisma.album.create({
             data: validated.data,
         });
@@ -53,12 +62,32 @@ export async function getAlbums(activeOnly: boolean = false) {
             include: {
                 _count: { select: { galleries: true } },
             },
-            orderBy: { createdAt: "desc" },
+            orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
         });
 
         return { success: true, data: albums };
     } catch (error) {
         console.error("Get albums error:", error);
+        return { success: false, error: "Gagal mengambil data album" };
+    }
+}
+
+export async function getAlbumById(id: string) {
+    try {
+        const album = await prisma.album.findUnique({
+            where: { id },
+            include: {
+                _count: { select: { galleries: true } },
+            },
+        });
+
+        if (!album) {
+            return { success: false, error: "Album tidak ditemukan" };
+        }
+
+        return { success: true, data: { album } };
+    } catch (error) {
+        console.error("Get album by id error:", error);
         return { success: false, error: "Gagal mengambil data album" };
     }
 }
@@ -110,6 +139,23 @@ export async function updateAlbum(
             }
         }
 
+        // Check for duplicate sort order
+        if (validated.data.sortOrder !== undefined && validated.data.sortOrder !== existing.sortOrder) {
+            const sortOrderExists = await prisma.album.findFirst({
+                where: {
+                    sortOrder: validated.data.sortOrder,
+                    id: { not: id },
+                },
+            });
+
+            if (sortOrderExists) {
+                return { 
+                    success: false, 
+                    error: `Urutan ${validated.data.sortOrder} sudah digunakan oleh album lain` 
+                };
+            }
+        }
+
         const album = await prisma.album.update({
             where: { id },
             data: validated.data,
@@ -125,18 +171,48 @@ export async function updateAlbum(
 
 export async function deleteAlbum(id: string): Promise<ActionResponse> {
     try {
-        const existing = await prisma.album.findUnique({ where: { id } });
+        const existing = await prisma.album.findUnique({
+            where: { id },
+            include: { _count: { select: { galleries: true } } },
+        });
         if (!existing) {
             return { success: false, error: "Album tidak ditemukan" };
+        }
+
+        if (existing._count.galleries > 0) {
+            return { success: false, error: "Tidak dapat menghapus album yang masih memiliki foto" };
         }
 
         await prisma.album.delete({ where: { id } });
 
         revalidatePath("/admin/gallery");
+        revalidatePath("/admin/gallery/albums");
         return { success: true };
     } catch (error) {
         console.error("Delete album error:", error);
         return { success: false, error: "Gagal menghapus album" };
+    }
+}
+
+export async function toggleActiveAlbum(id: string, isActive: boolean): Promise<ActionResponse> {
+    try {
+        const existing = await prisma.album.findUnique({ where: { id } });
+        if (!existing) {
+            return { success: false, error: "Album tidak ditemukan" };
+        }
+
+        await prisma.album.update({
+            where: { id },
+            data: { isActive },
+        });
+
+        revalidatePath("/admin/gallery");
+        revalidatePath("/admin/gallery/albums");
+        revalidatePath("/galeri");
+        return { success: true };
+    } catch (error) {
+        console.error("Toggle active album error:", error);
+        return { success: false, error: "Gagal mengubah status album" };
     }
 }
 

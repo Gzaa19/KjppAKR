@@ -98,6 +98,7 @@ model Album {
   slug        String   @unique
   description String?  @db.Text
   coverImage  String?
+  sortOrder   Int      @default(1)
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -106,6 +107,7 @@ model Album {
   galleries Gallery[]
 
   @@index([slug])
+  @@index([sortOrder])
   @@map("albums")
 }
 

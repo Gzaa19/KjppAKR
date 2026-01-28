@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import {
     DropdownMenu,
     DropdownMenuItem,
@@ -29,6 +29,11 @@ export function NewsActionMenu({ id, slug, isPublished }: { id: string; slug: st
     const [isPending, startTransition] = useTransition();
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const router = useRouter();
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
 
     const handleDelete = () => {
         startTransition(async () => {
@@ -54,6 +59,14 @@ export function NewsActionMenu({ id, slug, isPublished }: { id: string; slug: st
             }
         });
     };
+
+    if (!isMounted) {
+        return (
+            <Button variant="ghost" size="icon" className="h-8 w-8">
+                <MoreHorizontal className="h-4 w-4" />
+            </Button>
+        );
+    }
 
     return (
         <>

@@ -79,7 +79,7 @@ const cmsMenu = [
         icon: Map,
     },
     {
-        title: "Hero Images",
+        title: "Cover Depan",
         url: "/admin/hero-images",
         icon: ImageIcon,
     },

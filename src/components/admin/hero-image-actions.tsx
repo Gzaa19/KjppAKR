@@ -97,7 +97,7 @@ export function HeroImageActionMenu({ image }: HeroImageActionMenuProps) {
             <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
                 <DialogContent className="sm:max-w-lg">
                     <DialogHeader>
-                        <DialogTitle>Edit Gambar Hero</DialogTitle>
+                        <DialogTitle>Edit Gambar Cover</DialogTitle>
                         <DialogDescription>
                             Ganti gambar slide show.
                         </DialogDescription>

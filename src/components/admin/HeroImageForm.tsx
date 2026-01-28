@@ -121,7 +121,7 @@ export function HeroImageForm({ onSuccess, currentCount, initialData }: HeroImag
         <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
                 <Label htmlFor="image">
-                    {isEditMode ? "Ganti Gambar Hero" : `Upload Gambar Hero Baru (${currentCount}/3)`}
+                    {isEditMode ? "Ganti Gambar Cover" : `Upload Gambar Cover Baru (${currentCount}/3)`}
                 </Label>
                 <div className="flex items-center gap-4">
                     <Input

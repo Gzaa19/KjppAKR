@@ -9,6 +9,7 @@ export const createAlbumSchema = z.object({
         .regex(/^[a-z0-9-]+$/, "Slug hanya boleh huruf kecil, angka, dan strip"),
     description: z.string().max(500, "Deskripsi maksimal 500 karakter").optional().nullable(),
     coverImage: z.string().url("URL gambar tidak valid").optional().nullable(),
+    sortOrder: z.number().int().min(1, "Urutan tampilan minimal 1").default(1),
     isActive: z.boolean().default(true),
 });
 

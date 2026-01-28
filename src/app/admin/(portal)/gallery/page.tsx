@@ -36,10 +36,9 @@ export default async function GalleryPage() {
                     <Input type="search" placeholder="Cari foto..." className="pl-8 bg-white" />
                 </div>
                 <div className="flex gap-2">
-                    <Link href="/admin/gallery/albums/create">
+                    <Link href="/admin/gallery/albums">
                         <Button variant="outline">
-                            <Plus className="mr-2 h-4 w-4" />
-                            Buat Album
+                            Kelola Album
                         </Button>
                     </Link>
                     <Link href="/admin/gallery/create">

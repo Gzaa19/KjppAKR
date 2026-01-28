@@ -88,6 +88,7 @@ export default function UpdateProgressPage() {
     const [notifyClient, setNotifyClient] = React.useState(true)
     const [loading, setLoading] = React.useState(true)
     const [saving, setSaving] = React.useState(false)
+    const [savingProgress, setSavingProgress] = React.useState(false)
 
     React.useEffect(() => {
         async function fetchProject() {
@@ -135,10 +136,51 @@ export default function UpdateProgressPage() {
         ))
     }
 
+    // Auto-save progress to API
+    const saveProgressToAPI = async (updatedStages: MainStage[]) => {
+        if (!project) return
+        
+        setSavingProgress(true)
+        try {
+            const allSubSteps = updatedStages.flatMap(s => s.subSteps)
+            const progressData = allSubSteps.map(sub => ({
+                subStepId: sub.subStepId,
+                status: sub.status,
+                startDate: sub.startDate,
+                endDate: sub.endDate,
+            }))
+
+            const response = await fetch(`/api/tracking-projects/${projectId}/progress`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    progress: progressData,
+                })
+            })
+
+            const data = await response.json()
+
+            if (data.success) {
+                // Update project progress from response
+                if (data.data) {
+                    setProject(data.data)
+                }
+                toast.success("Progress berhasil diperbarui", { duration: 2000 })
+            } else {
+                toast.error(data.error || "Gagal menyimpan progress")
+            }
+        } catch (error) {
+            console.error("Error saving progress:", error)
+            toast.error("Terjadi kesalahan saat menyimpan progress")
+        } finally {
+            setSavingProgress(false)
+        }
+    }
+
     const updateSubStepStatus = (stageId: number, subStepId: string, newStatus: SubStep["status"]) => {
         const today = new Date().toISOString().split('T')[0]
 
-        setStages(prev => prev.map(stage => {
+        const updatedStages = stages.map(stage => {
             if (stage.id === stageId) {
                 return {
                     ...stage,
@@ -156,11 +198,15 @@ export default function UpdateProgressPage() {
                 }
             }
             return stage
-        }))
+        })
+
+        setStages(updatedStages)
+        // Auto-save progress when status changes
+        saveProgressToAPI(updatedStages)
     }
 
     const updateSubStepDate = (stageId: number, subStepId: string, field: "startDate" | "endDate", value: string) => {
-        setStages(prev => prev.map(stage => {
+        const updatedStages = stages.map(stage => {
             if (stage.id === stageId) {
                 return {
                     ...stage,
@@ -173,7 +219,11 @@ export default function UpdateProgressPage() {
                 }
             }
             return stage
-        }))
+        })
+
+        setStages(updatedStages)
+        // Auto-save progress when date changes
+        saveProgressToAPI(updatedStages)
     }
 
     const getStageProgress = (stage: MainStage) => {
@@ -221,13 +271,13 @@ export default function UpdateProgressPage() {
             const data = await response.json()
 
             if (data.success) {
-                toast.success("Progress berhasil disimpan")
+                toast.success("Pesan berhasil disimpan")
             } else {
-                toast.error(data.error || "Gagal menyimpan progress")
+                toast.error(data.error || "Gagal menyimpan pesan")
             }
         } catch (error) {
-            console.error("Error saving progress:", error)
-            toast.error("Terjadi kesalahan saat menyimpan")
+            console.error("Error saving notes:", error)
+            toast.error("Terjadi kesalahan saat menyimpan pesan")
         } finally {
             setSaving(false)
         }
@@ -297,7 +347,15 @@ export default function UpdateProgressPage() {
 
                     <div className="flex items-center gap-8 border-l pl-8 border-gray-100">
                         <div className="space-y-1">
-                            <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Progress Keseluruhan</p>
+                            <div className="flex items-center gap-2">
+                                <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Progress Keseluruhan</p>
+                                {savingProgress && (
+                                    <div className="flex items-center gap-1 text-blue-600">
+                                        <Loader2 className="h-3 w-3 animate-spin" />
+                                        <span className="text-[10px]">Menyimpan...</span>
+                                    </div>
+                                )}
+                            </div>
                             <div className="flex items-center gap-3">
                                 <div className="w-32 h-2.5 bg-gray-100 rounded-full overflow-hidden">
                                     <div
@@ -515,7 +573,7 @@ export default function UpdateProgressPage() {
                                 ) : (
                                     <>
                                         <Save className="mr-2 h-4 w-4" />
-                                        Simpan Perubahan
+                                        Simpan Pesan
                                     </>
                                 )}
                             </Button>
@@ -532,9 +590,10 @@ export default function UpdateProgressPage() {
                             <h3 className="text-sm font-bold text-blue-900">Tips Penggunaan</h3>
                             <ul className="text-xs text-blue-700 leading-relaxed space-y-1">
                                 <li>• Klik nama <strong>tahapan utama</strong> untuk expand/collapse</li>
-                                <li>• Ubah <strong>status</strong> untuk memperbarui progress kegiatan</li>
+                                <li>• Ubah <strong>status</strong> untuk memperbarui progress kegiatan (otomatis tersimpan)</li>
                                 <li>• <strong>Tanggal mulai</strong> otomatis terisi saat status berubah</li>
                                 <li>• <strong>Tanggal selesai</strong> otomatis terisi saat status menjadi Selesai</li>
+                                <li>• Klik <strong>Simpan Pesan</strong> untuk menyimpan catatan admin</li>
                             </ul>
                         </div>
                     </div>
