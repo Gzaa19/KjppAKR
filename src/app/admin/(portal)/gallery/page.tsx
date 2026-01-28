@@ -50,16 +50,60 @@ export default async function GalleryPage() {
                 </div>
             </div>
 
-            {galleries.length === 0 ? (
-                <Card className="p-12 text-center">
-                    <ImageIcon className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                    <p className="text-muted-foreground mb-4">Belum ada foto. Mulai dengan mengupload foto baru.</p>
-                    <Link href="/admin/gallery/create">
-                        <Button>
-                            <Plus className="mr-2 h-4 w-4" />
-                            Upload Foto Pertama
-                        </Button>
-                    </Link>
+            {albums.length === 0 ? (
+                <Card className="p-12 text-center bg-white">
+                    <div className="max-w-md mx-auto">
+                        <ImageIcon className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+                        <h3 className="text-lg font-semibold mb-2">Belum Ada Album</h3>
+                        <p className="text-muted-foreground mb-6">
+                            Anda belum membuat album untuk mengelompokkan foto. Buat album terlebih dahulu sebelum mengupload foto.
+                        </p>
+                        <Link href="/admin/gallery/albums">
+                            <Button>
+                                <Plus className="mr-2 h-4 w-4" />
+                                Buat Album Pertama
+                            </Button>
+                        </Link>
+                    </div>
+                </Card>
+            ) : galleries.length === 0 ? (
+                <Card className="p-12 text-center bg-white">
+                    <div className="max-w-md mx-auto">
+                        <ImageIcon className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+                        <h3 className="text-lg font-semibold mb-2">Belum Ada Foto</h3>
+                        <p className="text-muted-foreground mb-6">
+                            Galeri foto masih kosong. Mulai dokumentasikan kegiatan perusahaan dengan mengupload foto pertama Anda.
+                        </p>
+                        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                            <Link href="/admin/gallery/albums">
+                                <Button variant="outline" className="w-full sm:w-auto">
+                                    Kelola Album
+                                </Button>
+                            </Link>
+                            <Link href="/admin/gallery/create">
+                                <Button className="w-full sm:w-auto">
+                                    <Plus className="mr-2 h-4 w-4" />
+                                    Upload Foto Pertama
+                                </Button>
+                            </Link>
+                        </div>
+                    </div>
+                </Card>
+            ) : galleriesByAlbum.length === 0 ? (
+                <Card className="p-12 text-center bg-white">
+                    <div className="max-w-md mx-auto">
+                        <ImageIcon className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+                        <h3 className="text-lg font-semibold mb-2">Album Belum Memiliki Foto</h3>
+                        <p className="text-muted-foreground mb-6">
+                            Album sudah tersedia, tetapi belum ada foto yang diupload. Silakan upload foto ke album yang sudah ada.
+                        </p>
+                        <Link href="/admin/gallery/create">
+                            <Button>
+                                <Plus className="mr-2 h-4 w-4" />
+                                Upload Foto
+                            </Button>
+                        </Link>
+                    </div>
                 </Card>
             ) : (
                 <div className="space-y-8">
@@ -68,7 +112,7 @@ export default async function GalleryPage() {
                             <div className="flex items-center gap-2 mb-4">
                                 <ImageIcon className="h-5 w-5 text-kjpp-red" />
                                 <h3 className="text-lg font-bold">{album.name}</h3>
-                                <Badge variant="secondary">{items.length}</Badge>
+                                <Badge variant="secondary">{items.length} foto</Badge>
                             </div>
                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                                 {items.map((gallery) => (

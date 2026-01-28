@@ -23,7 +23,7 @@ async function main() {
     console.log("🌱 Starting database seed...\n");
 
     // Create default admin user
-    const adminEmail = "admin@kjppakr.com";
+    const adminEmail = "admin@kjpp-akr.com";
     const adminPassword = "admin123"; // Change this in production!
 
     const existingAdmin = await prisma.user.findUnique({
@@ -315,14 +315,37 @@ async function main() {
     }
     console.log(`✅ Seeded ${newsArticles.length} publikasi`);
 
-    // Seed Gallery
     console.log("\n🌱 Seeding Gallery...");
 
-    // First, create albums
     const albums = [
-        { name: "Kegiatan Kantor", slug: "kegiatan-kantor", description: "Dokumentasi kegiatan sehari-hari di kantor" },
-        { name: "Survei Lapangan", slug: "survei-lapangan", description: "Dokumentasi kegiatan survei dan penilaian di lapangan" },
-        { name: "Workshop & Seminar", slug: "workshop-seminar", description: "Dokumentasi workshop dan seminar yang diselenggarakan" },
+        {
+            name: "Kegiatan Kantor",
+            slug: "kegiatan-kantor",
+            description: "Dokumentasi kegiatan sehari-hari di kantor",
+            sortOrder: 1,
+            isActive: true
+        },
+        {
+            name: "Survei Lapangan",
+            slug: "survei-lapangan",
+            description: "Dokumentasi kegiatan survei dan penilaian di lapangan",
+            sortOrder: 2,
+            isActive: true
+        },
+        {
+            name: "Workshop & Seminar",
+            slug: "workshop-seminar",
+            description: "Dokumentasi workshop dan seminar yang diselenggarakan",
+            sortOrder: 3,
+            isActive: true
+        },
+        {
+            name: "Rapat & Pertemuan",
+            slug: "rapat-pertemuan",
+            description: "Dokumentasi rapat koordinasi dan pertemuan dengan klien",
+            sortOrder: 4,
+            isActive: true
+        },
     ];
 
     const createdAlbums: any[] = [];
@@ -340,15 +363,37 @@ async function main() {
             createdAlbums.push(existingAlbum);
         }
     }
+    console.log(`✅ Seeded ${albums.length} albums`);
 
     const galleries = [
         {
-            title: "Rapat Tim Manajemen",
-            description: "Rapat koordinasi tim manajemen membahas strategi perusahaan",
-            imageUrl: "/image/gallery/rapat-tim.jpg",
+            title: "Team Building 2024",
+            description: "Kegiatan team building tahunan KJPP AKR",
+            imageUrl: "/image/gallery/team-building.jpg",
             albumId: createdAlbums[0]?.id,
-            eventDate: new Date("2024-12-01"),
+            eventDate: new Date("2024-10-30"),
             sortOrder: 1,
+            isPublished: true,
+            uploadedById: admin.id
+        },
+        {
+            title: "Perayaan HUT KJPP AKR",
+            description: "Perayaan ulang tahun KJPP AKR yang ke-20",
+            imageUrl: "/image/gallery/hut-kjpp.jpg",
+            albumId: createdAlbums[0]?.id,
+            eventDate: new Date("2024-09-15"),
+            sortOrder: 2,
+            isPublished: true,
+            uploadedById: admin.id
+        },
+        {
+            title: "Gathering Karyawan",
+            description: "Acara gathering karyawan di Puncak",
+            imageUrl: "/image/gallery/gathering.jpg",
+            albumId: createdAlbums[0]?.id,
+            eventDate: new Date("2024-08-20"),
+            sortOrder: 3,
+            isPublished: true,
             uploadedById: admin.id
         },
         {
@@ -357,16 +402,8 @@ async function main() {
             imageUrl: "/image/gallery/survei-komersial.jpg",
             albumId: createdAlbums[1]?.id,
             eventDate: new Date("2024-11-25"),
-            sortOrder: 2,
-            uploadedById: admin.id
-        },
-        {
-            title: "Workshop Penilaian Properti",
-            description: "Workshop penilaian properti untuk sektor perbankan",
-            imageUrl: "/image/gallery/workshop-properti.jpg",
-            albumId: createdAlbums[2]?.id,
-            eventDate: new Date("2024-11-20"),
-            sortOrder: 3,
+            sortOrder: 1,
+            isPublished: true,
             uploadedById: admin.id
         },
         {
@@ -375,18 +412,90 @@ async function main() {
             imageUrl: "/image/gallery/survei-tanah.jpg",
             albumId: createdAlbums[1]?.id,
             eventDate: new Date("2024-11-15"),
-            sortOrder: 4,
+            sortOrder: 2,
+            isPublished: true,
             uploadedById: admin.id
         },
         {
-            title: "Team Building 2024",
-            description: "Kegiatan team building tahunan KJPP AKR",
-            imageUrl: "/image/gallery/team-building.jpg",
-            albumId: createdAlbums[0]?.id,
-            eventDate: new Date("2024-10-30"),
-            sortOrder: 5,
+            title: "Inspeksi Pabrik",
+            description: "Inspeksi dan penilaian aset pabrik di Bekasi",
+            imageUrl: "/image/gallery/inspeksi-pabrik.jpg",
+            albumId: createdAlbums[1]?.id,
+            eventDate: new Date("2024-10-10"),
+            sortOrder: 3,
+            isPublished: true,
             uploadedById: admin.id
-        }
+        },
+        {
+            title: "Survei Apartemen",
+            description: "Survei penilaian apartemen untuk agunan bank",
+            imageUrl: "/image/gallery/survei-apartemen.jpg",
+            albumId: createdAlbums[1]?.id,
+            eventDate: new Date("2024-09-25"),
+            sortOrder: 4,
+            isPublished: true,
+            uploadedById: admin.id
+        },
+        {
+            title: "Workshop Penilaian Properti",
+            description: "Workshop penilaian properti untuk sektor perbankan",
+            imageUrl: "/image/gallery/workshop-properti.jpg",
+            albumId: createdAlbums[2]?.id,
+            eventDate: new Date("2024-11-20"),
+            sortOrder: 1,
+            isPublished: true,
+            uploadedById: admin.id
+        },
+        {
+            title: "Seminar Nasional Penilaian",
+            description: "Seminar nasional tentang standar penilaian internasional",
+            imageUrl: "/image/gallery/seminar-nasional.jpg",
+            albumId: createdAlbums[2]?.id,
+            eventDate: new Date("2024-10-05"),
+            sortOrder: 2,
+            isPublished: true,
+            uploadedById: admin.id
+        },
+        {
+            title: "Pelatihan Internal",
+            description: "Pelatihan internal untuk meningkatkan kompetensi tim",
+            imageUrl: "/image/gallery/pelatihan-internal.jpg",
+            albumId: createdAlbums[2]?.id,
+            eventDate: new Date("2024-09-01"),
+            sortOrder: 3,
+            isPublished: true,
+            uploadedById: admin.id
+        },
+        {
+            title: "Rapat Tim Manajemen",
+            description: "Rapat koordinasi tim manajemen membahas strategi perusahaan",
+            imageUrl: "/image/gallery/rapat-tim.jpg",
+            albumId: createdAlbums[3]?.id,
+            eventDate: new Date("2024-12-01"),
+            sortOrder: 1,
+            isPublished: true,
+            uploadedById: admin.id
+        },
+        {
+            title: "Pertemuan dengan Klien Bank",
+            description: "Pertemuan koordinasi dengan klien dari sektor perbankan",
+            imageUrl: "/image/gallery/meeting-bank.jpg",
+            albumId: createdAlbums[3]?.id,
+            eventDate: new Date("2024-11-10"),
+            sortOrder: 2,
+            isPublished: true,
+            uploadedById: admin.id
+        },
+        {
+            title: "Rapat Evaluasi Proyek",
+            description: "Rapat evaluasi progress proyek penilaian",
+            imageUrl: "/image/gallery/rapat-evaluasi.jpg",
+            albumId: createdAlbums[3]?.id,
+            eventDate: new Date("2024-10-20"),
+            sortOrder: 3,
+            isPublished: true,
+            uploadedById: admin.id
+        },
     ];
 
     for (const gallery of galleries) {

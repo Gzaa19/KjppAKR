@@ -13,7 +13,7 @@ export default async function HeroImagesPage() {
     return (
         <div className="space-y-6">
             <div className="space-y-2">
-                <h1 className="text-3xl font-bold text-gray-900">Kelola Cover Depan</h1>
+                <h1 className="text-3xl font-bold text-gray-900">Kelola Banner Hero</h1>
                 <p className="text-gray-600">
                     Kelola gambar slide show di halaman depan. (Maksimal 3 gambar)
                 </p>

@@ -227,6 +227,13 @@ export function TrackingSidebar({ ...props }: React.ComponentProps<typeof Sideba
                                 </DropdownMenuLabel>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
+                                    onClick={() => router.push("/admin/portal-selection")}
+                                    className="cursor-pointer"
+                                >
+                                    <Settings2 className="mr-2" />
+                                    Dashboard Selection
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
                                     onClick={handleLogout}
                                     disabled={isLoggingOut}
                                     className="text-destructive focus:text-destructive cursor-pointer"

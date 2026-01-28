@@ -105,3 +105,147 @@ export async function getUsers() {
         return { success: false, error: "Gagal mengambil data users" };
     }
 }
+
+export async function requestPasswordReset(email: string): Promise<ActionResponse<{ message: string }>> {
+    try {
+        console.log('[Password Reset] Starting password reset request for:', email);
+
+        const { forgotPasswordSchema } = await import("@/lib/validations/auth");
+        const validated = forgotPasswordSchema.safeParse({ email });
+
+        if (!validated.success) {
+            console.log('[Password Reset] Validation failed:', validated.error.issues[0].message);
+            return { success: false, error: validated.error.issues[0].message };
+        }
+
+        const user = await prisma.user.findUnique({
+            where: { email: validated.data.email },
+        });
+
+        if (!user) {
+            console.log('[Password Reset] User not found for email:', email);
+            return {
+                success: true,
+                data: { message: "Jika email terdaftar, link reset password akan dikirim" }
+            };
+        }
+
+        console.log('[Password Reset] User found:', user.name);
+
+        const token = crypto.randomUUID();
+        const expiresAt = new Date(Date.now() + 15 * 60 * 1000); 
+
+        await prisma.passwordResetToken.deleteMany({
+            where: { email: validated.data.email },
+        });
+
+        await prisma.passwordResetToken.create({
+            data: {
+                email: validated.data.email,
+                token,
+                expiresAt,
+            },
+        });
+
+        console.log('[Password Reset] Token created successfully');
+
+        const { sendEmail, generatePasswordResetEmail } = await import("@/lib/email");
+        const resetLink = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/admin/reset-password?token=${token}`;
+
+        console.log('[Password Reset] Attempting to send email to:', validated.data.email);
+        const emailResult = await sendEmail({
+            to: validated.data.email,
+            subject: "Reset Password - KJPP AKR",
+            html: generatePasswordResetEmail(resetLink, user.name),
+        });
+
+        if (!emailResult.success) {
+            console.error('[Password Reset] Email sending failed:', emailResult.error);
+            return { success: false, error: "Gagal mengirim email. Silakan coba lagi." };
+        }
+
+        console.log('[Password Reset] Email sent successfully');
+
+        return {
+            success: true,
+            data: { message: "Link reset password telah dikirim ke email Anda" }
+        };
+    } catch (error) {
+        console.error("[Password Reset] Unexpected error:", error);
+        return { success: false, error: "Gagal memproses permintaan reset password" };
+    }
+}
+
+export async function resetPassword(token: string, newPassword: string): Promise<ActionResponse<{ message: string }>> {
+    try {
+        const { resetPasswordSchema } = await import("@/lib/validations/auth");
+        const validated = resetPasswordSchema.safeParse({
+            token,
+            password: newPassword,
+            confirmPassword: newPassword
+        });
+
+        if (!validated.success) {
+            return { success: false, error: validated.error.issues[0].message };
+        }
+
+        // Find token
+        const resetToken = await prisma.passwordResetToken.findUnique({
+            where: { token: validated.data.token },
+        });
+
+        if (!resetToken) {
+            return { success: false, error: "Token tidak valid atau sudah digunakan" };
+        }
+
+        // Check if token expired
+        if (resetToken.expiresAt < new Date()) {
+            await prisma.passwordResetToken.delete({
+                where: { token: validated.data.token },
+            });
+            return { success: false, error: "Token sudah kadaluarsa. Silakan request reset password lagi" };
+        }
+
+        const hashedPassword = await bcrypt.hash(validated.data.password, 12);
+
+        await prisma.user.update({
+            where: { email: resetToken.email },
+            data: { password: hashedPassword },
+        });
+
+        await prisma.passwordResetToken.delete({
+            where: { token: validated.data.token },
+        });
+
+        revalidatePath("/admin");
+
+        return {
+            success: true,
+            data: { message: "Password berhasil direset. Silakan login dengan password baru" }
+        };
+    } catch (error) {
+        console.error("Reset password error:", error);
+        return { success: false, error: "Gagal mereset password" };
+    }
+}
+
+export async function verifyResetToken(token: string): Promise<ActionResponse<{ valid: boolean }>> {
+    try {
+        const resetToken = await prisma.passwordResetToken.findUnique({
+            where: { token },
+        });
+
+        if (!resetToken) {
+            return { success: false, error: "Token tidak valid" };
+        }
+
+        if (resetToken.expiresAt < new Date()) {
+            return { success: false, error: "Token sudah kadaluarsa" };
+        }
+
+        return { success: true, data: { valid: true } };
+    } catch (error) {
+        console.error("Verify token error:", error);
+        return { success: false, error: "Gagal memverifikasi token" };
+    }
+}

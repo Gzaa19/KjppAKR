@@ -26,70 +26,87 @@ export default function PortalSelectionPage() {
     return (
         <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-[#F5F7FA]">
             <div className="relative z-10 w-full max-w-5xl px-4 animate-in fade-in zoom-in duration-500">
-                <div className="text-center mb-12 space-y-4">
-                    <div className="inline-flex items-center justify-center px-6 py-3 bg-white rounded-full mb-6 border border-gray-100 shadow-sm">
+                <div className="text-center mb-16 space-y-6">
+                    <div className="inline-flex items-center justify-center px-6 py-2.5 bg-white/50 backdrop-blur-sm rounded-full mb-4 border border-slate-200/60 shadow-sm animate-in fade-in slide-in-from-top-4 duration-700">
                         <Image
                             src="/image/logoAKR.png"
                             alt="Logo"
                             width={120}
                             height={40}
-                            className="h-8 w-auto object-contain"
+                            className="h-7 w-auto object-contain opacity-90 grayscale-[0.2] hover:grayscale-0 transition-all duration-300"
                         />
-                        <div className="w-px h-6 bg-gray-200 mx-4"></div>
-                        <span className="text-xs font-semibold tracking-widest text-gray-400 uppercase">
-                            Anas Karim Rivai & Rekan
+                        <div className="w-px h-5 bg-slate-300 mx-4"></div>
+                        <span className="text-[11px] font-bold tracking-[0.2em] text-slate-500 uppercase">
+                            Administrator Portal
                         </span>
                     </div>
 
-                    <h1 className="text-4xl md:text-5xl font-bold text-gray-800 tracking-tight">
-                        Selamat Datang, Admin
-                    </h1>
-                    <p className="text-gray-500 text-lg font-light">
-                        Silakan pilih dashboard yang ingin Anda akses hari ini
-                    </p>
+                    <div className="space-y-4 max-w-3xl mx-auto">
+                        <h1 className="text-4xl md:text-5xl font-bold text-slate-800 tracking-tight leading-tight">
+                            KJPP Anas Karim Rivai & Rekan
+                        </h1>
+                        <p className="text-slate-500 text-lg md:text-xl font-light max-w-2xl mx-auto leading-relaxed">
+                            Pusat kontrol terpadu untuk pengelolaan website profile dan sistem tracking penilaian aset.
+                        </p>
+                    </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto px-4">
                     <Link
                         href="/admin/dashboard"
-                        className="group relative bg-white rounded-3xl p-10 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-500/10 border border-gray-100 flex flex-col items-center text-center overflow-hidden"
+                        className="group relative bg-white rounded-[2rem] p-10 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_50px_-12px_rgba(59,130,246,0.15)] border border-slate-100 flex flex-col items-center text-center overflow-hidden"
                     >
-                        <div className="w-24 h-24 bg-blue-600 rounded-3xl flex items-center justify-center mb-6 shadow-xl shadow-blue-500/20 group-hover:scale-110 transition-transform duration-300">
+                        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                        <div className="relative w-24 h-24 bg-blue-600 rounded-3xl flex items-center justify-center mb-8 shadow-xl shadow-blue-500/20 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
                             <Layers className="w-10 h-10 text-white" />
                         </div>
 
-                        <h3 className="text-2xl font-bold text-gray-800 mb-3 group-hover:text-blue-600 transition-colors">
-                            Content Manager
-                        </h3>
-                        <p className="text-gray-500 mb-8 leading-relaxed max-w-xs">
-                            Pusat pengaturan konten publikasi, galeri, hero image, dan manajemen klien.
+                        <div className="relative space-y-2 mb-4">
+                            <span className="inline-block px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-bold tracking-wide uppercase mb-2">
+                                Company Profile
+                            </span>
+                            <h3 className="text-2xl font-bold text-slate-800 group-hover:text-blue-600 transition-colors">
+                                Manajemen Website
+                            </h3>
+                        </div>
+
+                        <p className="relative text-slate-500 mb-8 leading-relaxed text-sm max-w-xs mx-auto">
+                            Kelola konten Publikasi, Update Galeri, Hero Banner, dan Portofolio Klien Perusahaan dengan mudah.
                         </p>
 
-                        <div className="mt-auto opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                            <span className="inline-flex items-center text-blue-600 text-sm font-bold tracking-wide uppercase bg-blue-50 px-4 py-2 rounded-full">
-                                Masuk Content Manager <ArrowRight className="ml-2 w-4 h-4" />
+                        <div className="relative mt-auto opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 ease-out">
+                            <span className="inline-flex items-center text-blue-600 text-sm font-bold tracking-wide uppercase bg-blue-50/80 px-6 py-2.5 rounded-full hover:bg-blue-100 transition-colors">
+                                Akses Dashboard <ArrowRight className="ml-2 w-4 h-4" />
                             </span>
                         </div>
                     </Link>
-
                     <Link
                         href="/admin/tracking"
-                        className="group relative bg-white rounded-3xl p-10 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-emerald-500/10 border border-gray-100 flex flex-col items-center text-center overflow-hidden"
+                        className="group relative bg-white rounded-[2rem] p-10 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_50px_-12px_rgba(16,185,129,0.15)] border border-slate-100 flex flex-col items-center text-center overflow-hidden"
                     >
-                        <div className="w-24 h-24 bg-emerald-600 rounded-3xl flex items-center justify-center mb-6 shadow-xl shadow-emerald-500/20 group-hover:scale-110 transition-transform duration-300">
+                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                        <div className="relative w-24 h-24 bg-emerald-600 rounded-3xl flex items-center justify-center mb-8 shadow-xl shadow-emerald-500/20 group-hover:scale-110 group-hover:-rotate-3 transition-all duration-500">
                             <ClipboardClock className="w-10 h-10 text-white" />
                         </div>
 
-                        <h3 className="text-2xl font-bold text-gray-800 mb-3 group-hover:text-emerald-600 transition-colors">
-                            Appraisal Tracker
-                        </h3>
-                        <p className="text-gray-500 mb-8 leading-relaxed max-w-xs">
-                            Pantau status legalitas, jadwal inspeksi lapangan, analisis, hingga laporan final.
+                        <div className="relative space-y-2 mb-4">
+                            <span className="inline-block px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 text-xs font-bold tracking-wide uppercase mb-2">
+                                Tracking System
+                            </span>
+                            <h3 className="text-2xl font-bold text-slate-800 group-hover:text-emerald-600 transition-colors">
+                                Aplikasi SI-MAPAN
+                            </h3>
+                        </div>
+
+                        <p className="relative text-slate-500 mb-8 leading-relaxed text-sm max-w-xs mx-auto">
+                            Sistem monitoring terpadu. Pantau status Verifikasi Dokumen, Jadwal Inspeksi Lapangan, Analisis, hingga Laporan Final secara realtime.
                         </p>
 
-                        <div className="mt-auto opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                            <span className="inline-flex items-center text-emerald-600 text-sm font-bold tracking-wide uppercase bg-emerald-50 px-4 py-2 rounded-full">
-                                Masuk Appraisal Tracker <ArrowRight className="ml-2 w-4 h-4" />
+                        <div className="relative mt-auto opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 ease-out">
+                            <span className="inline-flex items-center text-emerald-600 text-sm font-bold tracking-wide uppercase bg-emerald-50/80 px-6 py-2.5 rounded-full hover:bg-emerald-100 transition-colors">
+                                Akses Aplikasi <ArrowRight className="ml-2 w-4 h-4" />
                             </span>
                         </div>
                     </Link>

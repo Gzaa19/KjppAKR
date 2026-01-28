@@ -3,22 +3,17 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Lock, Mail, Loader2, Eye, EyeOff, Building2 } from "lucide-react";
+import { Mail, Loader2, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { toast } from "sonner";
+import { requestPasswordReset } from "@/actions/auth";
 
-export default function AdminLoginPage() {
-    const router = useRouter();
+export default function ForgotPasswordPage() {
     const [isPending, startTransition] = useTransition();
     const [error, setError] = useState<string | null>(null);
-    const [showPassword, setShowPassword] = useState(false);
-    const [formData, setFormData] = useState({
-        email: "",
-        password: "",
-    });
+    const [success, setSuccess] = useState(false);
+    const [email, setEmail] = useState("");
 
     async function onSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -26,22 +21,12 @@ export default function AdminLoginPage() {
 
         startTransition(async () => {
             try {
-                const response = await fetch("/api/auth/login", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(formData),
-                });
-
-                const result = await response.json();
+                const result = await requestPasswordReset(email);
 
                 if (result.success) {
-                    toast.success("Login berhasil! Semangat bekerja! 🚀", {
-                        description: "Selamat datang kembali di dashboard admin KJPP AKR"
-                    });
-                    router.push("/admin/portal-selection");
-                    router.refresh();
+                    setSuccess(true);
                 } else {
-                    setError(result.error || "Login gagal");
+                    setError(result.error || "Gagal memproses permintaan");
                 }
             } catch {
                 setError("Terjadi kesalahan. Silakan coba lagi.");
@@ -49,12 +34,71 @@ export default function AdminLoginPage() {
         });
     }
 
+    if (success) {
+        return (
+            <div className="min-h-screen flex items-center justify-center p-8 bg-bg-1">
+                <div className="w-full max-w-md space-y-8">
+                    <div className="lg:hidden flex justify-center mb-8">
+                        <div className="flex items-center gap-3">
+                            <div className="w-50 h-50 bg-bg-1 rounded-lg p-2 flex items-center justify-center">
+                                <Image
+                                    src="/image/logoAKR.png"
+                                    alt="KJPP AKR Logo"
+                                    width={150}
+                                    height={150}
+                                    className="object-contain"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="text-center space-y-6 bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+                        <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
+                            <CheckCircle2 className="w-8 h-8 text-green-600" />
+                        </div>
+
+                        <div className="space-y-2">
+                            <h2 className="text-2xl font-bold text-slate-900">
+                                Email Terkirim!
+                            </h2>
+                            <p className="text-slate-600">
+                                Kami telah mengirim link reset password ke:
+                            </p>
+                            <p className="font-semibold text-slate-900">{email}</p>
+                        </div>
+
+                        <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg text-left">
+                            <p className="text-sm text-blue-900">
+                                <strong>Langkah selanjutnya:</strong>
+                            </p>
+                            <ol className="text-sm text-blue-800 mt-2 space-y-1 list-decimal list-inside">
+                                <li>Cek inbox email Anda</li>
+                                <li>Klik link reset password</li>
+                                <li>Buat password baru</li>
+                            </ol>
+                            <p className="text-xs text-blue-700 mt-3">
+                                Link berlaku selama 15 menit. Jika tidak menerima email, cek folder spam.
+                            </p>
+                        </div>
+
+                        <Link href="/admin/login">
+                            <Button className="w-full h-12 bg-slate-900 hover:bg-slate-800">
+                                <ArrowLeft className="mr-2 h-5 w-5" />
+                                Kembali ke Login
+                            </Button>
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen flex">
             <div className="hidden lg:flex lg:w-1/2 relative p-12 flex-col justify-between overflow-hidden">
                 <div className="absolute inset-0">
                     <Image
-                        src="https://images.unsplash.com/photo-1696820955952-1976baeb4eea?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                        src="https://images.unsplash.com/photo-1696820955952-1976baeb4eea?q=80&w=2070&auto=format&fit=crop"
                         alt="Modern Building"
                         fill
                         className="object-cover"
@@ -76,19 +120,20 @@ export default function AdminLoginPage() {
                     </div>
                     <div className="space-y-4">
                         <h1 className="text-4xl lg:text-5xl font-bold text-white leading-tight">
-                            Penilaian Properti & Manajemen Aset Profesional
+                            Lupa Password?
                         </h1>
                         <p className="text-lg text-slate-300 leading-relaxed max-w-md">
-                            Portal khusus untuk administrator KJPP AKR dalam mengelola penilaian, laporan klien, dan operasional perusahaan dengan presisi dan keamanan.
+                            Tidak masalah! Masukkan email Anda dan kami akan mengirimkan link untuk mereset password.
                         </p>
                     </div>
                 </div>
                 <div className="relative z-10">
                     <p className="text-sm text-slate-400">
-                        © 2026 KJPP AKR. All rights reserved. Professional Property Services.
+                        © 2026 KJPP AKR. All rights reserved.
                     </p>
                 </div>
             </div>
+
             <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-bg-1">
                 <div className="w-full max-w-md space-y-8">
                     <div className="lg:hidden flex justify-center mb-8">
@@ -104,15 +149,16 @@ export default function AdminLoginPage() {
                             </div>
                         </div>
                     </div>
+
                     <div className="text-center lg:text-left space-y-2">
                         <div className="inline-flex items-center justify-center w-12 h-12 bg-slate-100 rounded-full mb-4">
-                            <Lock className="w-6 h-6 text-slate-700" />
+                            <Mail className="w-6 h-6 text-slate-700" />
                         </div>
                         <h2 className="text-3xl font-bold text-slate-900">
-                            Login Admin
+                            Reset Password
                         </h2>
                         <p className="text-slate-600">
-                            Masukkan kredensial untuk mengakses dashboard
+                            Masukkan email Anda untuk menerima link reset password
                         </p>
                     </div>
 
@@ -132,52 +178,16 @@ export default function AdminLoginPage() {
                                 <Input
                                     id="email"
                                     type="email"
-                                    placeholder="admin@kjpp-akr.com"
+                                    placeholder="Masukkan Email KJPP AKR"
                                     className="pl-10 h-12 bg-slate-50 border-slate-200 focus:border-slate-900 focus:ring-slate-900"
-                                    value={formData.email}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                     required
                                     disabled={isPending}
                                 />
                             </div>
                         </div>
-                        <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                                <Label htmlFor="password" className="text-sm font-medium text-slate-700">
-                                    Kata Sandi
-                                </Label>
-                                <Link
-                                    href="/admin/forgot-password"
-                                    className="text-sm text-slate-600 hover:text-slate-900 transition-colors"
-                                >
-                                    Lupa Password?
-                                </Link>
-                            </div>
-                            <div className="relative">
-                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
-                                <Input
-                                    id="password"
-                                    type={showPassword ? "text" : "password"}
-                                    placeholder="••••••••"
-                                    className="pl-10 pr-10 h-12 bg-slate-50 border-slate-200 focus:border-slate-900 focus:ring-slate-900"
-                                    value={formData.password}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                                    required
-                                    disabled={isPending}
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                                >
-                                    {showPassword ? (
-                                        <EyeOff className="h-5 w-5" />
-                                    ) : (
-                                        <Eye className="h-5 w-5" />
-                                    )}
-                                </button>
-                            </div>
-                        </div>
+
                         <Button
                             type="submit"
                             className="w-full h-12 text-base font-medium bg-slate-900 hover:bg-slate-800 text-white transition-all duration-200"
@@ -186,15 +196,22 @@ export default function AdminLoginPage() {
                             {isPending ? (
                                 <>
                                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                                    Memproses...
+                                    Mengirim...
                                 </>
                             ) : (
-                                "Masuk ke Dashboard"
+                                "Kirim Link Reset Password"
                             )}
                         </Button>
-                        <p className="text-center text-sm text-slate-500">
-                            KJPP AKR - Admin Dashboard Management System v2.0
-                        </p>
+
+                        <div className="text-center">
+                            <Link
+                                href="/admin/login"
+                                className="inline-flex items-center text-sm text-slate-600 hover:text-slate-900 transition-colors"
+                            >
+                                <ArrowLeft className="mr-2 h-4 w-4" />
+                                Kembali ke Login
+                            </Link>
+                        </div>
                     </form>
                 </div>
             </div>

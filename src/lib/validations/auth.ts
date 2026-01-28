@@ -27,3 +27,23 @@ export const updateUserSchema = z.object({
 export type LoginInput = z.infer<typeof loginSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type UpdateUserInput = z.infer<typeof updateUserSchema>;
+
+export const forgotPasswordSchema = z.object({
+    email: z.string().email("Email tidak valid").toLowerCase(),
+});
+
+export const resetPasswordSchema = z.object({
+    token: z.string().min(1, "Token tidak valid"),
+    password: z
+        .string()
+        .min(8, "Password minimal 8 karakter")
+        .regex(/[a-zA-Z]/, "Password harus mengandung huruf")
+        .regex(/[0-9]/, "Password harus mengandung angka"),
+    confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "Password tidak cocok",
+    path: ["confirmPassword"],
+});
+
+export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;

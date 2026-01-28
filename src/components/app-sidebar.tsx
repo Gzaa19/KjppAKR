@@ -45,7 +45,6 @@ type UserSession = {
     avatar: string | null;
 };
 
-// Define menu items
 const platformMenu = [
     {
         title: "Dashboard",
@@ -79,7 +78,7 @@ const cmsMenu = [
         icon: Map,
     },
     {
-        title: "Cover Depan",
+        title: "Banner Hero",
         url: "/admin/hero-images",
         icon: ImageIcon,
     },
@@ -247,6 +246,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                     </div>
                                 </DropdownMenuLabel>
                                 <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                    onClick={() => router.push("/admin/portal-selection")}
+                                    className="cursor-pointer"
+                                >
+                                    <Settings2 className="mr-2" />
+                                    Dashboard Selection
+                                </DropdownMenuItem>
                                 <DropdownMenuItem
                                     onClick={handleLogout}
                                     disabled={isLoggingOut}

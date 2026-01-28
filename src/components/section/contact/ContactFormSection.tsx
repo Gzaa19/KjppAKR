@@ -20,7 +20,6 @@ import { toast } from "sonner";
 import { Loader2, Send } from "lucide-react";
 
 const formSchema = z.object({
-    // A. Identitas
     name: z.string().min(2, { message: "Nama harus diisi." }),
     company: z.string().min(2, { message: "Nama perusahaan harus diisi." }),
     position: z.string().min(2, { message: "Jabatan harus diisi." }),
