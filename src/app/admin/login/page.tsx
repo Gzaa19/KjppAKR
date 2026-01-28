@@ -15,6 +15,7 @@ export default function AdminLoginPage() {
     const [isPending, startTransition] = useTransition();
     const [error, setError] = useState<string | null>(null);
     const [showPassword, setShowPassword] = useState(false);
+    const [rememberMe, setRememberMe] = useState(false);
     const [formData, setFormData] = useState({
         email: "",
         password: "",
@@ -29,7 +30,7 @@ export default function AdminLoginPage() {
                 const response = await fetch("/api/auth/login", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(formData),
+                    body: JSON.stringify({ ...formData, rememberMe }),
                 });
 
                 const result = await response.json();
@@ -132,7 +133,7 @@ export default function AdminLoginPage() {
                                 <Input
                                     id="email"
                                     type="email"
-                                    placeholder="admin@kjpp-akr.com"
+                                    placeholder="Masukkan email KJPP"
                                     className="pl-10 h-12 bg-slate-50 border-slate-200 focus:border-slate-900 focus:ring-slate-900"
                                     value={formData.email}
                                     onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
@@ -178,6 +179,21 @@ export default function AdminLoginPage() {
                                 </button>
                             </div>
                         </div>
+
+                        <div className="flex items-center">
+                            <input
+                                id="rememberMe"
+                                type="checkbox"
+                                checked={rememberMe}
+                                onChange={(e) => setRememberMe(e.target.checked)}
+                                className="h-4 w-4 text-slate-900 focus:ring-slate-900 border-slate-300 rounded"
+                                disabled={isPending}
+                            />
+                            <Label htmlFor="rememberMe" className="ml-2 text-sm text-slate-600 cursor-pointer">
+                                Ingat saya
+                            </Label>
+                        </div>
+
                         <Button
                             type="submit"
                             className="w-full h-12 text-base font-medium bg-slate-900 hover:bg-slate-800 text-white transition-all duration-200"

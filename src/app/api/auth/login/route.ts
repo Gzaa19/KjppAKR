@@ -55,15 +55,27 @@ export async function POST(request: NextRequest) {
             avatar: user.avatar,
         };
 
-        // Set session cookie (expires in 7 days)
+        // Determine session duration based on rememberMe
+        // If rememberMe is true: 4 hours persistent cookie
+        // If rememberMe is false or not provided: session cookie (expires when browser closes)
+        const rememberMe = body.rememberMe === true;
+
+        // Set session cookie
         const cookieStore = await cookies();
-        cookieStore.set("admin_session", JSON.stringify(sessionData), {
+        const cookieOptions: any = {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
-            maxAge: 60 * 60 * 24 * 7, // 7 days
             path: "/",
-        });
+        };
+
+        // Only set maxAge if rememberMe is true
+        // Without maxAge, cookie becomes session-based (expires on browser close)
+        if (rememberMe) {
+            cookieOptions.maxAge = 60 * 60 * 4; // 4 hours
+        }
+
+        cookieStore.set("admin_session", JSON.stringify(sessionData), cookieOptions);
 
         return NextResponse.json({
             success: true,
