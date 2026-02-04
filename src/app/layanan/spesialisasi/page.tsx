@@ -9,9 +9,16 @@ export const metadata: Metadata = {
 };
 
 const specializations = [
-    "Pembebasan lahan",
     "Penilaian Bidang Perminyakan",
-    "Inventaris Aset Daerah (OTDA)",
+    "Penilaian untuk Kepentingan Standar Akuntasi Keuangan (SAK)",
+    "Penjaminan Utang dan Lelang Perbankan",
+    "Zona Nilai Tanah",
+    "Penilaian PBB-P2 Umum (Standar & Non-Standar)",
+    "Penilaian PBB-P2 Khusus",
+    "Dokumen Perencanaan Pengadaan Tanah (DPPT)",
+    "Penilaian Pengadaan Tanah",
+    "Penilaian Aset Tak Berwujud (Intangible Asset)",
+    "Studi Penurunan Nilai Aset (Impairment)",
 ];
 
 export default function SpesialisasiPage() {
@@ -24,7 +31,7 @@ export default function SpesialisasiPage() {
                 alt="Specialization Background"
             />
 
-            <main className="relative z-10 mt-[50vh] bg-white rounded-t-[3rem] shadow-2xl pt-24 pb-20 min-h-screen">
+            <main className="relative z-10 mt-[50vh] bg-white rounded-t-[3rem] shadow-2xl pt-24 pb-48 min-h-screen">
                 {/* Header */}
                 <div className="container mx-auto px-4 mb-16">
                     <div className="flex items-center gap-4 mb-6">

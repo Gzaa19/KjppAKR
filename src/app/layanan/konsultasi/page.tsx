@@ -11,15 +11,28 @@ export const metadata: Metadata = {
 };
 
 const consultancyServices = [
-    "Konsultansi Pengembangan Properti",
-    "Desain Sistem Informasi Aset",
-    "Manajemen Properti",
-    "Studi Kelayakan Usaha",
-    "Jasa Agen Properti",
-    "Pengawasan Pembiayaan Proyek",
-    "Studi Penentuan Sisa Umur Ekonomis",
-    "Studi Penggunaan Tertinggi dan Terbaik (Highest and Best Use)",
-    "Studi Optimalisasi Aset",
+    {
+        title: "Jasa Lainnya Penilaian Properti",
+        items: [
+            "Konsultasi Pengembangan Properti",
+            "Desain Sistem Informasi Aset",
+            "Manajemen Properti",
+            "Studi Kelayakan Usaha",
+            "Jasa Agen Properti",
+            "Pengawasan Pembiayaan Proyek",
+            "Studi Penentuan Sisa Umur Ekonomis",
+            "Studi Penggunaan Tertinggi dan Terbaik (Highest and Best Use)",
+            "Studi Optimalisasi Aset",
+        ]
+    },
+    {
+        title: "Jasa Lainnya Penilaian Bisnis",
+        items: [
+            "Studi Kelayakan Usaha",
+            "Penasihat Keuangan Korporasi",
+            "Pengawasan Pembiayaan Proyek",
+        ]
+    }
 ];
 
 export default function KonsultansiPage() {
@@ -31,7 +44,7 @@ export default function KonsultansiPage() {
                 imageUrl="https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop"
                 alt="Consultancy Background"
             />
-            <main className="relative z-10 mt-[50vh] bg-white rounded-t-[3rem] shadow-2xl pt-24 pb-20 min-h-screen">
+            <main className="relative z-10 mt-[50vh] bg-white rounded-t-[3rem] shadow-2xl pt-24 pb-48 min-h-screen">
                 {/* Header */}
                 <div className="container mx-auto px-4 mb-16">
                     <div className="flex items-center gap-4 mb-6">
@@ -47,26 +60,33 @@ export default function KonsultansiPage() {
 
                 {/* Content Section */}
                 <div className="container mx-auto px-4">
-                    <div className="bg-white rounded-2xl border-l-4 border-l-kjpp-red shadow-lg p-8 md:p-12 hover:shadow-xl transition-shadow duration-300">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
-                            {consultancyServices.map((service, index) => (
-                                <div key={index} className="flex items-center gap-4 group">
-                                    <div className="transform rotate-45 w-2 h-2 bg-kjpp-red shrink-0 group-hover:scale-125 transition-transform duration-300" />
-                                    <span className="text-lg text-slate-700 font-medium group-hover:text-kjpp-dark transition-colors duration-300">
-                                        {service}
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
+                    <div className="grid grid-cols-1 gap-12">
+                        {consultancyServices.map((category, index) => (
+                            <div key={index} className="bg-white rounded-2xl border-l-4 border-l-kjpp-red shadow-lg p-8 hover:shadow-xl transition-shadow duration-300 h-full">
+                                <h2 className="text-2xl font-bold text-kjpp-dark mb-6 pb-4 border-b border-slate-100">
+                                    {category.title}
+                                </h2>
+                                <ul className="space-y-4">
+                                    {category.items.map((item, idx) => (
+                                        <li key={idx} className="flex gap-3 text-slate-700 items-start">
+                                            <div className="mt-2 w-1.5 h-1.5 rounded-full bg-kjpp-red shrink-0" />
+                                            <span className="text-lg leading-relaxed">
+                                                {item}
+                                            </span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
                     </div>
-
-
                 </div>
+
+
             </main>
 
             <div className="relative z-10 -mt-20">
                 <Footer />
             </div>
-        </div>
+        </div >
     );
 }
