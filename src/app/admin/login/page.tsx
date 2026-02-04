@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Lock, Mail, Loader2, Eye, EyeOff, Building2 } from "lucide-react";
+import { Lock, Mail, Loader2, Eye, EyeOff } from "lucide-react";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -15,10 +15,10 @@ export default function AdminLoginPage() {
     const [isPending, startTransition] = useTransition();
     const [error, setError] = useState<string | null>(null);
     const [showPassword, setShowPassword] = useState(false);
-    const [rememberMe, setRememberMe] = useState(false);
     const [formData, setFormData] = useState({
         email: "",
         password: "",
+        rememberMe: false,
     });
 
     async function onSubmit(e: React.FormEvent) {
@@ -30,7 +30,7 @@ export default function AdminLoginPage() {
                 const response = await fetch("/api/auth/login", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ ...formData, rememberMe }),
+                    body: JSON.stringify(formData),
                 });
 
                 const result = await response.json();
@@ -133,7 +133,7 @@ export default function AdminLoginPage() {
                                 <Input
                                     id="email"
                                     type="email"
-                                    placeholder="Masukkan email KJPP"
+                                    placeholder="Masukkan Email KJPP AKR"
                                     className="pl-10 h-12 bg-slate-50 border-slate-200 focus:border-slate-900 focus:ring-slate-900"
                                     value={formData.email}
                                     onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
@@ -179,18 +179,20 @@ export default function AdminLoginPage() {
                                 </button>
                             </div>
                         </div>
-
-                        <div className="flex items-center">
+                        <div className="flex items-center space-x-2">
                             <input
-                                id="rememberMe"
                                 type="checkbox"
-                                checked={rememberMe}
-                                onChange={(e) => setRememberMe(e.target.checked)}
-                                className="h-4 w-4 text-slate-900 focus:ring-slate-900 border-slate-300 rounded"
+                                id="rememberMe"
+                                checked={formData.rememberMe}
+                                onChange={(e) => setFormData(prev => ({ ...prev, rememberMe: e.target.checked }))}
                                 disabled={isPending}
+                                className="w-4 h-4 text-slate-900 bg-slate-50 border-slate-300 rounded focus:ring-slate-900 focus:ring-2 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
                             />
-                            <Label htmlFor="rememberMe" className="ml-2 text-sm text-slate-600 cursor-pointer">
-                                Ingat saya
+                            <Label
+                                htmlFor="rememberMe"
+                                className="text-sm font-medium text-slate-700 cursor-pointer select-none"
+                            >
+                                Ingat Saya
                             </Label>
                         </div>
 

@@ -78,8 +78,8 @@ const cmsMenu = [
         icon: Map,
     },
     {
-        title: "Banner Hero",
-        url: "/admin/hero-images",
+        title: "Banner Sekapur Sirih",
+        url: "/admin/sekapur-sirih",
         icon: ImageIcon,
     },
 ];

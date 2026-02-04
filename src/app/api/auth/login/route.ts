@@ -4,11 +4,27 @@ import bcrypt from "bcryptjs";
 import { loginSchema } from "@/lib/validations";
 import { cookies } from "next/headers";
 
+import { loginRateLimit, checkRateLimit } from "@/lib/rate-limit";
+
 export async function POST(request: NextRequest) {
     try {
+        const ip = request.headers.get("x-forwarded-for") ?? request.headers.get("x-real-ip") ?? "127.0.0.1";
+        const identifier = `login:${ip}`;
+
+        const { success: rateLimitSuccess } = await checkRateLimit(loginRateLimit, identifier);
+
+        if (!rateLimitSuccess) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    error: "Terlalu banyak percobaan login. Silakan tunggu 15 menit dan coba lagi.",
+                },
+                { status: 429 }
+            );
+        }
+
         const body = await request.json();
 
-        // Validate input
         const validated = loginSchema.safeParse(body);
         if (!validated.success) {
             return NextResponse.json(
@@ -17,7 +33,6 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Find user by email
         const user = await prisma.user.findUnique({
             where: { email: validated.data.email },
         });
@@ -29,7 +44,6 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Check if user is active
         if (!user.isActive) {
             return NextResponse.json(
                 { success: false, error: "Akun tidak aktif" },
@@ -37,7 +51,6 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Verify password
         const isValidPassword = await bcrypt.compare(validated.data.password, user.password);
         if (!isValidPassword) {
             return NextResponse.json(
@@ -46,7 +59,6 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Create session data
         const sessionData = {
             id: user.id,
             email: user.email,
@@ -54,29 +66,24 @@ export async function POST(request: NextRequest) {
             role: user.role,
             avatar: user.avatar,
         };
-
-        // Determine session duration based on rememberMe
-        // If rememberMe is true: 4 hours persistent cookie
-        // If rememberMe is false or not provided: session cookie (expires when browser closes)
-        const rememberMe = body.rememberMe === true;
-
-        // Set session cookie
         const cookieStore = await cookies();
-        const cookieOptions: any = {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
-            path: "/",
-        };
 
-        // Only set maxAge if rememberMe is true
-        // Without maxAge, cookie becomes session-based (expires on browser close)
-        if (rememberMe) {
-            cookieOptions.maxAge = 60 * 60 * 4; // 4 hours
+        if (validated.data.rememberMe) {
+            cookieStore.set("admin_session", JSON.stringify(sessionData), {
+                httpOnly: true,
+                secure: true,
+                sameSite: "strict",
+                maxAge: 60 * 60 * 4,
+                path: "/",
+            });
+        } else {
+            cookieStore.set("admin_session", JSON.stringify(sessionData), {
+                httpOnly: true,
+                secure: true,
+                sameSite: "strict",
+                path: "/",
+            });
         }
-
-        cookieStore.set("admin_session", JSON.stringify(sessionData), cookieOptions);
-
         return NextResponse.json({
             success: true,
             data: {
@@ -87,7 +94,7 @@ export async function POST(request: NextRequest) {
             },
         });
     } catch (error) {
-        console.error("Login error:", error);
+        console.error("Login error:", error instanceof Error ? error.message : 'Unknown');
         return NextResponse.json(
             { success: false, error: "Terjadi kesalahan saat login" },
             { status: 500 }

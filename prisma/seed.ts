@@ -3,6 +3,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import bcrypt from "bcryptjs";
 import "dotenv/config";
+import { title } from "process";
 
 function createPrismaClient() {
     const connectionString = process.env.DATABASE_URL;
@@ -78,7 +79,7 @@ async function main() {
         {
             name: "Achmad Nurcholis Sofyan, ST., MAPPI (Cert.)",
             title: "Rekan",
-            image: "/image/manajemen/pakAchmad.png",
+            image: "/image/manajemen/pakKholis.png",
             description: "Lahir di Jakarta pada tanggal 04 September 1988. Beliau mendapatkan gelar Sarjana Teknik dari Universitas Tarumanagara tahun 2010, serta telah lulus mengikuti Ujian Sertifikasi Penilai (USP) dari Asosiasi Masyarakat Profesi Penilai Indonesia (MAPPI) tahun 2021. Beliau memiliki pengalaman dalam bidang penilaian aset daerah, penilaian tanah bangunan, serta beberapa pengalaman lainnya.",
             isMappiCert: true,
             sortOrder: 3
@@ -100,19 +101,19 @@ async function main() {
             sortOrder: 5
         },
         {
-            name: "Imadduddin, SE., MAPPI (Cert.)",
+            name: "Andri Kurniawan",
             title: "Rekan",
-            image: "/image/manajemen/pakImadduddin.png",
-            description: "Lahir di Bukit Gonggang pada tanggal 5 Agustus 1965. Beliau mendapatkan gelar Sarjana Ekonomi Akuntansi dari Universitas Satya Negara Indonesia tahun 1998, serta telah lulus mengikuti Ujian Sertifikasi Penilai (USP) dari Asosiasi Masyarakat Profesi Penilai Indonesia (MAPPI) tahun 2009. Beliau memiliki pengalaman dalam bidang penilaian aset daerah, penilaian tanah bangunan, serta beberapa pengalaman lainnya",
-            isMappiCert: true,
+            image: "/image/manajemen/pakAndri.png",
+            description: "Lahir di Bogor pada tanggal 29 Maret 1995. Beliau memiliki pengalaman dalam bidang Administrasi Tender dari Tahun 2013 - Sekarang.",
+            isMappiCert: false,
             sortOrder: 6
         },
         {
-            name: "Andri Kurniawan",
+            name: "Ery",
             title: "Rekan",
-            image: "",
-            description: "Lahir di Bogor pada tanggal 29 Maret 1995. Beliau memiliki pengalaman dalam bidang Administrasi Tender dari Tahun 2013 - Sekarang.",
-            isMappiCert: true,
+            image: "/image/manajemen/pakEry.png",
+            description: "Lahir di Jakarta pada tanggal ... . Beliau memiliki pengalaman dalam bidang Administrasi Tender dari Tahun ... - Sekarang.",
+            isMappiCert: false,
             sortOrder: 7
         }
     ];
@@ -130,42 +131,6 @@ async function main() {
         }
     }
     console.log(`✅ Seeded ${managementTeams.length} management teams`);
-
-    // Seed Hero Images
-    console.log("\n🌱 Seeding Hero Images...");
-    const heroImages = [
-        {
-            imageUrl: "/image/hero/hero1.png",
-            altText: "KJPP AKR Team",
-            sortOrder: 1,
-            isActive: true
-        },
-        {
-            imageUrl: "/image/hero/hero2.png",
-            altText: "KJPP AKR Logo",
-            sortOrder: 2,
-            isActive: true
-        },
-        {
-            imageUrl: "/image/hero/hero3.jpg",
-            altText: "KJPP AKR Team",
-            sortOrder: 3,
-            isActive: true
-        }
-    ];
-
-    for (const heroImage of heroImages) {
-        const existingImage = await prisma.heroImage.findFirst({
-            where: { imageUrl: heroImage.imageUrl }
-        });
-
-        if (!existingImage) {
-            await prisma.heroImage.create({
-                data: heroImage
-            });
-        }
-    }
-    console.log(`✅ Seeded ${heroImages.length} hero images`);
 
     // Seed Client Categories
     console.log("\n🌱 Seeding Client Categories...");
@@ -246,58 +211,105 @@ async function main() {
     console.log("\n🌱 Seeding Publikasi...");
     const newsArticles = [
         {
-            title: "KJPP AKR Raih Penghargaan Best Appraisal Firm 2024",
-            slug: "kjpp-akr-raih-penghargaan-best-appraisal-firm-2024",
-            excerpt: "KJPP Anas Karim Rivai & Rekan berhasil meraih penghargaan sebagai Best Appraisal Firm 2024 dari Asosiasi Penilai Indonesia.",
-            content: "Jakarta - KJPP Anas Karim Rivai & Rekan dengan bangga mengumumkan pencapaian luar biasa sebagai penerima penghargaan Best Appraisal Firm 2024 dari Asosiasi Penilai Indonesia. Penghargaan ini merupakan pengakuan atas dedikasi dan profesionalisme tim kami dalam memberikan layanan penilaian aset yang berkualitas tinggi.\n\nDalam acara penganugerahan yang berlangsung di Jakarta Convention Center, Managing Partner kami, Ir. H. Anas Karim Rivai, M.Ec.Dev., MAPPI (Cert.) menyampaikan rasa terima kasih kepada seluruh tim dan klien yang telah mempercayai layanan kami.\n\n\"Penghargaan ini adalah hasil kerja keras seluruh tim KJPP AKR. Kami berkomitmen untuk terus meningkatkan kualitas layanan dan memberikan nilai terbaik bagi klien,\" ujar Pak Anas.\n\nKJPP AKR telah melayani berbagai klien dari sektor perbankan, pemerintahan, dan swasta dengan total lebih dari 1000 proyek penilaian sepanjang tahun 2024.",
-            coverImage: "/image/news/award-2024.jpg",
+            title: "Wajah Baru Digital: Peluncuran Website Resmi KJPP Anas Karim Rivai & Rekan",
+            slug: "wajah-baru-digital-peluncuran-website-resmi-kjpp-anas-karim-rivai-rekan",
+            excerpt: "KJPP Anas Karim Rivai & Rekan resmi meluncurkan website company profile dengan tampilan yang lebih modern dan dinamis. Langkah ini diambil untuk meningkatkan transparansi informasi layanan, profil tim ahli, dan kredibilitas perusahaan bagi seluruh mitra kerja.",
+            content: `Pembaruan Layanan Digital untuk Kredibilitas dan Transparansi\n\nSejalan dengan visi kami untuk menjadi perusahaan yang kuat dan tumbuh dalam industri penilaian di tingkat nasional maupun internasional, KJPP Anas Karim Rivai & Rekan dengan bangga memperkenalkan Website Company Profile terbaru kami.\n\nSebelumnya, akses informasi digital mengenai perusahaan sempat terbatas. Kini, kami menghadirkan platform digital yang dinamis dan informatif sebagai sarana komunikasi resmi dengan publik dan klien.\n\nFitur dan Informasi Utama: Website baru ini dirancang untuk memudahkan Anda mengakses berbagai informasi krusial, antara lain:\n* Profil & Legalitas: Informasi lengkap mengenai sejarah, visi-misi, dan legalitas perusahaan untuk menjamin kepercayaan Anda.\n* Layanan Penilaian: Penjelasan rinci mengenai jasa Penilaian Properti, Penilaian Bisnis, dan Konsultasi.\n* Manajemen Tim: Profil tenaga ahli profesional yang siap menangani kebutuhan penilaian aset Anda.\n* Portofolio Klien: Rekam jejak pengalaman kami dalam melayani berbagai sektor industri.\n\nKami berharap kehadiran website ini dapat mempermudah calon klien dan mitra kerja dalam mengenal KJPP Anas Karim Rivai & Rekan lebih dekat, serta mendapatkan layanan penilaian yang profesional dan terpercaya.`,
+            coverImage: "/image/news/berita1.png",
             category: NewsCategory.BERITA,
             isPublished: true,
-            publishedAt: new Date("2024-12-15"),
+            publishedAt: new Date("2026-02-01"),
             authorId: admin.id
         },
         {
-            title: "Workshop Penilaian Properti untuk Perbankan",
-            slug: "workshop-penilaian-properti-untuk-perbankan",
-            excerpt: "KJPP AKR menyelenggarakan workshop khusus tentang penilaian properti untuk sektor perbankan dengan menghadirkan praktisi berpengalaman.",
-            content: "KJPP Anas Karim Rivai & Rekan menyelenggarakan workshop bertema \"Penilaian Properti untuk Sektor Perbankan\" yang dihadiri oleh lebih dari 50 peserta dari berbagai bank di Indonesia.\n\nWorkshop ini membahas berbagai aspek penting dalam penilaian properti, termasuk:\n- Standar penilaian internasional (IVSC)\n- Metode penilaian yang tepat untuk agunan kredit\n- Analisis pasar properti terkini\n- Studi kasus penilaian properti komersial\n\nAcara ini mendapat respons positif dari para peserta yang mayoritas adalah analis kredit dan risk management officer dari perbankan.",
-            coverImage: "/image/news/workshop-2024.jpg",
-            category: NewsCategory.KEGIATAN,
+            title: "KJPP Anas Karim Rivai & Rekan Luncurkan SI-MAPAN: Solusi Digital Transparansi Penilaian Aset",
+            slug: "kjpp-anas-karim-rivai-rekan-luncurkan-si-mapan-solusi-digital-transparansi-penilaian-aset",
+            excerpt: "Jakarta - Sebagai wujud komitmen untuk menjadi perusahaan yang kuat dan tumbuh dalam industri penilaian di tingkat nasional maupun internasional, KJPP Anas Karim Rivai & Rekan dengan bangga memperkenalkan inovasi digital terbaru, SI-MAPAN (Sistem Informasi Manajemen dan Pantau Penilaian).",
+            content: `Jakarta - Sebagai wujud komitmen untuk menjadi perusahaan yang kuat dan tumbuh dalam industri penilaian di tingkat nasional maupun internasional, KJPP Anas Karim Rivai & Rekan dengan bangga memperkenalkan inovasi digital terbaru, SI-MAPAN (Sistem Informasi Manajemen dan Pantau Penilaian).
+                    Sistem ini hadir sebagai jawaban atas tantangan operasional dalam proses penilaian aset yang panjang dan bertahap. Sebelumnya, klien seringkali merasa cemas menunggu hasil dan harus menghubungi admin berulang kali hanya untuk menanyakan progres pekerjaan. Hal ini tidak hanya membebani waktu klien, tetapi juga menghambat efisiensi tim admin kami.
+                    Dengan hadirnya SI-MAPAN, kami menghadirkan fitur unggulan "Cek Resi" atau Tracking Publik. Fitur ini memungkinkan klien untuk memantau status pekerjaan secara mandiri, real-time, dan transparan.
+                    Keunggulan Utama SI-MAPAN:
+                    - Akses Mudah Tanpa Login: Klien cukup memasukkan Kode Unik (Tiket) untuk melihat progres, tanpa perlu repot melakukan registrasi akun.
+                    - Informasi Real-Time: Status pengerjaan—mulai dari inspeksi lapangan hingga penerbitan laporan dapat dipantau saat itu juga.
+                    - Efisiensi Layanan: Mengurangi waktu tunggu respon admin, sehingga proses penyelesaian laporan penilaian menjadi lebih fokus dan cepat.`,
+            coverImage: "/image/news/berita2.png",
+            category: NewsCategory.BERITA,
             isPublished: true,
-            publishedAt: new Date("2024-11-20"),
+            publishedAt: new Date("2026-02-01"),
             authorId: admin.id
         },
         {
-            title: "Panduan Memilih Jasa Penilai Properti yang Tepat",
-            slug: "panduan-memilih-jasa-penilai-properti-yang-tepat",
-            excerpt: "Artikel panduan lengkap untuk membantu Anda memilih jasa penilai properti yang profesional dan terpercaya.",
-            content: "Memilih jasa penilai properti yang tepat adalah langkah penting dalam berbagai transaksi properti. Berikut adalah panduan lengkap untuk membantu Anda:\n\n## 1. Periksa Sertifikasi\nPastikan penilai memiliki sertifikasi dari MAPPI (Masyarakat Profesi Penilai Indonesia) dan terdaftar di DJKN.\n\n## 2. Pengalaman dan Track Record\nCari penilai dengan pengalaman minimal 5 tahun dan portfolio yang solid.\n\n## 3. Spesialisasi\nPilih penilai yang memiliki spesialisasi sesuai jenis properti Anda (residensial, komersial, industri).\n\n## 4. Metodologi\nTanyakan metode penilaian yang akan digunakan dan pastikan sesuai standar.\n\n## 5. Transparansi Biaya\nPenilai profesional akan memberikan rincian biaya yang jelas di awal.\n\nKJPP Anas Karim Rivai & Rekan siap membantu Anda dengan layanan penilaian yang profesional dan terpercaya.",
-            coverImage: "/image/news/panduan-penilai.jpg",
-            category: NewsCategory.ARTIKEL,
-            isPublished: true,
-            publishedAt: new Date("2024-10-10"),
-            authorId: admin.id
-        },
-        {
-            title: "Penilaian Aset untuk Restrukturisasi Perusahaan",
-            slug: "penilaian-aset-untuk-restrukturisasi-perusahaan",
-            excerpt: "Memahami pentingnya penilaian aset yang akurat dalam proses restrukturisasi perusahaan.",
-            content: "Restrukturisasi perusahaan memerlukan penilaian aset yang akurat dan independen. KJPP AKR memiliki pengalaman luas dalam membantu perusahaan melakukan penilaian aset untuk berbagai keperluan restrukturisasi.\n\nLayanan kami meliputi:\n- Penilaian aset tetap (tanah, bangunan, mesin)\n- Penilaian bisnis dan saham\n- Penilaian aset tak berwujud\n- Fairness opinion\n\nDengan metodologi yang sesuai standar internasional, kami memastikan hasil penilaian yang objektif dan dapat dipertanggungjawabkan.",
-            coverImage: "/image/news/restrukturisasi.jpg",
-            category: NewsCategory.ARTIKEL,
-            isPublished: true,
-            publishedAt: new Date("2024-09-05"),
-            authorId: admin.id
-        },
-        {
-            title: "KJPP AKR Buka Kantor Cabang di Surabaya",
-            slug: "kjpp-akr-buka-kantor-cabang-di-surabaya",
-            excerpt: "Ekspansi layanan KJPP AKR dengan pembukaan kantor cabang baru di Surabaya untuk melayani klien di Jawa Timur.",
-            content: "KJPP Anas Karim Rivai & Rekan dengan bangga mengumumkan pembukaan kantor cabang baru di Surabaya. Langkah ekspansi ini diambil untuk memberikan layanan yang lebih dekat dan responsif kepada klien di wilayah Jawa Timur.\n\nKantor cabang Surabaya akan menyediakan layanan lengkap meliputi:\n- Penilaian properti\n- Penilaian bisnis\n- Konsultasi properti\n- Studi kelayakan\n\nDengan tim profesional bersertifikat MAPPI, kami siap melayani kebutuhan penilaian Anda dengan standar kualitas yang sama seperti kantor pusat di Jakarta.",
-            coverImage: "/image/news/cabang-surabaya.jpg",
+            title: "KJPP Anas Karim Rivai & Rekan Perluas Jangkauan Layanan, Kini Hadir di Palembang, Bandung, dan Surabaya",
+            slug: "kjpp-anas-karim-rivai-rekan-perluas-jangkauan-layanan-kini-hadir-di-palembang-bandung-dan-surabaya",
+            excerpt: "JAKARTA - Kantor Jasa Penilai Publik Anas Karim Rivai & Rekan (KJPP AKR), salah satu firma penilai terkemuka di Indonesia, secara resmi mengumumkan penguatan jaringan layanannya di tingkat nasional. Dengan pusat operasional yang berkedudukan di Jakarta, kini KJPP AKR telah efektif mengoperasikan kantor cabang di tiga kota besar: Palembang, Bandung, dan Surabaya.",
+            content: `JAKARTA - Kantor Jasa Penilai Publik Anas Karim Rivai & Rekan (KJPP AKR), salah satu firma penilai terkemuka di Indonesia, secara resmi mengumumkan penguatan jaringan layanannya di tingkat nasional. Dengan pusat operasional yang berkedudukan di Jakarta, kini KJPP AKR telah efektif mengoperasikan kantor cabang di tiga kota besar: Palembang, Bandung, dan Surabaya.
+                    Langkah ini diambil sebagai bagian dari strategi pertumbuhan perusahaan untuk memberikan layanan yang lebih responsif dan kompetitif bagi para klien di wilayah Sumatera, Jawa Barat, hingga Jawa Timur.
+                    Komitmen Dekat dengan Klien
+                    Kehadiran cabang-cabang baru ini diharapkan dapat memangkas jarak koordinasi serta mempercepat proses penilaian (appraisal) bagi perbankan, instansi pemerintah, maupun sektor swasta di daerah.
+                    "Kehadiran kami di Palembang, Bandung, dan Surabaya adalah bukti komitmen kami untuk selalu dekat dengan klien. Meskipun kendali pusat tetap berada di Jakarta, setiap cabang dibekali dengan tenaga ahli yang kompeten dan standar operasional yang sama ketatnya," ujar perwakilan manajemen KJPP AKR.
+                    Layanan Unggulan
+                    Seluruh kantor cabang KJPP AKR kini sudah siap melayani berbagai kebutuhan jasa penilaian, antara lain:
+                    - Penilaian Properti: Tanah, bangunan, serta sarana pelengkap lainnya.
+                    - Penilaian Bisnis: Saham, surat berharga, dan opini kewajaran.
+                    - Penilaian Aset Mesin & Peralatan: Inventarisasi aset industri dan manufaktur.
+                    - Studi Kelayakan: Analisis aspek ekonomi dan pasar bagi proyek baru.`,
+            coverImage: "/image/news/berita3.png",
             category: NewsCategory.PENGUMUMAN,
             isPublished: true,
-            publishedAt: new Date("2024-08-01"),
+            publishedAt: new Date("2025-01-15"),
+            authorId: admin.id
+        },
+        {
+            title: "Memasuki 2026, Mengapa Jasa Penilai Publik Menjadi Kunci Mitigasi Risiko Finansial Anda?",
+            slug: "memasuki-2026-mengapa-jasa-penilai-publik-menjadi-kunci-mitigasi-risiko-finansial-anda",
+            excerpt: "JAKARTA - Memasuki tahun 2026, dinamika ekonomi nasional dan global menuntut para pelaku bisnis maupun individu untuk lebih cermat dalam mengelola aset. Di tengah fluktuasi harga properti dan perubahan regulasi perpajakan, peran Kantor Jasa Penilai Publik (KJPP) kini bukan lagi sekadar pelengkap administrasi, melainkan instrumen vital dalam mitigasi risiko finansial.",
+            content: `JAKARTA - Memasuki tahun 2026, dinamika ekonomi nasional dan global menuntut para pelaku bisnis maupun individu untuk lebih cermat dalam mengelola aset. Di tengah fluktuasi harga properti dan perubahan regulasi perpajakan, peran Kantor Jasa Penilai Publik (KJPP) kini bukan lagi sekadar pelengkap administrasi, melainkan instrumen vital dalam mitigasi risiko finansial.
+                    KJPP Anas Karim Rivai & Rekan (AKR) menyoroti beberapa alasan krusial mengapa penilaian aset profesional menjadi sangat penting di tahun ini.
+                    1. Keakuratan Nilai untuk Pengajuan Kredit
+                    Dalam proses perbankan, nilai agunan yang akurat adalah syarat mutlak. Dengan standar penilaian yang ketat pada tahun 2026, bank memerlukan laporan dari KJPP yang kredibel untuk menentukan Loan to Value (LTV) yang tepat. Penilaian yang objektif membantu nasabah mendapatkan plafon kredit yang maksimal sekaligus menjaga kesehatan rasio kredit bank.
+                    2. Strategi Ekspansi: Merger dan Akuisisi
+                    Bagi korporasi yang merencanakan merger atau akuisisi di tahun ini, mengetahui nilai wajar (fair value) dari sebuah entitas bisnis atau aset tetap adalah langkah awal yang menentukan keberhasilan negosiasi. KJPP AKR menyediakan jasa penilaian bisnis yang komprehensif untuk memastikan keputusan investasi didasarkan pada data yang valid, bukan sekadar estimasi.
+                    3. Kepatuhan Pajak dan Pelaporan Aset
+                    Regulasi pajak yang semakin transparan menuntut pelaporan aset yang jujur dan sesuai pasar. Penilaian dari KJPP memberikan dasar yang kuat bagi wajib pajak dalam melaporkan asetnya, sehingga terhindar dari sanksi atau perselisihan dengan otoritas pajak di kemudian hari.
+                    4. Transparansi melalui Teknologi Digital
+                    Menjawab tantangan kecepatan di tahun 2026, KJPP AKR kini mengintegrasikan sistem SI-MAPAN. Sistem ini memungkinkan klien memantau proses penilaian secara transparan. Kecepatan data ini sangat membantu manajemen dalam mengambil keputusan darurat di tengah kondisi pasar yang dinamis.
+                    "Di KJPP AKR, kami tidak hanya memberikan angka, tetapi kami memberikan kepastian hukum dan finansial. Di tengah ketidakpastian ekonomi, nilai aset yang akurat adalah jangkar bagi setiap keputusan besar," ujar perwakilan manajemen KJPP AKR.
+                    Kesimpulan
+                    Baik untuk tujuan penjaminan utang, laporan keuangan, hingga urusan hukum, jasa penilai publik memastikan bahwa setiap rupiah dari aset Anda diakui sesuai dengan kondisi pasar yang sebenarnya.
+                    Ingin Berkonsultasi Mengenai Aset Anda?
+                    Jangan biarkan aset Anda dinilai tanpa dasar yang kuat. Hubungi kantor pusat KJPP AKR di Jakarta atau kunjungi cabang terbaru kami di Palembang, Bandung, dan Surabaya untuk solusi penilaian yang profesional dan terpercaya.`,
+            coverImage: "/image/news/berita4.png",
+            category: NewsCategory.ARTIKEL,
+            isPublished: true,
+            publishedAt: new Date("2026-01-10"),
+            authorId: admin.id
+        },
+        {
+            title: "Menciptakan Standar Baru: Intip Budaya Kerja Profesional dan Modern di Kantor Pusat KJPP AKR Jakarta",
+            slug: "menciptakan-standar-baru-intip-budaya-kerja-profesional-dan-modern-di-kantor-pusat-kjpp-akr-jakarta",
+            excerpt: "JAKARTA - Di balik reputasinya sebagai salah satu Kantor Jasa Penilai Publik (KJPP) terkemuka, KJPP Anas Karim Rivai & Rekan (AKR) menyimpan kunci kesuksesan yang terletak pada lingkungan kerjanya. Berkantor pusat di Jakarta, KJPP AKR mengusung konsep budaya kerja yang memadukan kedisiplinan tinggi dengan inovasi teknologi.",
+            content: `JAKARTA - Di balik reputasinya sebagai salah satu Kantor Jasa Penilai Publik (KJPP) terkemuka, KJPP Anas Karim Rivai & Rekan (AKR) menyimpan kunci kesuksesan yang terletak pada lingkungan kerjanya. Berkantor pusat di Jakarta, KJPP AKR mengusung konsep budaya kerja yang memadukan kedisiplinan tinggi dengan inovasi teknologi.
+                    Memasuki tahun 2026, KJPP AKR tidak hanya fokus pada ekspansi cabang ke Palembang, Bandung, dan Surabaya, tetapi juga pada peningkatan kualitas lingkungan kerja bagi para staf dan tenaga ahlinya.
+
+                    Ekosistem Kerja yang Kolaboratif
+                    Sebagai kantor yang menangani proyek-proyek strategis nasional, kolaborasi antar departemen menjadi nyawa utama. Di kantor pusat Jakarta, suasana kerja dirancang untuk mendukung komunikasi yang cepat antara penilai senior dan tim pendukung teknis.
+
+                    "Kami percaya bahwa lingkungan kerja yang nyaman dan suportif akan menghasilkan analisis yang lebih tajam dan akurat. Di sini, setiap pendapat dihargai, dan setiap data diperiksa secara berlapis demi kepuasan klien," ujar salah satu anggota tim manajemen.
+
+                    Fasilitas Modern untuk Kinerja Maksimal
+                    Kantor pusat KJPP AKR kini dilengkapi dengan berbagai fasilitas modern, mulai dari ruang rapat berbasis teknologi konferensi video untuk koordinasi dengan kantor cabang, hingga area kerja yang paperless berkat integrasi sistem SI-MAPAN. Hal ini mencerminkan komitmen perusahaan terhadap efisiensi dan keberlanjutan lingkungan.
+
+                    Ruang Bagi Talenta Muda
+                    KJPP AKR juga dikenal sebagai tempat yang inklusif bagi talenta muda. Melalui program magang dan pengembangan karir, mahasiswa dari berbagai latar belakang—seperti Informatika dan Ekonomi—diberikan ruang untuk belajar langsung di lapangan. Hal ini menciptakan energi baru yang membuat KJPP AKR selalu relevan dengan perkembangan zaman.
+
+                    Melayani dengan Sepenuh Hati
+                    Dengan lingkungan kerja yang sehat, KJPP AKR memastikan bahwa setiap klien yang datang, baik ke kantor pusat di Jakarta maupun ke cabang-cabang di daerah, akan disambut dengan pelayanan yang ramah dan profesional.
+
+                    Kunjungi Kami: Rasakan pengalaman layanan penilaian aset yang transparan dan profesional. Kantor Pusat kami di Jakarta dan kantor cabang kami di daerah siap membantu kebutuhan appraisal Anda dengan standar terbaik di Indonesia.`,
+            coverImage: "/image/news/berita5.png",
+            category: NewsCategory.ARTIKEL,
+            isPublished: true,
+            publishedAt: new Date("2026-01-20"),
             authorId: admin.id
         }
     ];
@@ -309,6 +321,11 @@ async function main() {
 
         if (!existingNews) {
             await prisma.news.create({
+                data: news
+            });
+        } else {
+            await prisma.news.update({
+                where: { slug: news.slug },
                 data: news
             });
         }
@@ -510,6 +527,45 @@ async function main() {
         }
     }
     console.log(`✅ Seeded ${galleries.length} gallery items`);
+
+    // Seed Sekapur Sirih Images
+    console.log("\n🌱 Seeding Sekapur Sirih Images...");
+    const sekapurSirihImages = [
+        {
+            imageType: "MANAGING_PARTNER" as const,
+            imageUrl: "/image/tentang-kami/anas-karim-rivai.png",
+            altText: "Foto Managing Partner KJPP AKR",
+            caption: null,
+            managingPartnerName: "Ir. H. Anas Karim Rivai, MAPPI (Cert)",
+            managingPartnerTitle: "Managing Partner",
+            isActive: true
+        },
+        {
+            imageType: "TEAM_PHOTO" as const,
+            imageUrl: "/image/tentang-kami/sekapursirih.png",
+            altText: "Foto Tim KJPP AKR",
+            caption: null,
+            managingPartnerName: null,
+            managingPartnerTitle: null,
+            isActive: true
+        }
+    ];
+
+    for (const image of sekapurSirihImages) {
+        const existingImage = await prisma.sekapurSirihImage.findFirst({
+            where: {
+                imageType: image.imageType,
+                imageUrl: image.imageUrl
+            }
+        });
+
+        if (!existingImage) {
+            await prisma.sekapurSirihImage.create({
+                data: image
+            });
+        }
+    }
+    console.log(`✅ Seeded ${sekapurSirihImages.length} Sekapur Sirih images`);
 
     console.log("\n🎉 Seed completed!");
 }

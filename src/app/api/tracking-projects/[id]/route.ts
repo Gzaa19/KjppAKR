@@ -51,6 +51,17 @@ export async function PUT(
         const { id } = await params;
         const body = await request.json();
 
+        // ✅ Authorization check
+        const { requireAuth, canCreate } = await import("@/lib/auth-helpers");
+        const session = await requireAuth();
+
+        if (!canCreate(session)) {
+            return NextResponse.json(
+                { success: false, error: "Forbidden: Tidak memiliki akses untuk mengupdate proyek" },
+                { status: 403 }
+            );
+        }
+
         const existingProject = await prisma.trackingProject.findFirst({
             where: {
                 OR: [{ id }, { projectId: id }],
@@ -117,7 +128,13 @@ export async function PUT(
             message: "Proyek berhasil diupdate",
         });
     } catch (error) {
-        console.error("Error updating project:", error);
+        if (error instanceof Error && error.message === "Unauthorized") {
+            return NextResponse.json(
+                { success: false, error: "Unauthorized" },
+                { status: 401 }
+            );
+        }
+        console.error("Error updating project:", error instanceof Error ? error.message : 'Unknown');
         return NextResponse.json(
             { success: false, error: "Gagal mengupdate proyek" },
             { status: 500 }
@@ -131,6 +148,17 @@ export async function DELETE(
 ) {
     try {
         const { id } = await params;
+
+        // ✅ Authorization check - only SUPER_ADMIN can delete
+        const { requireAuth, canDelete } = await import("@/lib/auth-helpers");
+        const session = await requireAuth();
+
+        if (!canDelete(session)) {
+            return NextResponse.json(
+                { success: false, error: "Forbidden: Hanya SUPER_ADMIN yang dapat menghapus proyek" },
+                { status: 403 }
+            );
+        }
 
         const existingProject = await prisma.trackingProject.findFirst({
             where: {
@@ -154,7 +182,13 @@ export async function DELETE(
             message: "Proyek berhasil dihapus",
         });
     } catch (error) {
-        console.error("Error deleting project:", error);
+        if (error instanceof Error && error.message === "Unauthorized") {
+            return NextResponse.json(
+                { success: false, error: "Unauthorized" },
+                { status: 401 }
+            );
+        }
+        console.error("Error deleting project:", error instanceof Error ? error.message : 'Unknown');
         return NextResponse.json(
             { success: false, error: "Gagal menghapus proyek" },
             { status: 500 }

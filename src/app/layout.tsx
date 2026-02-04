@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
+import { ConditionalWhatsAppWidget } from "@/components/ui/ConditionalWhatsAppWidget";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -31,6 +32,7 @@ export default function RootLayout({
       >
         {children}
         <Toaster position="top-right" richColors />
+        <ConditionalWhatsAppWidget />
       </body>
     </html>
   );

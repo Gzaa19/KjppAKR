@@ -41,6 +41,17 @@ export async function PUT(
         const body = await request.json();
         const { name, type, address, picName, phone, email } = body;
 
+        // ✅ Authorization check
+        const { requireAuth, canCreate } = await import("@/lib/auth-helpers");
+        const session = await requireAuth();
+
+        if (!canCreate(session)) {
+            return NextResponse.json(
+                { success: false, error: "Forbidden: Tidak memiliki akses" },
+                { status: 403 }
+            );
+        }
+
         const existingClient = await prisma.clientContact.findUnique({
             where: { id },
         });
@@ -70,7 +81,13 @@ export async function PUT(
             message: "Client updated successfully",
         });
     } catch (error) {
-        console.error("Error updating client:", error);
+        if (error instanceof Error && error.message === "Unauthorized") {
+            return NextResponse.json(
+                { success: false, error: "Unauthorized" },
+                { status: 401 }
+            );
+        }
+        console.error("Error updating client:", error instanceof Error ? error.message : 'Unknown');
         return NextResponse.json(
             { success: false, error: "Failed to update client" },
             { status: 500 }
@@ -84,6 +101,17 @@ export async function DELETE(
 ) {
     try {
         const { id } = await params;
+
+        // ✅ Authorization check - only SUPER_ADMIN can delete
+        const { requireAuth, canDelete } = await import("@/lib/auth-helpers");
+        const session = await requireAuth();
+
+        if (!canDelete(session)) {
+            return NextResponse.json(
+                { success: false, error: "Forbidden: Hanya SUPER_ADMIN yang dapat menghapus" },
+                { status: 403 }
+            );
+        }
 
         const existingClient = await prisma.clientContact.findUnique({
             where: { id },
@@ -105,7 +133,13 @@ export async function DELETE(
             message: "Client deleted successfully",
         });
     } catch (error) {
-        console.error("Error deleting client:", error);
+        if (error instanceof Error && error.message === "Unauthorized") {
+            return NextResponse.json(
+                { success: false, error: "Unauthorized" },
+                { status: 401 }
+            );
+        }
+        console.error("Error deleting client:", error instanceof Error ? error.message : 'Unknown');
         return NextResponse.json(
             { success: false, error: "Failed to delete client" },
             { status: 500 }

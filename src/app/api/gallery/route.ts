@@ -10,7 +10,6 @@ import {
 import { getSession } from "@/lib/session";
 import type { CreateGalleryInput, UpdateGalleryInput } from "@/lib/validations";
 
-// GET /api/gallery - Get all galleries or a specific one by ID
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
@@ -31,7 +30,6 @@ export async function GET(request: Request) {
     return NextResponse.json(result);
 }
 
-// POST /api/gallery - Create a new gallery
 export async function POST(request: Request) {
     const session = await getSession();
     if (!session) {
@@ -58,7 +56,6 @@ export async function POST(request: Request) {
     }
 }
 
-// PUT /api/gallery - Update a gallery
 export async function PUT(request: Request) {
     const session = await getSession();
     if (!session) {
@@ -93,7 +90,6 @@ export async function PUT(request: Request) {
     }
 }
 
-// DELETE /api/gallery - Delete a gallery
 export async function DELETE(request: Request) {
     const session = await getSession();
     if (!session) {

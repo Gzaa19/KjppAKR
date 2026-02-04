@@ -1,12 +1,51 @@
 "use client";
 
 import Image from "next/image";
-import { Badge } from "@/components/ui/badge";
-import { Quote, ArrowRight, CheckCircle2 } from "lucide-react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Quote, ImageIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+
+interface SekapurSirihImages {
+    managingPartner: {
+        imageUrl: string;
+        altText: string;
+        caption: string | null;
+        managingPartnerName: string | null;
+        managingPartnerTitle: string | null;
+    } | null;
+    teamPhoto: {
+        imageUrl: string;
+        altText: string;
+        caption: string | null;
+    } | null;
+}
 
 export function SekapurSirihSection() {
+    const [images, setImages] = useState<SekapurSirihImages>({
+        managingPartner: null,
+        teamPhoto: null
+    });
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetchImages();
+    }, []);
+
+    const fetchImages = async () => {
+        try {
+            const response = await fetch("/api/sekapur-sirih");
+            if (!response.ok) throw new Error("Failed to fetch images");
+            const data = await response.json();
+            setImages(data);
+        } catch (error) {
+            console.error("Error fetching Sekapur Sirih images:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const managingPartnerImage = images.managingPartner;
+    const teamPhotoImage = images.teamPhoto;
+
     return (
         <main
             className="relative z-10 mt-[35vh] md:mt-[50vh] bg-bg-1 rounded-t-[3rem] shadow-2xl pt-24 pb-32 scroll-mt-24"
@@ -38,23 +77,43 @@ export function SekapurSirihSection() {
                     </div>
                     <div className="flex-1 w-full max-w-md md:max-w-lg relative">
                         <div className="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white transform hover:scale-[1.01] transition-transform duration-500">
-                            <Image
-                                src="/image/tentang-kami/anas-karim-rivai.png"
-                                alt="Ir. H. Anas Karim Rivai, MAPPI (Cert)"
-                                width={0}
-                                height={0}
-                                sizes="(max-width: 768px) 100vw, 50vw"
-                                style={{ width: '100%', height: 'auto' }}
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
-                            <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-sm p-3 rounded-xl shadow-lg border-l-4 border-kjpp-red">
-                                <h3 className="font-bold text-kjpp-dark text-base md:text-lg leading-tight">
-                                    Ir. H. Anas Karim Rivai, MAPPI (Cert)
-                                </h3>
-                                <p className="text-kjpp-red font-medium text-xs md:text-sm mt-1">
-                                    Managing Partner
-                                </p>
-                            </div>
+                            {loading ? (
+                                <div className="aspect-square bg-slate-200 animate-pulse" />
+                            ) : managingPartnerImage ? (
+                                <>
+                                    <Image
+                                        src={managingPartnerImage.imageUrl}
+                                        alt={managingPartnerImage.altText}
+                                        width={0}
+                                        height={0}
+                                        sizes="(max-width: 768px) 100vw, 50vw"
+                                        style={{ width: '100%', height: 'auto' }}
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+                                    <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-sm p-3 rounded-xl shadow-lg border-l-4 border-kjpp-red">
+                                        <h3 className="font-bold text-kjpp-dark text-base md:text-lg leading-tight">
+                                            {managingPartnerImage.managingPartnerName || "Managing Partner"}
+                                        </h3>
+                                        <p className="text-kjpp-red font-medium text-xs md:text-sm mt-1">
+                                            {managingPartnerImage.managingPartnerTitle || "KJPP AKR"}
+                                        </p>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="aspect-square bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center p-8">
+                                    <div className="text-center">
+                                        <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-slate-300/50 flex items-center justify-center">
+                                            <ImageIcon className="w-8 h-8 text-slate-400" />
+                                        </div>
+                                        <p className="text-slate-500 font-medium text-base mb-1">
+                                            Foto Managing Partner
+                                        </p>
+                                        <p className="text-slate-400 text-xs">
+                                            Belum diupload oleh admin
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                         <div className="absolute -z-10 top-10 -right-10 w-full h-full bg-slate-100 rounded-3xl" />
                     </div>
@@ -73,33 +132,39 @@ export function SekapurSirihSection() {
                         & Rekan.
                     </p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start text-muted-foreground leading-relaxed text-lg text-justify">
-                    <div>
-                        <p>
-                            Secara umum KJPP Anas Karim Rivai & Rekan (AKR) didirikan dengan cita-cita
-                            yang luhur dari pendirinya, yang berkeinginan untuk mengembangkan
-                            kemampuan dan talenta setiap personil untuk aktif berperan serta dalam
-                            pembangunan terkait dengan Jasa Penilai dan Jasa Konsultansi.
-                        </p>
-                    </div>
-                    <div>
-                        <p>
-                            KJPP Anas Karim Rivai & Rekan selalu berusaha untuk menjadi perusahaan
-                            yang berintegritas tinggi serta menjunjung tinggi komitmen sebagai
-                            Perusahaan Penilai yang independen dan profesional. Dalam menjalankan
-                            bisnis serta layanan kami, kami didukung oleh tenaga ahli yang
-                            profesional, berdedikasi tinggi.
-                        </p>
-                    </div>
+                <div className="mb-2 text-muted-foreground leading-relaxed text-lg text-justify">
+                    <p>
+                        Secara umum KJPP Anas Karim Rivai & Rekan (AKR) didirikan dengan cita-cita yang luhur dari pendirinya, yang berkeinginan untuk mengembangkan kemampuan dan talenta setiap personil untuk aktif berperan serta dalam pembangunan terkait dengan Jasa Penilai dan Jasa Konsultansi. KJPP Anas Karim Rivai & Rekan selalu berusaha untuk menjadi perusahaan yang berintegritas tinggi serta menjunjung tinggi komitmen sebagai Perusahaan Penilai yang independen dan profesional. Dalam menjalankan bisnis serta layanan kami, kami didukung oleh tenaga ahli yang profesional, berdedikasi tinggi.
+                    </p>
                 </div>
-                <div className="mt-16 relative w-full h-[400px] rounded-3xl overflow-hidden shadow-xl group">
-                    <Image
-                        src="/image/tentang-kami/sekapursirih.png"
-                        alt="Pengurus KJPP AKR"
-                        fill
-                        className="object-cover transition-transform duration-700 group-hover:scale-105 object-top"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-60" />
+                <div className="mt-16 relative w-full aspect-video rounded-3xl overflow-hidden shadow-xl group">
+                    {loading ? (
+                        <div className="w-full h-full bg-slate-200 animate-pulse" />
+                    ) : teamPhotoImage ? (
+                        <>
+                            <Image
+                                src={teamPhotoImage.imageUrl}
+                                alt={teamPhotoImage.altText}
+                                fill
+                                className="object-cover transition-transform duration-700 group-hover:scale-105 object-top"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-60" />
+                        </>
+                    ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
+                            <div className="text-center">
+                                <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-slate-300/50 flex items-center justify-center">
+                                    <ImageIcon className="w-10 h-10 text-slate-400" />
+                                </div>
+                                <p className="text-slate-500 font-medium text-xl mb-2">
+                                    Foto Tim KJPP AKR
+                                </p>
+                                <p className="text-slate-400 text-sm">
+                                    Gambar belum diupload oleh admin
+                                </p>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </main>

@@ -208,22 +208,7 @@ model ManagementTeam {
   @@map("management_teams")
 }
 
-// ==========================================
-// HERO IMAGE MODEL
-// ==========================================
-model HeroImage {
-  id        String   @id @default(cuid())
-  imageUrl  String
-  altText   String
-  sortOrder Int      @default(0)
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([sortOrder])
-  @@index([isActive])
-  @@map("hero_images")
-}
+// HeroImage model removed as it is no longer used
 
 // ==========================================
 // CLIENT CONTACT MODEL (for Client Management)
@@ -345,4 +330,29 @@ enum ProgressStatus {
   PENDING
   IN_PROGRESS
   COMPLETED
+}
+
+// ==========================================
+// SEKAPUR SIRIH IMAGE MODEL
+// ==========================================
+model SekapurSirihImage {
+  id                    String                  @id @default(cuid())
+  imageType             SekapurSirihImageType
+  imageUrl              String
+  altText               String
+  caption               String?                 @db.Text
+  managingPartnerName   String?
+  managingPartnerTitle  String?
+  isActive              Boolean                 @default(true)
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+
+  @@index([imageType])
+  @@index([isActive])
+  @@map("sekapur_sirih_images")
+}
+
+enum SekapurSirihImageType {
+  MANAGING_PARTNER
+  TEAM_PHOTO
 }

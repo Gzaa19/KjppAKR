@@ -14,6 +14,7 @@ interface Category {
     id: string;
     name: string;
     slug: string;
+    sortOrder: number;
 }
 
 interface CategoryGroup {
@@ -34,9 +35,13 @@ const convertToLogoItems = (clients: Client[]) => {
 };
 
 export function TrustedClientsSection({ groupedByCategory }: TrustedClientsSectionProps) {
-    const categoryGroups = Object.values(groupedByCategory).sort((a, b) =>
-        a.category.name.localeCompare(b.category.name)
-    );
+    const categoryGroups = Object.values(groupedByCategory).sort((a, b) => {
+        // Primary sort by sortOrder
+        const diff = a.category.sortOrder - b.category.sortOrder;
+        if (diff !== 0) return diff;
+        // Fallback to name if sortOrder is equal
+        return a.category.name.localeCompare(b.category.name);
+    });
 
     const displayCategories = categoryGroups.slice(0, 2);
     const directions: ("left" | "right")[] = ["left", "right"];

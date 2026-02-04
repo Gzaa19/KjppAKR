@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, Facebook, Twitter, Instagram, Mail, Share2, MessageCircle } from "lucide-react";
+import DOMPurify from "isomorphic-dompurify";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import prisma from "@/lib/prisma"; // Adjust path if necessary based on your project structure
@@ -120,7 +121,12 @@ export default async function NewsDetailPage({ params, searchParams }: PageProps
                                 prose-p:text-slate-700 prose-p:leading-relaxed prose-p:mb-6 prose-p:text-justify
                                 prose-li:text-slate-700 prose-a:text-kjpp-red prose-a:no-underline hover:prose-a:underline
                                 whitespace-pre-line"
-                                dangerouslySetInnerHTML={{ __html: article.content }}
+                                dangerouslySetInnerHTML={{
+                                    __html: DOMPurify.sanitize(article.content, {
+                                        ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'blockquote', 'code', 'pre'],
+                                        ALLOWED_ATTR: ['href', 'target', 'rel', 'class']
+                                    })
+                                }}
                             />
                         </article>
                     </div>
