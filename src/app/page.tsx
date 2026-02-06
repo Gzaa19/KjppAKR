@@ -6,6 +6,7 @@ import { ServicesSection } from "@/components/section/home/ServicesSection";
 import { WhyChooseUsSection } from "@/components/section/home/WhyChooseUsSection";
 import { RecentUpdatesSection } from "@/components/section/home/RecentUpdatesSection";
 import { StatsSection } from "@/components/section/home/StatsSection";
+import { OfficeLocationsSection } from "@/components/section/home/OfficeLocationsSection";
 import { getPublishedClients } from "@/actions/client";
 import type { Metadata } from "next";
 
@@ -26,6 +27,7 @@ export default async function Home() {
       <ServicesSection />
       <RecentUpdatesSection />
       <WhyChooseUsSection />
+      <OfficeLocationsSection />
       <StatsSection />
       <Footer />
     </div>

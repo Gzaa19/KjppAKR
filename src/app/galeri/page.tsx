@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 const INITIAL_ITEMS = 6;
 
 export default async function GalleryPage() {
-    const albums = await prisma.album.findMany({
+    const albums = await prisma.albums.findMany({
         where: {
             isActive: true,
             galleries: {

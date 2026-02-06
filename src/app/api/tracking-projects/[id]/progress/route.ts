@@ -52,13 +52,13 @@ export async function GET(
     try {
         const { id } = await params;
 
-        const project = await prisma.trackingProject.findFirst({
+        const project = await prisma.tracking_projects.findFirst({
             where: {
                 OR: [{ id }, { projectId: id }],
             },
             include: {
-                client: true,
-                projectProgresses: {
+                client_contacts: true,
+                project_progress: {
                     orderBy: [
                         { stageId: 'asc' },
                         { subStepId: 'asc' }
@@ -74,7 +74,7 @@ export async function GET(
             );
         }
 
-        if (project.projectProgresses.length === 0) {
+        if (project.project_progress.length === 0) {
             const progressData = DEFAULT_STAGES.flatMap(stage =>
                 stage.subSteps.map(subStep => ({
                     projectId: project.id,
@@ -83,18 +83,20 @@ export async function GET(
                     subStepId: subStep.id,
                     subStepName: subStep.name,
                     status: "PENDING" as const,
+                    id: crypto.randomUUID(),
+                    updatedAt: new Date(),
                 }))
             );
 
-            await prisma.projectProgress.createMany({
+            await prisma.project_progress.createMany({
                 data: progressData,
             });
 
-            const updatedProject = await prisma.trackingProject.findUnique({
+            const updatedProject = await prisma.tracking_projects.findUnique({
                 where: { id: project.id },
                 include: {
-                    client: true,
-                    projectProgresses: {
+                    client_contacts: true,
+                    project_progress: {
                         orderBy: [
                             { stageId: 'asc' },
                             { subStepId: 'asc' }
@@ -130,7 +132,7 @@ export async function PUT(
         const { id } = await params;
         const body = await request.json();
 
-        const project = await prisma.trackingProject.findFirst({
+        const project = await prisma.tracking_projects.findFirst({
             where: {
                 OR: [{ id }, { projectId: id }],
             },
@@ -151,7 +153,7 @@ export async function PUT(
         }>;
 
         for (const update of updates) {
-            await prisma.projectProgress.upsert({
+            await prisma.project_progress.upsert({
                 where: {
                     projectId_subStepId: {
                         projectId: project.id,
@@ -162,6 +164,7 @@ export async function PUT(
                     status: update.status,
                     startDate: update.startDate ? new Date(update.startDate) : null,
                     endDate: update.endDate ? new Date(update.endDate) : null,
+                    updatedAt: new Date(),
                 },
                 create: {
                     projectId: project.id,
@@ -172,11 +175,13 @@ export async function PUT(
                     status: update.status,
                     startDate: update.startDate ? new Date(update.startDate) : null,
                     endDate: update.endDate ? new Date(update.endDate) : null,
+                    id: crypto.randomUUID(),
+                    updatedAt: new Date(),
                 }
             });
         }
 
-        const allProgress = await prisma.projectProgress.findMany({
+        const allProgress = await prisma.project_progress.findMany({
             where: { projectId: project.id }
         });
 
@@ -197,21 +202,22 @@ export async function PUT(
             newStatus = "VERIFIKASI_DOKUMEN";
         }
 
-        await prisma.trackingProject.update({
+        await prisma.tracking_projects.update({
             where: { id: project.id },
             data: {
                 progress: progressPercent,
                 status: newStatus,
                 completedAt: newStatus === "SELESAI" ? new Date() : null,
                 initialMessage: body.notes || project.initialMessage,
+                updatedAt: new Date(),
             }
         });
 
-        const updatedProject = await prisma.trackingProject.findUnique({
+        const updatedProject = await prisma.tracking_projects.findUnique({
             where: { id: project.id },
             include: {
-                client: true,
-                projectProgresses: {
+                client_contacts: true,
+                project_progress: {
                     orderBy: [
                         { stageId: 'asc' },
                         { subStepId: 'asc' }

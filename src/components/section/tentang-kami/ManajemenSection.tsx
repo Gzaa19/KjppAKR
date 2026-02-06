@@ -19,6 +19,7 @@ interface ManagementTeam {
     title: string;
     image: string | null;
     description: string;
+    branch: string | null;
     isMappiCert: boolean;
     sortOrder: number;
 }
@@ -117,6 +118,14 @@ export const ManajemenSection = () => {
                                             <h3 className="text-2xl md:text-3xl font-bold font-playfair text-primary-2 mb-2">
                                                 {member.name}
                                             </h3>
+                                            {member.branch && (
+                                                <p className="text-lg font-medium text-gray-500 mb-2">
+                                                    {member.branch}
+                                                </p>
+                                            )}
+                                            <p className="text-xl font-medium text-kjpp-red mb-4">
+                                                {member.title}
+                                            </p>
                                             <div className={`h-1 w-24 bg-red-600 mb-6 mx-auto ${index % 2 === 0 ? "md:mx-0" : "md:ml-auto md:mr-0"}`} />
                                             <p className="text-gray-600 leading-relaxed text-sm md:text-base text-justify line-clamp-5 mb-4">
                                                 {member.description}

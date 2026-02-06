@@ -4,6 +4,11 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
 
+  // Expose env variables to Edge Runtime (middleware)
+  env: {
+    ADMIN_SECRET_KEY: process.env.ADMIN_SECRET_KEY,
+  },
+
   async headers() {
     return [
       {

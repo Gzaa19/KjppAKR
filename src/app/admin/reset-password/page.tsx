@@ -5,15 +5,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Lock, Loader2, Eye, EyeOff, CheckCircle2, AlertCircle } from "lucide-react";
 import { useState, useTransition, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { resetPassword, verifyResetToken } from "@/actions/auth";
 
 export default function ResetPasswordPage() {
     const router = useRouter();
-    const searchParams = useSearchParams();
     const [isPending, startTransition] = useTransition();
+    const [isTokenValid, setIsTokenValid] = useState(false);
     const [isVerifying, setIsVerifying] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
@@ -26,25 +26,38 @@ export default function ResetPasswordPage() {
     const [token, setToken] = useState<string | null>(null);
 
     useEffect(() => {
-        const tokenParam = searchParams.get("token");
+        // Use window.location.search to avoid Next.js useSearchParams hydration issues
+        const params = new URLSearchParams(window.location.search);
+        const tokenParam = params.get("token");
+
+        console.log('[Reset Password Page] URL:', window.location.href);
+        console.log('[Reset Password Page] Token from URL:', tokenParam);
+
         if (!tokenParam) {
+            console.log('[Reset Password Page] No token found in URL');
             setError("Token tidak ditemukan");
             setIsVerifying(false);
         } else {
             setToken(tokenParam);
             verifyResetToken(tokenParam)
                 .then((result) => {
+                    console.log('[Reset Password Page] Verification result:', result);
                     if (!result.success) {
                         setError(result.error || "Token tidak valid");
+                        setIsTokenValid(false);
+                    } else {
+                        setError(null);
+                        setIsTokenValid(true);
                     }
                     setIsVerifying(false);
                 })
-                .catch(() => {
+                .catch((err) => {
+                    console.error('[Reset Password Page] Verification error:', err);
                     setError("Gagal memverifikasi token");
                     setIsVerifying(false);
                 });
         }
-    }, [searchParams]);
+    }, []); // Run only once on mount
 
     async function onSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -142,7 +155,7 @@ export default function ResetPasswordPage() {
         );
     }
 
-    if (!token || error && !success) {
+    if (!token || !isTokenValid) {
         return (
             <div className="min-h-screen flex items-center justify-center p-8 bg-bg-1">
                 <div className="w-full max-w-md space-y-8">
@@ -294,7 +307,7 @@ export default function ResetPasswordPage() {
                                 </div>
                             )}
                             <p className="text-xs text-slate-500">
-                                Minimal 8 karakter, mengandung huruf dan angka
+                                Minimal 12 karakter, mengandung huruf besar, huruf kecil, angka, dan karakter spesial (!@#$%^&*)
                             </p>
                         </div>
 

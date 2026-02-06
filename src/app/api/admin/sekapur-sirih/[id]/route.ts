@@ -26,7 +26,7 @@ export async function PUT(
             );
         }
 
-        const existingImage = await prisma.sekapurSirihImage.findUnique({
+        const existingImage = await prisma.sekapur_sirih_images.findUnique({
             where: { id },
         });
 
@@ -37,7 +37,7 @@ export async function PUT(
         // Auto-deactivate other images of the same type if this one is being set to active
         if (isActive && !existingImage.isActive) {
             console.log("Deactivating other active images of type:", imageType);
-            await prisma.sekapurSirihImage.updateMany({
+            await prisma.sekapur_sirih_images.updateMany({
                 where: {
                     imageType: imageType,
                     isActive: true,
@@ -57,7 +57,7 @@ export async function PUT(
             imageUrl = uploadResult.secure_url;
         }
 
-        const updatedImage = await prisma.sekapurSirihImage.update({
+        const updatedImage = await prisma.sekapur_sirih_images.update({
             where: { id },
             data: {
                 imageUrl,
@@ -67,6 +67,7 @@ export async function PUT(
                 managingPartnerName: imageType === "MANAGING_PARTNER" ? (managingPartnerName || null) : null,
                 managingPartnerTitle: imageType === "MANAGING_PARTNER" ? (managingPartnerTitle || null) : null,
                 isActive,
+                updatedAt: new Date(),
             },
         });
 
@@ -87,7 +88,7 @@ export async function DELETE(
     const { id } = await params;
 
     try {
-        await prisma.sekapurSirihImage.delete({ where: { id } });
+        await prisma.sekapur_sirih_images.delete({ where: { id } });
         return new Response(null, { status: 204 });
     } catch (error) {
         console.error("Error deleting Sekapur Sirih image:", error);

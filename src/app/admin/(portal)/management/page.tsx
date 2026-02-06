@@ -22,11 +22,7 @@ export default async function ManagementPage() {
                 </p>
             </div>
 
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <div className="relative flex-1 max-w-sm">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input type="search" placeholder="Cari nama..." className="pl-8 bg-white" />
-                </div>
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-end">
                 <Link href="/admin/management/create">
                     <Button>
                         <Plus className="mr-2 h-4 w-4" />

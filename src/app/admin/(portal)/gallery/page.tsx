@@ -10,16 +10,32 @@ import { formatDateShort } from "@/lib/helpers";
 import { GalleryActionMenu } from "@/components/admin/gallery-actions";
 import Image from "next/image";
 
+// Define local types to fix implicit any errors
+type Album = {
+    id: string;
+    name: string;
+};
+
+type Gallery = {
+    id: string;
+    title: string;
+    imageUrl: string;
+    albumId: string | null;
+    isPublished: boolean;
+    eventDate: Date | null;
+    createdAt: Date;
+};
+
 export default async function GalleryPage() {
     const [galleriesResult, albumsResult] = await Promise.all([getGalleries(), getAlbums()]);
 
     const galleries = galleriesResult.success ? galleriesResult.data?.galleries || [] : [];
     const albums = albumsResult.success ? albumsResult.data || [] : [];
 
-    const galleriesByAlbum = albums.map(album => ({
+    const galleriesByAlbum = albums.map((album: Album) => ({
         album,
-        items: galleries.filter(g => g.albumId === album.id)
-    })).filter(group => group.items.length > 0);
+        items: galleries.filter((g: Gallery) => g.albumId === album.id)
+    })).filter((group: { items: Gallery[] }) => group.items.length > 0);
 
     return (
         <div className="flex flex-1 flex-col gap-4">
@@ -30,11 +46,7 @@ export default async function GalleryPage() {
                 </p>
             </div>
 
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <div className="relative flex-1 max-w-sm">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input type="search" placeholder="Cari foto..." className="pl-8 bg-white" />
-                </div>
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-end">
                 <div className="flex gap-2">
                     <Link href="/admin/gallery/albums">
                         <Button variant="outline">
@@ -115,7 +127,7 @@ export default async function GalleryPage() {
                                 <Badge variant="secondary">{items.length} foto</Badge>
                             </div>
                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                                {items.map((gallery) => (
+                                {items.map((gallery: Gallery) => (
                                     <Card key={gallery.id} className="overflow-hidden hover:shadow-md transition-shadow">
                                         <div className="relative aspect-square bg-muted">
                                             {gallery.imageUrl ? (

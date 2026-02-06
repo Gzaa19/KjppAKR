@@ -17,7 +17,7 @@ type ClientCategoryInput = z.infer<typeof clientCategorySchema>;
 // Get all categories
 export async function getClientCategories() {
     try {
-        const categories = await prisma.clientCategory.findMany({
+        const categories = await prisma.client_categories.findMany({
             orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
             include: {
                 _count: {
@@ -36,7 +36,7 @@ export async function getClientCategories() {
 // Get active categories for dropdown
 export async function getActiveClientCategories() {
     try {
-        const categories = await prisma.clientCategory.findMany({
+        const categories = await prisma.client_categories.findMany({
             where: { isActive: true },
             orderBy: [{ sortOrder: "asc" }],
         });
@@ -51,7 +51,7 @@ export async function getActiveClientCategories() {
 // Get single category
 export async function getClientCategory(id: string) {
     try {
-        const category = await prisma.clientCategory.findUnique({
+        const category = await prisma.client_categories.findUnique({
             where: { id },
         });
 
@@ -72,7 +72,7 @@ export async function createClientCategory(data: ClientCategoryInput) {
         const validated = clientCategorySchema.parse(data);
 
         // Check for duplicate sortOrder
-        const existingSortOrder = await prisma.clientCategory.findFirst({
+        const existingSortOrder = await prisma.client_categories.findFirst({
             where: { sortOrder: validated.sortOrder },
         });
 
@@ -80,8 +80,12 @@ export async function createClientCategory(data: ClientCategoryInput) {
             return { success: false, error: `Urutan tampilan ${validated.sortOrder} sudah digunakan oleh kategori lain` };
         }
 
-        const category = await prisma.clientCategory.create({
-            data: validated,
+        const category = await prisma.client_categories.create({
+            data: {
+                ...validated,
+                id: crypto.randomUUID(),
+                updatedAt: new Date(),
+            },
         });
 
         revalidatePath("/admin/clients/categories");
@@ -120,7 +124,7 @@ export async function updateClientCategory(id: string, data: Partial<ClientCateg
     try {
         // Check for duplicate sortOrder if it's being updated
         if (data.sortOrder !== undefined) {
-            const existingSortOrder = await prisma.clientCategory.findFirst({
+            const existingSortOrder = await prisma.client_categories.findFirst({
                 where: {
                     sortOrder: data.sortOrder,
                     NOT: { id }, // Exclude current category
@@ -132,9 +136,12 @@ export async function updateClientCategory(id: string, data: Partial<ClientCateg
             }
         }
 
-        const category = await prisma.clientCategory.update({
+        const category = await prisma.client_categories.update({
             where: { id },
-            data,
+            data: {
+                ...data,
+                updatedAt: new Date(),
+            },
         });
 
         revalidatePath("/admin/clients/categories");
@@ -151,7 +158,7 @@ export async function updateClientCategory(id: string, data: Partial<ClientCateg
 export async function deleteClientCategory(id: string) {
     try {
         // Check if category has clients
-        const clientCount = await prisma.client.count({
+        const clientCount = await prisma.clients.count({
             where: { categoryId: id },
         });
 
@@ -162,7 +169,7 @@ export async function deleteClientCategory(id: string) {
             };
         }
 
-        await prisma.clientCategory.delete({
+        await prisma.client_categories.delete({
             where: { id },
         });
 
@@ -179,9 +186,12 @@ export async function deleteClientCategory(id: string) {
 // Toggle active status
 export async function toggleActiveClientCategory(id: string, isActive: boolean) {
     try {
-        const category = await prisma.clientCategory.update({
+        const category = await prisma.client_categories.update({
             where: { id },
-            data: { isActive },
+            data: {
+                isActive,
+                updatedAt: new Date()
+            },
         });
 
         revalidatePath("/admin/clients/categories");
@@ -199,9 +209,12 @@ export async function reorderClientCategories(categories: { id: string; sortOrde
     try {
         await prisma.$transaction(
             categories.map((cat) =>
-                prisma.clientCategory.update({
+                prisma.client_categories.update({
                     where: { id: cat.id },
-                    data: { sortOrder: cat.sortOrder },
+                    data: {
+                        sortOrder: cat.sortOrder,
+                        updatedAt: new Date()
+                    },
                 })
             )
         );
@@ -229,10 +242,14 @@ export async function initializeDefaultCategories() {
         ];
 
         for (const category of defaultCategories) {
-            await prisma.clientCategory.upsert({
+            await prisma.client_categories.upsert({
                 where: { slug: category.slug },
-                update: {},
-                create: category,
+                update: { updatedAt: new Date() },
+                create: {
+                    ...category,
+                    id: crypto.randomUUID(),
+                    updatedAt: new Date()
+                },
             });
         }
 

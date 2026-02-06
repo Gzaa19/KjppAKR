@@ -6,11 +6,11 @@ import prisma from "@/lib/prisma";
 async function getDashboardStats() {
     const [newsCount, galleryCount, userCount, publishedNewsCount, managementCount, clientCount] = await Promise.all([
         prisma.news.count(),
-        prisma.gallery.count(),
-        prisma.user.count(),
+        prisma.galleries.count(),
+        prisma.users.count(),
         prisma.news.count({ where: { isPublished: true } }),
         prisma.managementTeam.count(),
-        prisma.client.count(),
+        prisma.clients.count(),
     ]);
 
     return {

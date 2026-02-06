@@ -22,6 +22,7 @@ export default function EditManagementPage({ params }: { params: Promise<{ id: s
     const [formData, setFormData] = useState({
         name: "",
         title: "",
+        branch: "",
         image: "",
         description: "",
         isMappiCert: false,
@@ -33,10 +34,11 @@ export default function EditManagementPage({ params }: { params: Promise<{ id: s
             try {
                 const result = await getManagementTeamById(resolvedParams.id);
                 if (result.success && result.data?.team) {
-                    const { name, title, image, description, isMappiCert, sortOrder } = result.data.team;
+                    const { name, title, branch, image, description, isMappiCert, sortOrder } = result.data.team;
                     setFormData({
                         name,
                         title,
+                        branch: branch || "",
                         image: image || "",
                         description,
                         isMappiCert,
@@ -112,6 +114,16 @@ export default function EditManagementPage({ params }: { params: Promise<{ id: s
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                     placeholder="Contoh: Ir. H. Anas Karim Rivai"
                                     required
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="branch">Cabang / Posisi Khusus</Label>
+                                <Input
+                                    id="branch"
+                                    value={formData.branch}
+                                    onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
+                                    placeholder="Contoh: Kepala Cabang Pusat"
                                 />
                             </div>
 

@@ -4,10 +4,10 @@ import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-// Validation schema (internal only)
 const managementSchema = z.object({
     name: z.string().min(1, "Nama harus diisi"),
     title: z.string().min(1, "Jabatan harus diisi"),
+    branch: z.string().optional().or(z.literal("")),
     image: z.string().optional().or(z.literal("")),
     description: z.string().min(1, "Deskripsi harus diisi"),
     isMappiCert: z.boolean().default(false),
@@ -16,7 +16,6 @@ const managementSchema = z.object({
 
 type ManagementInput = z.infer<typeof managementSchema>;
 
-// Get all management team members
 export async function getManagementTeams() {
     try {
         const teams = await prisma.managementTeam.findMany({
@@ -30,7 +29,6 @@ export async function getManagementTeams() {
     }
 }
 
-// Get management team member by ID
 export async function getManagementTeamById(id: string) {
     try {
         const team = await prisma.managementTeam.findUnique({
@@ -48,7 +46,6 @@ export async function getManagementTeamById(id: string) {
     }
 }
 
-// Create management team member
 export async function createManagementTeam(data: ManagementInput) {
     try {
         const validated = managementSchema.parse(data);
@@ -63,7 +60,11 @@ export async function createManagementTeam(data: ManagementInput) {
         }
 
         const team = await prisma.managementTeam.create({
-            data: validated,
+            data: {
+                ...validated,
+                id: crypto.randomUUID(),
+                updatedAt: new Date(),
+            },
         });
 
         revalidatePath("/admin/management");
@@ -98,7 +99,10 @@ export async function updateManagementTeam(id: string, data: Partial<ManagementI
 
         const team = await prisma.managementTeam.update({
             where: { id },
-            data,
+            data: {
+                ...data,
+                updatedAt: new Date(),
+            },
         });
 
         revalidatePath("/admin/management");
@@ -111,7 +115,6 @@ export async function updateManagementTeam(id: string, data: Partial<ManagementI
     }
 }
 
-// Delete management team member
 export async function deleteManagementTeam(id: string) {
     try {
         await prisma.managementTeam.delete({

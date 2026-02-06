@@ -26,6 +26,8 @@ export async function createNews(
         const news = await prisma.news.create({
             data: {
                 ...validated.data,
+                id: crypto.randomUUID(),
+                updatedAt: new Date(),
                 authorId,
                 publishedAt: validated.data.isPublished ? new Date() : null,
             },
@@ -61,7 +63,7 @@ export async function getNews(options?: {
             prisma.news.findMany({
                 where,
                 include: {
-                    author: {
+                    users: {
                         select: { id: true, name: true, avatar: true },
                     },
                     _count: { select: { comments: true } },
@@ -96,7 +98,7 @@ export async function getNewsById(id: string) {
         const news = await prisma.news.findUnique({
             where: { id },
             include: {
-                author: { select: { id: true, name: true, avatar: true } },
+                users: { select: { id: true, name: true, avatar: true } },
                 comments: {
                     where: { isApproved: true },
                     orderBy: { createdAt: "desc" },
@@ -120,7 +122,7 @@ export async function getNewsBySlug(slug: string) {
         const news = await prisma.news.findUnique({
             where: { slug },
             include: {
-                author: { select: { id: true, name: true, avatar: true } },
+                users: { select: { id: true, name: true, avatar: true } },
                 comments: {
                     where: { isApproved: true },
                     orderBy: { createdAt: "desc" },
@@ -134,7 +136,10 @@ export async function getNewsBySlug(slug: string) {
 
         await prisma.news.update({
             where: { id: news.id },
-            data: { views: { increment: 1 } },
+            data: {
+                views: { increment: 1 },
+                updatedAt: new Date()
+            },
         });
 
         return { success: true, data: news };
@@ -170,6 +175,7 @@ export async function updateNews(
 
         const updateData = {
             ...validated.data,
+            updatedAt: new Date(),
             ...(validated.data.isPublished && !existing.publishedAt && { publishedAt: new Date() }),
         };
 
@@ -187,9 +193,6 @@ export async function updateNews(
     }
 }
 
-// ============================================
-// DELETE
-// ============================================
 export async function deleteNews(id: string): Promise<ActionResponse> {
     try {
         const existing = await prisma.news.findUnique({ where: { id } });
@@ -218,6 +221,7 @@ export async function togglePublishNews(id: string): Promise<ActionResponse> {
             where: { id },
             data: {
                 isPublished: !existing.isPublished,
+                updatedAt: new Date(),
                 publishedAt: !existing.isPublished ? new Date() : existing.publishedAt,
             },
         });

@@ -20,6 +20,7 @@ export default function CreateManagementPage() {
     const [formData, setFormData] = useState({
         name: "",
         title: "",
+        branch: "",
         image: "",
         description: "",
         isMappiCert: false,
@@ -74,6 +75,16 @@ export default function CreateManagementPage() {
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                     placeholder="Contoh: Ir. H. Anas Karim Rivai"
                                     required
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="branch">Cabang / Posisi Khusus</Label>
+                                <Input
+                                    id="branch"
+                                    value={formData.branch}
+                                    onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
+                                    placeholder="Contoh: Kepala Cabang Pusat"
                                 />
                             </div>
 

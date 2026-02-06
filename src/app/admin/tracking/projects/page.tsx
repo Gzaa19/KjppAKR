@@ -66,7 +66,7 @@ interface Project {
     projectId: string
     proposalNo: string
     trackingCode: string
-    client: Client
+    client_contacts: Client
     objectType: string
     reportType: string
     branch: string
@@ -386,7 +386,7 @@ export default function ProjectsPage() {
                                             </TableCell>
                                             <TableCell className="py-5 px-6 align-top max-w-xs">
                                                 <div className="flex flex-col">
-                                                    <span className="font-bold text-gray-900">{project.client.name}</span>
+                                                    <span className="font-bold text-gray-900">{project.client_contacts.name}</span>
                                                     <span className="text-xs text-gray-500 truncate" title={project.address}>
                                                         {project.address}
                                                     </span>

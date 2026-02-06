@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const user = await prisma.user.findUnique({
+        const user = await prisma.users.findUnique({
             where: { email: validated.data.email },
         });
 
@@ -67,21 +67,23 @@ export async function POST(request: NextRequest) {
             avatar: user.avatar,
         };
         const cookieStore = await cookies();
+        const isProduction = process.env.NODE_ENV === 'production';
+
+        const baseCookieOptions = {
+            httpOnly: true,
+            secure: isProduction,
+            sameSite: "strict" as const,
+            path: "/",
+        };
 
         if (validated.data.rememberMe) {
             cookieStore.set("admin_session", JSON.stringify(sessionData), {
-                httpOnly: true,
-                secure: true,
-                sameSite: "strict",
+                ...baseCookieOptions,
                 maxAge: 60 * 60 * 4,
-                path: "/",
             });
         } else {
             cookieStore.set("admin_session", JSON.stringify(sessionData), {
-                httpOnly: true,
-                secure: true,
-                sameSite: "strict",
-                path: "/",
+                ...baseCookieOptions,
             });
         }
         return NextResponse.json({

@@ -340,7 +340,7 @@ export function ContactFormSection() {
                                 />
                             </div>
 
-                            <Button type="submit" size="lg" className="w-full md:w-auto min-w-[200px]" disabled={isSubmitting}>
+                            <Button type="submit" size="lg" className="w-full md:w-auto min-w-[200px] bg-kjpp-red hover:bg-kjpp-red/80" disabled={isSubmitting}>
                                 {isSubmitting ? (
                                     <>
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />

@@ -4,7 +4,7 @@ import prisma from "@/lib/prisma";
 // Generate unique Project ID
 async function generateProjectId(): Promise<string> {
     const year = new Date().getFullYear();
-    const count = await prisma.trackingProject.count({
+    const count = await prisma.tracking_projects.count({
         where: {
             projectId: {
                 startsWith: `PRJ-${year}`,
@@ -29,7 +29,7 @@ async function generateTrackingCode(): Promise<string> {
         const trackingCode = `AKR-${randomPart}`;
 
         // Check if unique
-        const existing = await prisma.trackingProject.findUnique({
+        const existing = await prisma.tracking_projects.findUnique({
             where: { trackingCode },
         });
 
@@ -78,7 +78,7 @@ export async function GET(request: NextRequest) {
                 { proposalNo: { contains: search, mode: "insensitive" } },
                 { trackingCode: { contains: search, mode: "insensitive" } },
                 { address: { contains: search, mode: "insensitive" } },
-                { client: { name: { contains: search, mode: "insensitive" } } },
+                { client_contacts: { name: { contains: search, mode: "insensitive" } } },
             ];
         }
 
@@ -109,16 +109,16 @@ export async function GET(request: NextRequest) {
         }
 
         // Get total count
-        const total = await prisma.trackingProject.count({ where });
+        const total = await prisma.tracking_projects.count({ where });
 
         // Get projects with client info
-        const projects = await prisma.trackingProject.findMany({
+        const projects = await prisma.tracking_projects.findMany({
             where,
             skip,
             take: limit,
             orderBy: { createdAt: "desc" },
             include: {
-                client: {
+                client_contacts: {
                     select: {
                         id: true,
                         name: true,
@@ -130,18 +130,18 @@ export async function GET(request: NextRequest) {
         });
 
         // Get stats
-        const stats = await prisma.trackingProject.groupBy({
+        const stats = await prisma.tracking_projects.groupBy({
             by: ["status"],
             _count: {
                 status: true,
             },
         });
 
-        const totalActive = await prisma.trackingProject.count({
+        const totalActive = await prisma.tracking_projects.count({
             where: { status: { not: "SELESAI" } },
         });
 
-        const totalCompleted = await prisma.trackingProject.count({
+        const totalCompleted = await prisma.tracking_projects.count({
             where: { status: "SELESAI" },
         });
 
@@ -197,7 +197,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Check if client exists
-        const clientExists = await prisma.clientContact.findUnique({
+        const clientExists = await prisma.client_contacts.findUnique({
             where: { id: clientId },
         });
 
@@ -213,8 +213,10 @@ export async function POST(request: NextRequest) {
         const trackingCode = await generateTrackingCode();
 
         // Create project
-        const project = await prisma.trackingProject.create({
+        const project = await prisma.tracking_projects.create({
             data: {
+                id: crypto.randomUUID(),
+                updatedAt: new Date(),
                 projectId,
                 proposalNo,
                 trackingCode,
@@ -229,7 +231,7 @@ export async function POST(request: NextRequest) {
                 progress: 0,
             },
             include: {
-                client: {
+                client_contacts: {
                     select: {
                         id: true,
                         name: true,

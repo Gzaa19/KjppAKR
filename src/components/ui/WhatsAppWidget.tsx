@@ -8,14 +8,13 @@ import { motion, AnimatePresence } from "framer-motion";
 export function WhatsAppWidget() {
     const [isOpen, setIsOpen] = useState(false);
 
-    const phoneNumber = "6287771000800";
+    const phoneNumber = "628777200070";
     const message = "Halo, saya ingin bertanya mengenai layanan KJPP Anas Karim Rivai & Rekan.";
 
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 
     return (
         <>
-            {/* WhatsApp Button */}
             <motion.div
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -105,8 +104,6 @@ export function WhatsAppWidget() {
                         )}
                     </AnimatePresence>
                 </motion.button>
-
-                {/* Pulse effect */}
                 {!isOpen && (
                     <motion.div
                         className="absolute inset-0 rounded-full bg-green-400 -z-10"

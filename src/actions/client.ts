@@ -19,10 +19,10 @@ type ClientInput = z.infer<typeof clientSchema>;
 // Get all clients
 export async function getClients() {
     try {
-        const clients = await prisma.client.findMany({
+        const clients = await prisma.clients.findMany({
             orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
             include: {
-                category: true,
+                client_categories: true,
             },
         });
 
@@ -36,25 +36,25 @@ export async function getClients() {
 // Get published clients for public view
 export async function getPublishedClients() {
     try {
-        const clients = await prisma.client.findMany({
+        const clients = await prisma.clients.findMany({
             where: {
                 isPublished: true,
-                category: {
+                client_categories: {
                     isActive: true
                 }
             },
             orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
             include: {
-                category: true,
+                client_categories: true,
             },
         });
 
         // Group by category
         const groupedByCategory = clients.reduce((acc, client) => {
-            const categoryId = client.category.id;
+            const categoryId = client.client_categories.id;
             if (!acc[categoryId]) {
                 acc[categoryId] = {
-                    category: client.category,
+                    category: client.client_categories,
                     clients: [],
                 };
             }
@@ -80,8 +80,12 @@ export async function createClient(data: ClientInput) {
     try {
         const validated = clientSchema.parse(data);
 
-        const client = await prisma.client.create({
-            data: validated,
+        const client = await prisma.clients.create({
+            data: {
+                ...validated,
+                id: crypto.randomUUID(),
+                updatedAt: new Date(),
+            },
         });
 
         revalidatePath("/admin/clients");
@@ -100,9 +104,12 @@ export async function createClient(data: ClientInput) {
 // Update client
 export async function updateClient(id: string, data: Partial<ClientInput>) {
     try {
-        const client = await prisma.client.update({
+        const client = await prisma.clients.update({
             where: { id },
-            data,
+            data: {
+                ...data,
+                updatedAt: new Date(),
+            },
         });
 
         revalidatePath("/admin/clients");
@@ -118,7 +125,7 @@ export async function updateClient(id: string, data: Partial<ClientInput>) {
 // Delete client
 export async function deleteClient(id: string) {
     try {
-        await prisma.client.delete({
+        await prisma.clients.delete({
             where: { id },
         });
 
@@ -135,9 +142,12 @@ export async function deleteClient(id: string) {
 // Toggle publish status
 export async function togglePublishClient(id: string, isPublished: boolean) {
     try {
-        const client = await prisma.client.update({
+        const client = await prisma.clients.update({
             where: { id },
-            data: { isPublished },
+            data: {
+                isPublished,
+                updatedAt: new Date()
+            },
         });
 
         revalidatePath("/admin/clients");

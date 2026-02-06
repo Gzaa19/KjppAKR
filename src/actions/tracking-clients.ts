@@ -45,13 +45,13 @@ export async function getTrackingClients({
         }
 
         const [clients, total] = await Promise.all([
-            prisma.clientContact.findMany({
+            prisma.client_contacts.findMany({
                 where,
                 skip,
                 take: limit,
                 orderBy: { createdAt: "desc" },
             }),
-            prisma.clientContact.count({ where }),
+            prisma.client_contacts.count({ where }),
         ]);
 
         return {
@@ -74,7 +74,7 @@ export async function getTrackingClients({
 
 export async function getTrackingClientById(id: string) {
     try {
-        const client = await prisma.clientContact.findUnique({
+        const client = await prisma.client_contacts.findUnique({
             where: { id },
         });
 
@@ -93,8 +93,12 @@ export async function createTrackingClient(data: TrackingClientInput) {
     try {
         const validated = trackingClientSchema.parse(data);
 
-        const client = await prisma.clientContact.create({
-            data: validated,
+        const client = await prisma.client_contacts.create({
+            data: {
+                ...validated,
+                id: crypto.randomUUID(),
+                updatedAt: new Date(),
+            },
         });
 
         revalidatePath("/admin/tracking/clients");
@@ -110,9 +114,12 @@ export async function createTrackingClient(data: TrackingClientInput) {
 
 export async function updateTrackingClient(id: string, data: Partial<TrackingClientInput>) {
     try {
-        const client = await prisma.clientContact.update({
+        const client = await prisma.client_contacts.update({
             where: { id },
-            data,
+            data: {
+                ...data,
+                updatedAt: new Date(),
+            },
         });
 
         revalidatePath("/admin/tracking/clients");
@@ -127,7 +134,7 @@ export async function updateTrackingClient(id: string, data: Partial<TrackingCli
 
 export async function deleteTrackingClient(id: string) {
     try {
-        await prisma.clientContact.delete({
+        await prisma.client_contacts.delete({
             where: { id },
         });
 

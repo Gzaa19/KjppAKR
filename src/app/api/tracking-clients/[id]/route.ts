@@ -8,7 +8,7 @@ export async function GET(
     try {
         const { id } = await params;
 
-        const client = await prisma.clientContact.findUnique({
+        const client = await prisma.client_contacts.findUnique({
             where: { id },
         });
 
@@ -52,7 +52,7 @@ export async function PUT(
             );
         }
 
-        const existingClient = await prisma.clientContact.findUnique({
+        const existingClient = await prisma.client_contacts.findUnique({
             where: { id },
         });
 
@@ -63,7 +63,7 @@ export async function PUT(
             );
         }
 
-        const client = await prisma.clientContact.update({
+        const client = await prisma.client_contacts.update({
             where: { id },
             data: {
                 name,
@@ -72,6 +72,7 @@ export async function PUT(
                 picName,
                 phone,
                 email,
+                updatedAt: new Date(),
             },
         });
 
@@ -113,7 +114,7 @@ export async function DELETE(
             );
         }
 
-        const existingClient = await prisma.clientContact.findUnique({
+        const existingClient = await prisma.client_contacts.findUnique({
             where: { id },
         });
 
@@ -124,7 +125,7 @@ export async function DELETE(
             );
         }
 
-        await prisma.clientContact.delete({
+        await prisma.client_contacts.delete({
             where: { id },
         });
 

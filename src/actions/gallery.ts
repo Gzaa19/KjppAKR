@@ -26,7 +26,7 @@ export async function createAlbum(input: CreateAlbumInput): Promise<ActionRespon
             return { success: false, error: validated.error.issues[0].message };
         }
 
-        const existingSlug = await prisma.album.findUnique({
+        const existingSlug = await prisma.albums.findUnique({
             where: { slug: validated.data.slug },
         });
 
@@ -35,7 +35,7 @@ export async function createAlbum(input: CreateAlbumInput): Promise<ActionRespon
         }
 
         // Check for duplicate sort order
-        const existingSortOrder = await prisma.album.findFirst({
+        const existingSortOrder = await prisma.albums.findFirst({
             where: { sortOrder: validated.data.sortOrder },
         });
 
@@ -43,8 +43,12 @@ export async function createAlbum(input: CreateAlbumInput): Promise<ActionRespon
             return { success: false, error: `Urutan ${validated.data.sortOrder} sudah digunakan oleh album lain` };
         }
 
-        const album = await prisma.album.create({
-            data: validated.data,
+        const album = await prisma.albums.create({
+            data: {
+                ...validated.data,
+                id: crypto.randomUUID(),
+                updatedAt: new Date(),
+            },
         });
 
         revalidatePath("/admin/gallery");
@@ -57,7 +61,7 @@ export async function createAlbum(input: CreateAlbumInput): Promise<ActionRespon
 
 export async function getAlbums(activeOnly: boolean = false) {
     try {
-        const albums = await prisma.album.findMany({
+        const albums = await prisma.albums.findMany({
             where: activeOnly ? { isActive: true } : undefined,
             include: {
                 _count: { select: { galleries: true } },
@@ -74,7 +78,7 @@ export async function getAlbums(activeOnly: boolean = false) {
 
 export async function getAlbumById(id: string) {
     try {
-        const album = await prisma.album.findUnique({
+        const album = await prisma.albums.findUnique({
             where: { id },
             include: {
                 _count: { select: { galleries: true } },
@@ -94,7 +98,7 @@ export async function getAlbumById(id: string) {
 
 export async function getAlbumBySlug(slug: string) {
     try {
-        const album = await prisma.album.findUnique({
+        const album = await prisma.albums.findUnique({
             where: { slug },
             include: {
                 galleries: {
@@ -125,13 +129,13 @@ export async function updateAlbum(
             return { success: false, error: validated.error.issues[0].message };
         }
 
-        const existing = await prisma.album.findUnique({ where: { id } });
+        const existing = await prisma.albums.findUnique({ where: { id } });
         if (!existing) {
             return { success: false, error: "Album tidak ditemukan" };
         }
 
         if (validated.data.slug && validated.data.slug !== existing.slug) {
-            const slugExists = await prisma.album.findUnique({
+            const slugExists = await prisma.albums.findUnique({
                 where: { slug: validated.data.slug },
             });
             if (slugExists) {
@@ -141,7 +145,7 @@ export async function updateAlbum(
 
         // Check for duplicate sort order
         if (validated.data.sortOrder !== undefined && validated.data.sortOrder !== existing.sortOrder) {
-            const sortOrderExists = await prisma.album.findFirst({
+            const sortOrderExists = await prisma.albums.findFirst({
                 where: {
                     sortOrder: validated.data.sortOrder,
                     id: { not: id },
@@ -149,16 +153,19 @@ export async function updateAlbum(
             });
 
             if (sortOrderExists) {
-                return { 
-                    success: false, 
-                    error: `Urutan ${validated.data.sortOrder} sudah digunakan oleh album lain` 
+                return {
+                    success: false,
+                    error: `Urutan ${validated.data.sortOrder} sudah digunakan oleh album lain`
                 };
             }
         }
 
-        const album = await prisma.album.update({
+        const album = await prisma.albums.update({
             where: { id },
-            data: validated.data,
+            data: {
+                ...validated.data,
+                updatedAt: new Date(),
+            },
         });
 
         revalidatePath("/admin/gallery");
@@ -171,7 +178,7 @@ export async function updateAlbum(
 
 export async function deleteAlbum(id: string): Promise<ActionResponse> {
     try {
-        const existing = await prisma.album.findUnique({
+        const existing = await prisma.albums.findUnique({
             where: { id },
             include: { _count: { select: { galleries: true } } },
         });
@@ -183,7 +190,7 @@ export async function deleteAlbum(id: string): Promise<ActionResponse> {
             return { success: false, error: "Tidak dapat menghapus album yang masih memiliki foto" };
         }
 
-        await prisma.album.delete({ where: { id } });
+        await prisma.albums.delete({ where: { id } });
 
         revalidatePath("/admin/gallery");
         revalidatePath("/admin/gallery/albums");
@@ -196,14 +203,17 @@ export async function deleteAlbum(id: string): Promise<ActionResponse> {
 
 export async function toggleActiveAlbum(id: string, isActive: boolean): Promise<ActionResponse> {
     try {
-        const existing = await prisma.album.findUnique({ where: { id } });
+        const existing = await prisma.albums.findUnique({ where: { id } });
         if (!existing) {
             return { success: false, error: "Album tidak ditemukan" };
         }
 
-        await prisma.album.update({
+        await prisma.albums.update({
             where: { id },
-            data: { isActive },
+            data: {
+                isActive,
+                updatedAt: new Date()
+            },
         });
 
         revalidatePath("/admin/gallery");
@@ -230,9 +240,11 @@ export async function createGallery(
             return { success: false, error: validated.error.issues[0].message };
         }
 
-        const gallery = await prisma.gallery.create({
+        const gallery = await prisma.galleries.create({
             data: {
                 ...validated.data,
+                id: crypto.randomUUID(),
+                updatedAt: new Date(),
                 uploadedById,
             },
         });
@@ -261,17 +273,17 @@ export async function getGalleries(options?: {
         };
 
         const [galleries, total] = await Promise.all([
-            prisma.gallery.findMany({
+            prisma.galleries.findMany({
                 where,
                 include: {
-                    album: { select: { id: true, name: true, slug: true } },
-                    uploadedBy: { select: { id: true, name: true } },
+                    albums: { select: { id: true, name: true, slug: true } },
+                    users: { select: { id: true, name: true } },
                 },
                 orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
                 take: limit,
                 skip,
             }),
-            prisma.gallery.count({ where }),
+            prisma.galleries.count({ where }),
         ]);
 
         return {
@@ -294,11 +306,11 @@ export async function getGalleries(options?: {
 
 export async function getGalleryById(id: string) {
     try {
-        const gallery = await prisma.gallery.findUnique({
+        const gallery = await prisma.galleries.findUnique({
             where: { id },
             include: {
-                album: true,
-                uploadedBy: { select: { id: true, name: true } },
+                albums: true,
+                users: { select: { id: true, name: true } },
             },
         });
 
@@ -320,14 +332,17 @@ export async function updateGallery(id: string, input: UpdateGalleryInput): Prom
             return { success: false, error: validated.error.issues[0].message };
         }
 
-        const existing = await prisma.gallery.findUnique({ where: { id } });
+        const existing = await prisma.galleries.findUnique({ where: { id } });
         if (!existing) {
             return { success: false, error: "Foto tidak ditemukan" };
         }
 
-        const gallery = await prisma.gallery.update({
+        const gallery = await prisma.galleries.update({
             where: { id },
-            data: validated.data,
+            data: {
+                ...validated.data,
+                updatedAt: new Date(),
+            },
         });
 
         revalidatePath("/admin/gallery");
@@ -340,12 +355,12 @@ export async function updateGallery(id: string, input: UpdateGalleryInput): Prom
 
 export async function deleteGallery(id: string): Promise<ActionResponse> {
     try {
-        const existing = await prisma.gallery.findUnique({ where: { id } });
+        const existing = await prisma.galleries.findUnique({ where: { id } });
         if (!existing) {
             return { success: false, error: "Foto tidak ditemukan" };
         }
 
-        await prisma.gallery.delete({ where: { id } });
+        await prisma.galleries.delete({ where: { id } });
 
         revalidatePath("/admin/gallery");
         return { success: true };
@@ -357,14 +372,17 @@ export async function deleteGallery(id: string): Promise<ActionResponse> {
 
 export async function togglePublishGallery(id: string): Promise<ActionResponse> {
     try {
-        const existing = await prisma.gallery.findUnique({ where: { id } });
+        const existing = await prisma.galleries.findUnique({ where: { id } });
         if (!existing) {
             return { success: false, error: "Foto tidak ditemukan" };
         }
 
-        await prisma.gallery.update({
+        await prisma.galleries.update({
             where: { id },
-            data: { isPublished: !existing.isPublished },
+            data: {
+                isPublished: !existing.isPublished,
+                updatedAt: new Date()
+            },
         });
 
         revalidatePath("/admin/gallery");
@@ -379,9 +397,12 @@ export async function reorderGalleries(items: { id: string; sortOrder: number }[
     try {
         await Promise.all(
             items.map((item) =>
-                prisma.gallery.update({
+                prisma.galleries.update({
                     where: { id: item.id },
-                    data: { sortOrder: item.sortOrder },
+                    data: {
+                        sortOrder: item.sortOrder,
+                        updatedAt: new Date()
+                    },
                 })
             )
         );

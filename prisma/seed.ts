@@ -27,7 +27,7 @@ async function main() {
     const adminEmail = "admin@kjpp-akr.com";
     const adminPassword = "admin123"; // Change this in production!
 
-    const existingAdmin = await prisma.user.findUnique({
+    const existingAdmin = await prisma.users.findUnique({
         where: { email: adminEmail },
     });
 
@@ -39,13 +39,15 @@ async function main() {
     } else {
         const hashedPassword = await bcrypt.hash(adminPassword, 12);
 
-        const admin = await prisma.user.create({
+        const admin = await prisma.users.create({
             data: {
                 email: adminEmail,
                 password: hashedPassword,
                 name: "Administrator",
                 role: "SUPER_ADMIN",
                 isActive: true,
+                id: crypto.randomUUID(),
+                updatedAt: new Date(),
             },
         });
 
@@ -109,24 +111,27 @@ async function main() {
             sortOrder: 6
         },
         {
-            name: "Ery",
+            name: "Say Barian Alzairi, S.E, M.Ec.Dev, MAPPI (Cert.)",
             title: "Rekan",
             image: "/image/manajemen/pakEry.png",
             description: "Lahir di Jakarta pada tanggal ... . Beliau memiliki pengalaman dalam bidang Administrasi Tender dari Tahun ... - Sekarang.",
-            isMappiCert: false,
+            isMappiCert: true,
             sortOrder: 7
         }
     ];
 
     for (const team of managementTeams) {
-        // Check if exists by name to avoid duplicates on re-seed
         const existingTeam = await prisma.managementTeam.findFirst({
             where: { name: team.name }
         });
 
         if (!existingTeam) {
             await prisma.managementTeam.create({
-                data: team
+                data: {
+                    ...team,
+                    id: crypto.randomUUID(),
+                    updatedAt: new Date(),
+                }
             });
         }
     }
@@ -144,10 +149,10 @@ async function main() {
     ];
 
     for (const category of clientCategories) {
-        await prisma.clientCategory.upsert({
+        await prisma.client_categories.upsert({
             where: { slug: category.slug },
-            update: { name: category.name, sortOrder: category.sortOrder, isActive: category.isActive },
-            create: category,
+            update: { name: category.name, sortOrder: category.sortOrder, isActive: category.isActive, updatedAt: new Date() },
+            create: { ...category, id: crypto.randomUUID(), updatedAt: new Date() },
         });
     }
     console.log(`✅ Seeded ${clientCategories.length} client categories`);
@@ -156,10 +161,10 @@ async function main() {
     console.log("\n🌱 Seeding Clients...");
 
     // Get category IDs for reference
-    const bankCategory = await prisma.clientCategory.findUnique({
+    const bankCategory = await prisma.client_categories.findUnique({
         where: { slug: "bank-bumn-swasta" }
     });
-    const nonBankCategory = await prisma.clientCategory.findUnique({
+    const nonBankCategory = await prisma.client_categories.findUnique({
         where: { slug: "non-bank" }
     });
 
@@ -182,14 +187,16 @@ async function main() {
         ];
 
         for (const client of clients) {
-            const existingClient = await prisma.client.findFirst({
+            const existingClient = await prisma.clients.findFirst({
                 where: { name: client.name }
             });
 
             if (!existingClient) {
-                await prisma.client.create({
+                await prisma.clients.create({
                     data: {
                         ...client,
+                        id: crypto.randomUUID(), // Need ID
+                        updatedAt: new Date(),   // Need updatedAt
                         isPublished: true
                     }
                 });
@@ -199,7 +206,7 @@ async function main() {
     }
 
     // Get admin user ID for news
-    const admin = await prisma.user.findUnique({
+    const admin = await prisma.users.findUnique({
         where: { email: adminEmail }
     });
 
@@ -321,12 +328,12 @@ async function main() {
 
         if (!existingNews) {
             await prisma.news.create({
-                data: news
+                data: { ...news, id: crypto.randomUUID(), updatedAt: new Date() }
             });
         } else {
             await prisma.news.update({
                 where: { slug: news.slug },
-                data: news
+                data: { ...news, updatedAt: new Date() }
             });
         }
     }
@@ -367,13 +374,13 @@ async function main() {
 
     const createdAlbums: any[] = [];
     for (const album of albums) {
-        const existingAlbum = await prisma.album.findUnique({
+        const existingAlbum = await prisma.albums.findUnique({
             where: { slug: album.slug }
         });
 
         if (!existingAlbum) {
-            const newAlbum = await prisma.album.create({
-                data: album
+            const newAlbum = await prisma.albums.create({
+                data: { ...album, id: crypto.randomUUID(), updatedAt: new Date() }
             });
             createdAlbums.push(newAlbum);
         } else {
@@ -516,13 +523,13 @@ async function main() {
     ];
 
     for (const gallery of galleries) {
-        const existingGallery = await prisma.gallery.findFirst({
+        const existingGallery = await prisma.galleries.findFirst({
             where: { title: gallery.title }
         });
 
         if (!existingGallery) {
-            await prisma.gallery.create({
-                data: gallery
+            await prisma.galleries.create({
+                data: { ...gallery, id: crypto.randomUUID(), updatedAt: new Date() }
             });
         }
     }
@@ -552,7 +559,7 @@ async function main() {
     ];
 
     for (const image of sekapurSirihImages) {
-        const existingImage = await prisma.sekapurSirihImage.findFirst({
+        const existingImage = await prisma.sekapur_sirih_images.findFirst({
             where: {
                 imageType: image.imageType,
                 imageUrl: image.imageUrl
@@ -560,8 +567,8 @@ async function main() {
         });
 
         if (!existingImage) {
-            await prisma.sekapurSirihImage.create({
-                data: image
+            await prisma.sekapur_sirih_images.create({
+                data: { ...image, id: crypto.randomUUID(), updatedAt: new Date() }
             });
         }
     }

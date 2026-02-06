@@ -25,9 +25,9 @@ export async function GET(request: NextRequest) {
             where.type = type.toUpperCase();
         }
 
-        const total = await prisma.clientContact.count({ where });
+        const total = await prisma.client_contacts.count({ where });
 
-        const clients = await prisma.clientContact.findMany({
+        const clients = await prisma.client_contacts.findMany({
             where,
             skip,
             take: limit,
@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const client = await prisma.clientContact.create({
+        const client = await prisma.client_contacts.create({
             data: {
                 name,
                 type: type.toUpperCase(),
@@ -76,6 +76,8 @@ export async function POST(request: NextRequest) {
                 picName,
                 phone,
                 email,
+                id: crypto.randomUUID(),
+                updatedAt: new Date(),
             },
         });
 

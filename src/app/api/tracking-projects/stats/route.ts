@@ -3,28 +3,28 @@ import prisma from "@/lib/prisma";
 
 export async function GET() {
     try {
-        const totalProjects = await prisma.trackingProject.count();
-        const activeProjects = await prisma.trackingProject.count({
+        const totalProjects = await prisma.tracking_projects.count();
+        const activeProjects = await prisma.tracking_projects.count({
             where: { status: { not: "SELESAI" } },
         });
-        const completedProjects = await prisma.trackingProject.count({
+        const completedProjects = await prisma.tracking_projects.count({
             where: { status: "SELESAI" },
         });
 
-        const totalClients = await prisma.clientContact.count();
+        const totalClients = await prisma.client_contacts.count();
 
-        const projectsByStatus = await prisma.trackingProject.groupBy({
+        const projectsByStatus = await prisma.tracking_projects.groupBy({
             by: ["status"],
             _count: {
                 status: true,
             },
         });
 
-        const recentProjects = await prisma.trackingProject.findMany({
+        const recentProjects = await prisma.tracking_projects.findMany({
             take: 5,
             orderBy: { createdAt: "desc" },
             include: {
-                client: {
+                client_contacts: {
                     select: {
                         name: true,
                     },
@@ -36,7 +36,7 @@ export async function GET() {
         const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
         const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
 
-        const projectsLastMonth = await prisma.trackingProject.count({
+        const projectsLastMonth = await prisma.tracking_projects.count({
             where: {
                 createdAt: {
                     gte: lastMonth,
@@ -45,7 +45,7 @@ export async function GET() {
             },
         });
 
-        const projectsThisMonth = await prisma.trackingProject.count({
+        const projectsThisMonth = await prisma.tracking_projects.count({
             where: {
                 createdAt: {
                     gte: thisMonthStart,
@@ -92,7 +92,7 @@ export async function GET() {
                 statusDistribution,
                 recentProjects: recentProjects.map((p) => ({
                     id: p.projectId,
-                    client: p.client.name,
+                    client: p.client_contacts.name,
                     status: statusMap[p.status]?.label || p.status,
                     progress: p.progress,
                     color: statusMap[p.status]?.color || "bg-gray-500",

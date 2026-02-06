@@ -5,7 +5,7 @@ import { uploadImage } from "@/lib/uploadImage";
 
 export async function GET() {
     try {
-        const images = await prisma.sekapurSirihImage.findMany({
+        const images = await prisma.sekapur_sirih_images.findMany({
             orderBy: { createdAt: "desc" },
         });
         return NextResponse.json(images);
@@ -49,7 +49,7 @@ export async function POST(req: Request) {
         // Auto-deactivate other images of the same type if this one is active
         if (isActive) {
             console.log("Deactivating other active images of type:", imageType);
-            await prisma.sekapurSirihImage.updateMany({
+            await prisma.sekapur_sirih_images.updateMany({
                 where: {
                     imageType: imageType,
                     isActive: true,
@@ -66,7 +66,7 @@ export async function POST(req: Request) {
         const imageUrl = uploadResult.secure_url;
         console.log("Image uploaded:", imageUrl);
 
-        const newImage = await prisma.sekapurSirihImage.create({
+        const newImage = await prisma.sekapur_sirih_images.create({
             data: {
                 imageUrl,
                 imageType,
@@ -75,6 +75,8 @@ export async function POST(req: Request) {
                 managingPartnerName: imageType === "MANAGING_PARTNER" ? (managingPartnerName || null) : null,
                 managingPartnerTitle: imageType === "MANAGING_PARTNER" ? (managingPartnerTitle || null) : null,
                 isActive,
+                id: crypto.randomUUID(),
+                updatedAt: new Date(),
             },
         });
         console.log("Image saved to database:", newImage.id);

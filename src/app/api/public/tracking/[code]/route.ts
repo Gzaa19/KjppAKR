@@ -9,28 +9,14 @@ const STAGE_CONFIG = [
     { id: 5, name: "Laporan Final", subStepIds: ["5a", "5b"] },
 ];
 
-/**
- * Normalize phone number - remove all non-digit characters
- * Handles various formats:
- * - 081261490378
- * - +6281261490378
- * - 0812-6149-0378
- * - 0812 6149 0378
- * - +62 812 6149 0378
- */
 function normalizePhoneNumber(phone: string): string {
     return phone.replace(/\D/g, "");
 }
-
-/**
- * Get last 4 digits of a phone number
- */
 function getLast4Digits(phone: string): string {
     const normalized = normalizePhoneNumber(phone);
     return normalized.slice(-4);
 }
 
-// Step 1: Check if tracking code exists (GET request)
 export async function GET(
     request: NextRequest,
     { params }: { params: Promise<{ code: string }> }
@@ -45,12 +31,12 @@ export async function GET(
             );
         }
 
-        const project = await prisma.trackingProject.findUnique({
+        const project = await prisma.tracking_projects.findUnique({
             where: { trackingCode: code.toUpperCase() },
             select: {
                 id: true,
                 trackingCode: true,
-                client: {
+                client_contacts: {
                     select: {
                         phone: true,
                     },
@@ -68,8 +54,7 @@ export async function GET(
             );
         }
 
-        // Return success with masked phone number hint
-        const clientPhone = project.client.phone;
+        const clientPhone = project.client_contacts.phone;
         const last4 = getLast4Digits(clientPhone);
         const maskedPhone = `****${last4}`;
 
@@ -111,7 +96,7 @@ export async function POST(
             );
         }
 
-        const project = await prisma.trackingProject.findUnique({
+        const project = await prisma.tracking_projects.findUnique({
             where: { trackingCode: code.toUpperCase() },
             select: {
                 projectId: true,
@@ -125,13 +110,13 @@ export async function POST(
                 updatedAt: true,
                 completedAt: true,
                 initialMessage: true,
-                client: {
+                client_contacts: {
                     select: {
                         name: true,
                         phone: true,
                     },
                 },
-                projectProgresses: {
+                project_progress: {
                     orderBy: [
                         { stageId: 'asc' },
                         { subStepId: 'asc' }
@@ -151,7 +136,7 @@ export async function POST(
         }
 
         // Verify last 4 digits of phone number
-        const clientLast4 = getLast4Digits(project.client.phone);
+        const clientLast4 = getLast4Digits(project.client_contacts.phone);
         if (clientLast4 !== last4Phone) {
             return NextResponse.json(
                 {
@@ -163,7 +148,7 @@ export async function POST(
         }
 
         const stages = STAGE_CONFIG.map(config => {
-            const subSteps = project.projectProgresses.filter(p =>
+            const subSteps = project.project_progress.filter(p =>
                 config.subStepIds.includes(p.subStepId)
             );
 
@@ -212,7 +197,7 @@ export async function POST(
         const publicData = {
             trackingCode: project.trackingCode,
             projectId: project.projectId,
-            clientName: project.client.name,
+            clientName: project.client_contacts.name,
             objectType: project.objectType,
             objective: project.objective,
             location: project.address,

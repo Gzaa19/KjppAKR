@@ -79,6 +79,12 @@ export function generatePasswordResetEmail(resetLink: string, userName: string) 
                                 </tr>
                             </table>
                             
+                            <!-- Alternative plain text link -->
+                            <p style="margin: 0 0 24px; color: #6b7280; font-size: 13px; line-height: 1.6; word-break: break-all;">
+                                Jika tombol di atas tidak berfungsi, copy dan paste link berikut ke browser Anda:<br/>
+                                <a href="${resetLink}" style="color: #2C4157; text-decoration: underline; word-break: break-all;">${resetLink}</a>
+                            </p>
+                            
                             <!-- Warning -->
                             <div style="padding: 20px; background-color: #fef2f2; border-left: 4px solid #ED1C24; border-radius: 6px; margin-top: 32px;">
                                 <p style="margin: 0 0 8px; color: #991b1b; font-size: 14px; font-weight: 700;">

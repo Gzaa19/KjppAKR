@@ -8,13 +8,13 @@ export async function GET(
     try {
         const { id } = await params;
 
-        const project = await prisma.trackingProject.findFirst({
+        const project = await prisma.tracking_projects.findFirst({
             where: {
                 OR: [{ id }, { projectId: id }],
             },
             include: {
-                client: true,
-                projectProgresses: {
+                client_contacts: true,
+                project_progress: {
                     orderBy: [
                         { stageId: 'asc' },
                         { subStepId: 'asc' }
@@ -62,7 +62,7 @@ export async function PUT(
             );
         }
 
-        const existingProject = await prisma.trackingProject.findFirst({
+        const existingProject = await prisma.tracking_projects.findFirst({
             where: {
                 OR: [{ id }, { projectId: id }],
             },
@@ -110,11 +110,14 @@ export async function PUT(
             updateData.progress = body.progress;
         }
 
-        const project = await prisma.trackingProject.update({
+        const project = await prisma.tracking_projects.update({
             where: { id: existingProject.id },
-            data: updateData,
+            data: {
+                ...updateData,
+                updatedAt: new Date(),
+            },
             include: {
-                client: {
+                client_contacts: {
                     select: {
                         id: true,
                         name: true,
@@ -162,7 +165,7 @@ export async function DELETE(
             );
         }
 
-        const existingProject = await prisma.trackingProject.findFirst({
+        const existingProject = await prisma.tracking_projects.findFirst({
             where: {
                 OR: [{ id }, { projectId: id }],
             },
@@ -175,7 +178,7 @@ export async function DELETE(
             );
         }
 
-        await prisma.trackingProject.delete({
+        await prisma.tracking_projects.delete({
             where: { id: existingProject.id },
         });
 

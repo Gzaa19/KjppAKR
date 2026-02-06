@@ -35,7 +35,7 @@ export default async function NewsListingPage({ searchParams }: PageProps) {
         take: itemsPerPage,
         skip: (currentPage - 1) * itemsPerPage,
         include: {
-            author: {
+            users: {
                 select: {
                     name: true,
                 },
@@ -52,7 +52,10 @@ export default async function NewsListingPage({ searchParams }: PageProps) {
             />
 
             <NewsListSection
-                articles={articles}
+                articles={articles.map(article => ({
+                    ...article,
+                    author: article.users
+                }))}
                 currentPage={currentPage}
                 totalPages={totalPages}
             />

@@ -26,7 +26,7 @@ export default async function NewsDetailPage({ params, searchParams }: PageProps
             isPublished: true,
         },
         include: {
-            author: {
+            users: {
                 select: {
                     name: true,
                     avatar: true,
@@ -133,7 +133,7 @@ export default async function NewsDetailPage({ params, searchParams }: PageProps
                                     {formattedDate}
                                 </div>
                                 <div className="text-slate-400 text-xs tracking-wider">
-                                    Diterbitkan oleh {article.author.name}
+                                    Diterbitkan oleh {article.users.name}
                                 </div>
                             </div>
                         </div>

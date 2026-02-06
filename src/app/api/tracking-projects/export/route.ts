@@ -48,11 +48,11 @@ export async function GET(request: NextRequest) {
             where.status = status;
         }
 
-        const projects = await prisma.trackingProject.findMany({
+        const projects = await prisma.tracking_projects.findMany({
             where,
             orderBy: { createdAt: "desc" },
             include: {
-                client: {
+                client_contacts: {
                     select: {
                         id: true,
                         name: true,
@@ -125,7 +125,7 @@ function generateCSV(projects: any[]) {
         project.projectId,
         project.proposalNo,
         project.trackingCode,
-        project.client.name,
+        project.client_contacts.name,
         project.branch,
         objectTypeLabels[project.objectType] || project.objectType,
         reportTypeLabels[project.reportType] || project.reportType,
@@ -224,7 +224,7 @@ async function generatePDF(projects: any[]) {
         project.projectId,
         project.proposalNo,
         project.trackingCode,
-        project.client.name,
+        project.client_contacts.name,
         project.branch,
         objectTypeLabels[project.objectType] || project.objectType,
         reportTypeLabels[project.reportType] || project.reportType,

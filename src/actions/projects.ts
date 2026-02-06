@@ -24,7 +24,7 @@ import type { ActionResponse } from "@/types/action-response";
  */
 async function generateProjectId(): Promise<string> {
     const year = new Date().getFullYear();
-    const count = await prisma.trackingProject.count({
+    const count = await prisma.tracking_projects.count({
         where: {
             projectId: {
                 startsWith: `PRJ-${year}`,
@@ -51,7 +51,7 @@ async function generateTrackingCode(): Promise<string> {
         const trackingCode = `AKR-${randomPart}`;
 
         // Check if unique
-        const existing = await prisma.trackingProject.findUnique({
+        const existing = await prisma.tracking_projects.findUnique({
             where: { trackingCode },
         });
 
@@ -93,7 +93,7 @@ export async function createProject(
         }
 
         // Check if client exists
-        const clientExists = await prisma.clientContact.findUnique({
+        const clientExists = await prisma.client_contacts.findUnique({
             where: { id: validated.data.clientId },
         });
 
@@ -106,14 +106,18 @@ export async function createProject(
         const trackingCode = await generateTrackingCode();
 
         // Create project
-        const project = await prisma.trackingProject.create({
+        const project = await prisma.tracking_projects.create({
             data: {
+                id: crypto.randomUUID(),
+                updatedAt: new Date(),
                 projectId,
                 proposalNo: validated.data.proposalNo,
                 trackingCode,
                 clientId: validated.data.clientId,
                 objectType: validated.data.objectType,
                 objective: validated.data.objective,
+                branch: "Pusat", // Add default branch if string is required, or check schema
+                reportType: "Standar", // Add default reportType
                 address: validated.data.address,
                 initialMessage: validated.data.initialMessage || null,
                 status: "VERIFIKASI_DOKUMEN",
@@ -158,7 +162,7 @@ export async function getProjects(options?: Partial<ProjectFilterInput>) {
                 { proposalNo: { contains: search, mode: "insensitive" } },
                 { trackingCode: { contains: search, mode: "insensitive" } },
                 { address: { contains: search, mode: "insensitive" } },
-                { client: { name: { contains: search, mode: "insensitive" } } },
+                { client_contacts: { name: { contains: search, mode: "insensitive" } } },
             ];
         }
 
@@ -171,16 +175,16 @@ export async function getProjects(options?: Partial<ProjectFilterInput>) {
         }
 
         // Get total count
-        const total = await prisma.trackingProject.count({ where });
+        const total = await prisma.tracking_projects.count({ where });
 
         // Get projects with client info
-        const projects = await prisma.trackingProject.findMany({
+        const projects = await prisma.tracking_projects.findMany({
             where,
             skip,
             take: limit,
             orderBy: { createdAt: "desc" },
             include: {
-                client: {
+                client_contacts: {
                     select: {
                         id: true,
                         name: true,
@@ -214,13 +218,13 @@ export async function getProjects(options?: Partial<ProjectFilterInput>) {
  */
 export async function getProjectById(id: string) {
     try {
-        const project = await prisma.trackingProject.findFirst({
+        const project = await prisma.tracking_projects.findFirst({
             where: {
                 OR: [{ id }, { projectId: id }, { trackingCode: id }],
             },
             include: {
-                client: true,
-                projectProgresses: {
+                client_contacts: true,
+                project_progress: {
                     orderBy: [{ stageId: "asc" }, { subStepId: "asc" }],
                 },
             },
@@ -242,16 +246,16 @@ export async function getProjectById(id: string) {
  */
 export async function getProjectByTrackingCode(trackingCode: string) {
     try {
-        const project = await prisma.trackingProject.findUnique({
+        const project = await prisma.tracking_projects.findUnique({
             where: { trackingCode },
             include: {
-                client: {
+                client_contacts: {
                     select: {
                         name: true,
                         type: true,
                     },
                 },
-                projectProgresses: {
+                project_progress: {
                     orderBy: [{ stageId: "asc" }, { subStepId: "asc" }],
                 },
             },
@@ -281,7 +285,7 @@ export async function updateProject(
             return { success: false, error: validated.error.issues[0].message };
         }
 
-        const existing = await prisma.trackingProject.findFirst({
+        const existing = await prisma.tracking_projects.findFirst({
             where: {
                 OR: [{ id }, { projectId: id }],
             },
@@ -298,7 +302,7 @@ export async function updateProject(
         if (validated.data.proposalNo) updateData.proposalNo = validated.data.proposalNo;
         if (validated.data.clientId) {
             // Check if new client exists
-            const clientExists = await prisma.clientContact.findUnique({
+            const clientExists = await prisma.client_contacts.findUnique({
                 where: { id: validated.data.clientId },
             });
             if (!clientExists) {
@@ -329,9 +333,12 @@ export async function updateProject(
             updateData.progress = validated.data.progress;
         }
 
-        const project = await prisma.trackingProject.update({
+        const project = await prisma.tracking_projects.update({
             where: { id: existing.id },
-            data: updateData,
+            data: {
+                ...updateData,
+                updatedAt: new Date(),
+            },
         });
 
         revalidatePath("/admin/tracking/projects");
@@ -351,7 +358,7 @@ export async function updateProject(
  */
 export async function deleteProject(id: string): Promise<ActionResponse> {
     try {
-        const existing = await prisma.trackingProject.findFirst({
+        const existing = await prisma.tracking_projects.findFirst({
             where: {
                 OR: [{ id }, { projectId: id }],
             },
@@ -362,7 +369,7 @@ export async function deleteProject(id: string): Promise<ActionResponse> {
         }
 
         // Delete project (cascade will delete related progress)
-        await prisma.trackingProject.delete({
+        await prisma.tracking_projects.delete({
             where: { id: existing.id },
         });
 
@@ -386,7 +393,7 @@ export async function updateProjectStatus(
     status: ProjectStatus
 ): Promise<ActionResponse<{ id: string; status: string; progress: number }>> {
     try {
-        const existing = await prisma.trackingProject.findFirst({
+        const existing = await prisma.tracking_projects.findFirst({
             where: {
                 OR: [{ id }, { projectId: id }],
             },
@@ -399,12 +406,13 @@ export async function updateProjectStatus(
         const progress = statusProgressMap[status];
         const completedAt = status === "SELESAI" ? new Date() : null;
 
-        const project = await prisma.trackingProject.update({
+        const project = await prisma.tracking_projects.update({
             where: { id: existing.id },
             data: {
                 status,
                 progress,
                 completedAt,
+                updatedAt: new Date(),
             },
         });
 
@@ -437,7 +445,7 @@ export async function upsertProjectProgress(
             return { success: false, error: validated.error.issues[0].message };
         }
 
-        const project = await prisma.trackingProject.findFirst({
+        const project = await prisma.tracking_projects.findFirst({
             where: {
                 OR: [{ id: projectId }, { projectId: projectId }],
             },
@@ -448,7 +456,7 @@ export async function upsertProjectProgress(
         }
 
         // Upsert progress
-        const progress = await prisma.projectProgress.upsert({
+        const progress = await prisma.project_progress.upsert({
             where: {
                 projectId_subStepId: {
                     projectId: project.id,
@@ -459,8 +467,11 @@ export async function upsertProjectProgress(
                 status: validated.data.status,
                 startDate: validated.data.startDate,
                 endDate: validated.data.endDate,
+                updatedAt: new Date(),
             },
             create: {
+                id: crypto.randomUUID(),
+                updatedAt: new Date(),
                 projectId: project.id,
                 stageId: validated.data.stageId,
                 stageName: validated.data.stageName,
@@ -485,7 +496,7 @@ export async function upsertProjectProgress(
  */
 export async function getProjectProgress(projectId: string) {
     try {
-        const project = await prisma.trackingProject.findFirst({
+        const project = await prisma.tracking_projects.findFirst({
             where: {
                 OR: [{ id: projectId }, { projectId: projectId }],
             },
@@ -495,7 +506,7 @@ export async function getProjectProgress(projectId: string) {
             return { success: false, error: "Proyek tidak ditemukan" };
         }
 
-        const progresses = await prisma.projectProgress.findMany({
+        const progresses = await prisma.project_progress.findMany({
             where: { projectId: project.id },
             orderBy: [{ stageId: "asc" }, { subStepId: "asc" }],
         });
@@ -516,24 +527,24 @@ export async function getProjectProgress(projectId: string) {
  */
 export async function getProjectStats() {
     try {
-        const total = await prisma.trackingProject.count();
+        const total = await prisma.tracking_projects.count();
 
-        const totalActive = await prisma.trackingProject.count({
+        const totalActive = await prisma.tracking_projects.count({
             where: { status: { not: "SELESAI" } },
         });
 
-        const totalCompleted = await prisma.trackingProject.count({
+        const totalCompleted = await prisma.tracking_projects.count({
             where: { status: "SELESAI" },
         });
 
-        const byStatus = await prisma.trackingProject.groupBy({
+        const byStatus = await prisma.tracking_projects.groupBy({
             by: ["status"],
             _count: {
                 status: true,
             },
         });
 
-        const byObjectType = await prisma.trackingProject.groupBy({
+        const byObjectType = await prisma.tracking_projects.groupBy({
             by: ["objectType"],
             _count: {
                 objectType: true,
@@ -543,13 +554,13 @@ export async function getProjectStats() {
         // Get this month's projects
         const now = new Date();
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        const thisMonthProjects = await prisma.trackingProject.count({
+        const thisMonthProjects = await prisma.tracking_projects.count({
             where: {
                 createdAt: { gte: startOfMonth },
             },
         });
 
-        const thisMonthCompleted = await prisma.trackingProject.count({
+        const thisMonthCompleted = await prisma.tracking_projects.count({
             where: {
                 completedAt: { gte: startOfMonth },
             },

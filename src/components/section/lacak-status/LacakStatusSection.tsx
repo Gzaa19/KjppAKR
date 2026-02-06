@@ -168,11 +168,9 @@ export function LacakStatusSection() {
         }
     };
 
-    // Handle digit input
     const handleDigitChange = (index: number, value: string) => {
         if (!/^\d*$/.test(value)) return;
 
-        // Clear error when user starts typing again
         if (verificationError) {
             setVerificationError(null);
         }
@@ -181,18 +179,15 @@ export function LacakStatusSection() {
         newCode[index] = value.slice(-1);
         setVerificationCode(newCode);
 
-        // Auto-focus next input
         if (value && index < 3) {
             inputRefs[index + 1].current?.focus();
         }
 
-        // Auto-submit when all 4 digits entered
         if (value && index === 3 && newCode.every(d => d !== "")) {
             setTimeout(() => handleVerify(newCode), 200);
         }
     };
 
-    // Handle backspace
     const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Backspace" && !verificationCode[index] && index > 0) {
             inputRefs[index - 1].current?.focus();
@@ -202,7 +197,6 @@ export function LacakStatusSection() {
         }
     };
 
-    // Handle paste
     const handlePaste = (e: React.ClipboardEvent) => {
         e.preventDefault();
         const pastedData = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 4);
@@ -254,7 +248,6 @@ export function LacakStatusSection() {
         });
     };
 
-    // Calculate duration between two dates
     const calculateDuration = (startDate: string | null, endDate: string | null): string => {
         if (!startDate || !endDate) return "";
 
@@ -283,7 +276,6 @@ export function LacakStatusSection() {
         return `${diffDays} hari`;
     };
 
-    // Calculate estimated completion date (14 days from creation)
     const getEstimatedDate = () => {
         if (!projectData?.createdAt) return "-";
         const created = new Date(projectData.createdAt);
@@ -291,7 +283,6 @@ export function LacakStatusSection() {
         return formatDate(estimated.toISOString());
     };
 
-    // Determine schedule status
     const getScheduleStatus = () => {
         if (projectData?.status === "SELESAI") return { label: "Selesai", color: "bg-green-100 text-green-700" };
         if (!projectData?.createdAt) return { label: "On Schedule", color: "bg-green-100 text-green-700" };
@@ -368,7 +359,6 @@ export function LacakStatusSection() {
                             ))}
                         </div>
 
-                        {/* Error message */}
                         {verificationError && (
                             <div className="flex items-center justify-center gap-2 text-red-600 text-sm mb-4">
                                 <AlertCircle className="w-4 h-4" />
@@ -376,7 +366,6 @@ export function LacakStatusSection() {
                             </div>
                         )}
 
-                        {/* Verify button */}
                         <Button
                             onClick={() => handleVerify()}
                             disabled={isVerifying || verificationCode.some(d => d === "")}
@@ -392,7 +381,6 @@ export function LacakStatusSection() {
                             )}
                         </Button>
 
-                        {/* Help text */}
                         <p className="text-xs text-gray-400 text-center mt-4">
                             Gunakan 4 digit terakhir nomor HP pemesan jasa penilaian
                         </p>
@@ -404,7 +392,6 @@ export function LacakStatusSection() {
                 <div className="w-full max-w-5xl">
                     {!projectData && !isLoading && (
                         <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 max-w-3xl mx-auto text-center">
-                            {/* Red Accent Line */}
                             <div className="w-16 h-1 bg-kjpp-red mx-auto mb-6"></div>
 
                             <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4 uppercase tracking-wide">
@@ -621,7 +608,7 @@ export function LacakStatusSection() {
                                             className="w-full bg-white hover:bg-gray-100 text-kjpp-red font-semibold rounded-lg"
                                             asChild
                                         >
-                                            <a href="https://wa.me/628123456789" target="_blank" rel="noopener noreferrer">
+                                            <a href="https://wa.me/6287777200070" target="_blank" rel="noopener noreferrer">
                                                 <MessageSquare className="w-4 h-4 mr-2" />
                                                 Hubungi WhatsApp
                                             </a>

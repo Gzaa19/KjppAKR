@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 
 export default async function SekapurSirihPage() {
-    const images = await prisma.sekapurSirihImage.findMany({
+    const images = await prisma.sekapur_sirih_images.findMany({
         orderBy: { createdAt: 'desc' }
     });
 

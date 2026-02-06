@@ -13,7 +13,7 @@ export async function login(input: LoginInput): Promise<ActionResponse<{ id: str
             return { success: false, error: validated.error.issues[0].message };
         }
 
-        const user = await prisma.user.findUnique({
+        const user = await prisma.users.findUnique({
             where: { email: validated.data.email },
         });
 
@@ -51,7 +51,7 @@ export async function register(input: RegisterInput): Promise<ActionResponse<{ i
             return { success: false, error: validated.error.issues[0].message };
         }
 
-        const existingUser = await prisma.user.findUnique({
+        const existingUser = await prisma.users.findUnique({
             where: { email: validated.data.email },
         });
 
@@ -61,8 +61,10 @@ export async function register(input: RegisterInput): Promise<ActionResponse<{ i
 
         const hashedPassword = await bcrypt.hash(validated.data.password, 12);
 
-        const user = await prisma.user.create({
+        const user = await prisma.users.create({
             data: {
+                id: crypto.randomUUID(),
+                updatedAt: new Date(),
                 email: validated.data.email,
                 password: hashedPassword,
                 name: validated.data.name,
@@ -87,7 +89,7 @@ export async function register(input: RegisterInput): Promise<ActionResponse<{ i
 
 export async function getUsers() {
     try {
-        const users = await prisma.user.findMany({
+        const users = await prisma.users.findMany({
             select: {
                 id: true,
                 email: true,
@@ -118,7 +120,7 @@ export async function requestPasswordReset(email: string): Promise<ActionRespons
             return { success: false, error: validated.error.issues[0].message };
         }
 
-        const user = await prisma.user.findUnique({
+        const user = await prisma.users.findUnique({
             where: { email: validated.data.email },
         });
 
@@ -133,14 +135,15 @@ export async function requestPasswordReset(email: string): Promise<ActionRespons
         console.log('[Password Reset] User found:', user.name);
 
         const token = crypto.randomUUID();
-        const expiresAt = new Date(Date.now() + 15 * 60 * 1000); 
+        const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
 
-        await prisma.passwordResetToken.deleteMany({
+        await prisma.password_reset_tokens.deleteMany({
             where: { email: validated.data.email },
         });
 
-        await prisma.passwordResetToken.create({
+        await prisma.password_reset_tokens.create({
             data: {
+                id: crypto.randomUUID(),
                 email: validated.data.email,
                 token,
                 expiresAt,
@@ -190,7 +193,7 @@ export async function resetPassword(token: string, newPassword: string): Promise
         }
 
         // Find token
-        const resetToken = await prisma.passwordResetToken.findUnique({
+        const resetToken = await prisma.password_reset_tokens.findUnique({
             where: { token: validated.data.token },
         });
 
@@ -200,7 +203,7 @@ export async function resetPassword(token: string, newPassword: string): Promise
 
         // Check if token expired
         if (resetToken.expiresAt < new Date()) {
-            await prisma.passwordResetToken.delete({
+            await prisma.password_reset_tokens.delete({
                 where: { token: validated.data.token },
             });
             return { success: false, error: "Token sudah kadaluarsa. Silakan request reset password lagi" };
@@ -208,12 +211,12 @@ export async function resetPassword(token: string, newPassword: string): Promise
 
         const hashedPassword = await bcrypt.hash(validated.data.password, 12);
 
-        await prisma.user.update({
+        await prisma.users.update({
             where: { email: resetToken.email },
             data: { password: hashedPassword },
         });
 
-        await prisma.passwordResetToken.delete({
+        await prisma.password_reset_tokens.delete({
             where: { token: validated.data.token },
         });
 
@@ -231,21 +234,33 @@ export async function resetPassword(token: string, newPassword: string): Promise
 
 export async function verifyResetToken(token: string): Promise<ActionResponse<{ valid: boolean }>> {
     try {
-        const resetToken = await prisma.passwordResetToken.findUnique({
+        console.log('[Verify Token] Checking token:', token);
+
+        const resetToken = await prisma.password_reset_tokens.findUnique({
             where: { token },
         });
 
+        console.log('[Verify Token] Token found in DB:', resetToken ? 'YES' : 'NO');
+
         if (!resetToken) {
+            console.log('[Verify Token] Token not found in database');
             return { success: false, error: "Token tidak valid" };
         }
 
+        const now = new Date();
+        console.log('[Verify Token] Token expires at:', resetToken.expiresAt);
+        console.log('[Verify Token] Current time:', now);
+        console.log('[Verify Token] Is expired:', resetToken.expiresAt < now);
+
         if (resetToken.expiresAt < new Date()) {
+            console.log('[Verify Token] Token has expired');
             return { success: false, error: "Token sudah kadaluarsa" };
         }
 
+        console.log('[Verify Token] Token is valid');
         return { success: true, data: { valid: true } };
     } catch (error) {
-        console.error("Verify token error:", error);
+        console.error("[Verify Token] Error:", error);
         return { success: false, error: "Gagal memverifikasi token" };
     }
 }

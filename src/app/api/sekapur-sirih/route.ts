@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 
 export async function GET() {
     try {
-        const managingPartnerImage = await prisma.sekapurSirihImage.findFirst({
+        const managingPartnerImage = await prisma.sekapur_sirih_images.findFirst({
             where: {
                 imageType: "MANAGING_PARTNER",
                 isActive: true,
@@ -11,7 +11,7 @@ export async function GET() {
             orderBy: { createdAt: "desc" },
         });
 
-        const teamPhotoImage = await prisma.sekapurSirihImage.findFirst({
+        const teamPhotoImage = await prisma.sekapur_sirih_images.findFirst({
             where: {
                 imageType: "TEAM_PHOTO",
                 isActive: true,
