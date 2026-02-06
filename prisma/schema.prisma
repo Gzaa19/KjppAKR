@@ -1,0 +1,266 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model albums {
+  id          String      @id
+  name        String
+  slug        String      @unique
+  description String?
+  coverImage  String?
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime
+  sortOrder   Int         @default(1)
+  galleries   galleries[]
+
+  @@index([slug])
+  @@index([sortOrder])
+}
+
+model client_categories {
+  id        String    @id
+  name      String    @unique
+  slug      String    @unique
+  sortOrder Int       @default(0)
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime
+  clients   clients[]
+
+  @@index([isActive])
+  @@index([sortOrder])
+}
+
+model client_contacts {
+  id                String              @id
+  name              String
+  type              ClientType
+  address           String
+  picName           String
+  phone             String
+  email             String
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime
+  tracking_projects tracking_projects[]
+
+  @@index([createdAt])
+  @@index([type])
+}
+
+model clients {
+  id                String            @id
+  name              String
+  logo              String
+  isPublished       Boolean           @default(true)
+  sortOrder         Int               @default(0)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime
+  categoryId        String
+  client_categories client_categories @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@index([categoryId])
+  @@index([isPublished])
+  @@index([sortOrder])
+}
+
+model comments {
+  id          String   @id
+  content     String
+  authorName  String
+  authorEmail String?
+  isApproved  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+  newsId      String
+  news        news     @relation(fields: [newsId], references: [id], onDelete: Cascade)
+
+  @@index([newsId])
+}
+
+model galleries {
+  id           String    @id
+  title        String
+  description  String?
+  imageUrl     String
+  thumbnailUrl String?
+  eventDate    DateTime?
+  isPublished  Boolean   @default(true)
+  sortOrder    Int       @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime
+  albumId      String?
+  uploadedById String
+  albums       albums?   @relation(fields: [albumId], references: [id])
+  users        users     @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
+
+  @@index([albumId])
+  @@index([eventDate])
+  @@index([isPublished])
+}
+
+model ManagementTeam {
+  id          String   @id
+  name        String
+  title       String
+  branch      String?
+  image       String?
+  description String
+  isMappiCert Boolean  @default(false)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+
+  @@index([sortOrder])
+  @@map("management_teams")
+}
+
+model news {
+  id          String       @id
+  title       String
+  slug        String       @unique
+  excerpt     String?
+  content     String
+  coverImage  String?
+  category    NewsCategory
+  isPublished Boolean      @default(false)
+  publishedAt DateTime?
+  views       Int          @default(0)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime
+  authorId    String
+  comments    comments[]
+  users       users        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([category])
+  @@index([isPublished])
+  @@index([publishedAt])
+  @@index([slug])
+}
+
+model password_reset_tokens {
+  id        String   @id
+  email     String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model project_progress {
+  id                String            @id
+  projectId         String
+  stageId           Int
+  stageName         String
+  subStepId         String
+  subStepName       String
+  status            ProgressStatus    @default(PENDING)
+  startDate         DateTime?
+  endDate           DateTime?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime
+  tracking_projects tracking_projects @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, subStepId])
+  @@index([projectId])
+  @@index([status])
+}
+
+model sekapur_sirih_images {
+  id                   String                @id
+  imageType            SekapurSirihImageType
+  imageUrl             String
+  altText              String
+  caption              String?
+  managingPartnerName  String?
+  managingPartnerTitle String?
+  isActive             Boolean               @default(true)
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime
+
+  @@index([imageType])
+  @@index([isActive])
+}
+
+model tracking_projects {
+  id               String             @id
+  projectId        String             @unique
+  proposalNo       String
+  trackingCode     String             @unique
+  clientId         String
+  objective        String
+  address          String
+  status           ProjectStatus      @default(VERIFIKASI_DOKUMEN)
+  progress         Int                @default(0)
+  initialMessage   String?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime
+  completedAt      DateTime?
+  objectType       String
+  branch           String
+  reportType       String
+  project_progress project_progress[]
+  client_contacts  client_contacts    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([clientId])
+  @@index([createdAt])
+  @@index([status])
+  @@index([trackingCode])
+}
+
+model users {
+  id        String      @id
+  email     String      @unique
+  password  String
+  name      String
+  role      UserRole    @default(ADMIN)
+  avatar    String?
+  isActive  Boolean     @default(true)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime
+  galleries galleries[]
+  news      news[]
+}
+
+enum ClientType {
+  CORPORATE
+  PERORANGAN
+  SME
+  INSTANSI
+}
+
+enum NewsCategory {
+  ARTIKEL
+  BERITA
+  KEGIATAN
+  PENGUMUMAN
+}
+
+enum ProgressStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum ProjectStatus {
+  VERIFIKASI_DOKUMEN
+  INSPEKSI_LAPANGAN
+  PROSES_REVIEW
+  LAPORAN_FINAL
+  SELESAI
+}
+
+enum SekapurSirihImageType {
+  MANAGING_PARTNER
+  TEAM_PHOTO
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  EDITOR
+}

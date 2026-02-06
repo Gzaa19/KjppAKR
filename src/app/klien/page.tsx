@@ -1,0 +1,35 @@
+import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
+import { ClientListSection } from "@/components/section/klien/ClientListSection";
+import { ParallaxBackground } from "@/components/ui/ParallaxBackground";
+import { getPublishedClients } from "@/actions/client";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Klien Kami - KJPP AKR | Dipercaya oleh Perusahaan Terkemuka",
+    description: "KJPP AKR dipercaya oleh berbagai institusi perbankan BUMN/Swasta dan perusahaan non-bank terkemuka untuk layanan penilaian properti profesional.",
+};
+
+export default async function Klien() {
+    const result = await getPublishedClients();
+    const { allClients = [], groupedByCategory = {} } = result.success ? result.data! : {};
+
+    return (
+        <div className="min-h-screen bg-slate-50">
+            <Navbar />
+            <ParallaxBackground
+                imageUrl="https://plus.unsplash.com/premium_photo-1661768507909-f961fcff0d45?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2xpZW50fGVufDB8fDB8fHww"
+                alt="Client Background"
+            />
+
+            <ClientListSection
+                allClients={allClients}
+                groupedByCategory={groupedByCategory}
+            />
+
+            <div className="relative z-10 -mt-20">
+                <Footer />
+            </div>
+        </div>
+    );
+}

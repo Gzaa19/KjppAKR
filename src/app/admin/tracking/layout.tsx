@@ -1,0 +1,29 @@
+import { TrackingSidebar } from "@/components/tracking-sidebar"
+import {
+    SidebarInset,
+    SidebarProvider,
+    SidebarTrigger,
+} from "@/components/ui/sidebar"
+
+export default function TrackingLayout({
+    children,
+}: {
+    children: React.ReactNode
+}) {
+    return (
+        <SidebarProvider>
+            <TrackingSidebar />
+            <SidebarInset>
+                <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 bg-background">
+                    <div className="flex items-center gap-2 px-4">
+                        <SidebarTrigger className="-ml-1" />
+                    </div>
+                </header>
+                <div className="flex flex-1 flex-col gap-4 p-8">
+                    {children}
+                </div>
+            </SidebarInset>
+
+        </SidebarProvider>
+    )
+}
