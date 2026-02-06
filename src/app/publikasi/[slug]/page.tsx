@@ -5,7 +5,7 @@ import { ChevronLeft, Facebook, Twitter, Instagram, Mail, Share2, MessageCircle 
 import DOMPurify from "isomorphic-dompurify";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import prisma from "@/lib/prisma"; // Adjust path if necessary based on your project structure
+import prisma from "@/lib/prisma";
 
 interface PageProps {
     params: Promise<{
@@ -19,7 +19,7 @@ export default async function NewsDetailPage({ params, searchParams }: PageProps
     const { from } = await searchParams;
 
     const backLink = from === 'home' ? '/#recent-updates' : '/publikasi';
-    const backLabel = "Kembali Ke Semua Publikasi";
+
     const article = await prisma.news.findUnique({
         where: {
             slug: slug,
@@ -42,7 +42,7 @@ export default async function NewsDetailPage({ params, searchParams }: PageProps
     const formattedDate = article.publishedAt
         ? new Date(article.publishedAt).toLocaleDateString("id-ID", {
             day: "2-digit",
-            month: "short", // e.g. "Feb"
+            month: "short",
             year: "numeric",
         }).toUpperCase()
         : "";
@@ -67,7 +67,6 @@ export default async function NewsDetailPage({ params, searchParams }: PageProps
                 ) : (
                     <div className="w-full h-full bg-slate-900" style={{ clipPath: "polygon(0 0, 100% 0, 100% 85%, 0 100%)" }} />
                 )}
-                {/* Overlay for subtle darkening if needed, can adhere to same clip-path */}
                 <div className="absolute inset-0 bg-black/20 pointer-events-none" style={{ clipPath: "polygon(0 0, 100% 0, 100% 85%, 0 100%)" }} />
             </div>
 
@@ -102,29 +101,19 @@ export default async function NewsDetailPage({ params, searchParams }: PageProps
                             <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold text-kjpp-dark leading-tight tracking-tight mb-6">
                                 {article.title}
                             </h1>
-
-                            {/* Social Share - Below Title */}
-                            <div className="flex items-center gap-4 mb-10">
-                                <span className="text-slate-600 font-semibold text-lg">Bagikan:</span>
-                                <div className="flex gap-3">
-                                    <SocialLink icon={MessageCircle} href="#" label="WhatsApp" />
-                                    <SocialLink icon={Mail} href="#" label="Email" />
-                                    <SocialLink icon={Twitter} href="#" label="Twitter" />
-                                    <SocialLink icon={Facebook} href="#" label="Facebook" />
-                                </div>
-                            </div>
-
                             {/* Main Body */}
                             <div
                                 className="prose prose-lg prose-slate max-w-none 
                                 prose-headings:font-bold prose-headings:text-kjpp-dark 
                                 prose-p:text-slate-700 prose-p:leading-relaxed prose-p:mb-6 prose-p:text-justify
                                 prose-li:text-slate-700 prose-a:text-kjpp-red prose-a:no-underline hover:prose-a:underline
-                                whitespace-pre-line"
+                                [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-6 [&_ul]:space-y-2
+                                [&_li]:pl-1 [&_li]:text-justify text-justify
+                                "
                                 dangerouslySetInnerHTML={{
-                                    __html: DOMPurify.sanitize(article.content, {
-                                        ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'blockquote', 'code', 'pre'],
-                                        ALLOWED_ATTR: ['href', 'target', 'rel', 'class']
+                                    __html: DOMPurify.sanitize(formatArticleContent(article.content), {
+                                        ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'blockquote', 'code', 'pre', 'span'],
+                                        ALLOWED_ATTR: ['href', 'target', 'rel', 'class', 'style']
                                     })
                                 }}
                             />
@@ -168,4 +157,61 @@ function SocialLink({ icon: Icon, href, label }: { icon: any; href: string; labe
             <Icon className="w-4 h-4" />
         </a>
     );
+}
+
+// Helper function to format plain text content into HTML
+// - Handles paragraphs
+// - Handles lists (lines starting with -, *, •, —, –)
+function formatArticleContent(content: string) {
+    if (!content) return "";
+
+    const lines = content.split('\n');
+    let html = "";
+    let listOpen = false;
+
+    // Regex to match list items
+    // Matches: - item, * item, • item, — item, – item
+    const listRegex = /^(\s*)([-*•—–])\s+(.*)/;
+
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+
+        if (line === "") {
+            if (listOpen) {
+                html += "</ul>";
+                listOpen = false;
+            }
+            continue;
+        }
+
+        const match = line.match(listRegex);
+
+        if (match) {
+            // It's a list item
+            if (!listOpen) {
+                html += '<ul class="list-disc pl-5 mb-6 space-y-2 text-justify">';
+                listOpen = true;
+            }
+            // match[3] is the content
+            html += `<li class="pl-1">${match[3]}</li>`;
+        } else {
+            // It's a paragraph or header?
+            // If previous was list, close it
+            if (listOpen) {
+                html += "</ul>";
+                listOpen = false;
+            }
+
+            // Simple heuristics for headers? 
+            // If line is short and uppercase? No, risky.
+            // Just treat as paragraph.
+            html += `<p class="mb-6 text-justify leading-relaxed">${line}</p>`;
+        }
+    }
+
+    if (listOpen) {
+        html += "</ul>";
+    }
+
+    return html;
 }

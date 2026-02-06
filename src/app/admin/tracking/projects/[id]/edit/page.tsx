@@ -86,11 +86,47 @@ export default function EditProjectPage() {
         proposalNo: "",
         clientId: "",
         objectType: "",
+        reportType: "",
+        branch: "",
         objective: "",
         address: "",
         status: "",
         initialMessage: "",
     })
+
+    const [useCustomObjectType, setUseCustomObjectType] = React.useState(false)
+    const [useCustomReportType, setUseCustomReportType] = React.useState(false)
+    const [useCustomBranch, setUseCustomBranch] = React.useState(false)
+
+    const handleObjectTypeChange = (value: string) => {
+        if (value === "LAINNYA") {
+            setUseCustomObjectType(true)
+            setFormData((prev) => ({ ...prev, objectType: "" }))
+        } else {
+            setUseCustomObjectType(false)
+            setFormData((prev) => ({ ...prev, objectType: value }))
+        }
+    }
+
+    const handleReportTypeChange = (value: string) => {
+        if (value === "LAINNYA") {
+            setUseCustomReportType(true)
+            setFormData((prev) => ({ ...prev, reportType: "" }))
+        } else {
+            setUseCustomReportType(false)
+            setFormData((prev) => ({ ...prev, reportType: value }))
+        }
+    }
+
+    const handleBranchChange = (value: string) => {
+        if (value === "LAINNYA") {
+            setUseCustomBranch(true)
+            setFormData((prev) => ({ ...prev, branch: "" }))
+        } else {
+            setUseCustomBranch(false)
+            setFormData((prev) => ({ ...prev, branch: value }))
+        }
+    }
 
     // Fetch project data
     React.useEffect(() => {
@@ -105,11 +141,28 @@ export default function EditProjectPage() {
                         proposalNo: data.data.proposalNo,
                         clientId: data.data.clientId,
                         objectType: data.data.objectType,
+                        reportType: data.data.reportType,
+                        branch: data.data.branch,
                         objective: data.data.objective,
                         address: data.data.address,
                         status: data.data.status,
                         initialMessage: data.data.initialMessage || "",
                     })
+
+                    // Check if values are custom
+                    const standardTypes = ["RUMAH_TINGGAL", "RUKO_KANTOR", "TANAH_KOSONG", "GUDANG", "APARTEMEN", "PABRIK"];
+                    const standardReportTypes = ["SHORT_REPORT", "FULL_REPORT"];
+                    const standardBranches = ["PUSAT", "BANDUNG", "SURABAYA", "PALEMBANG"];
+
+                    if (data.data.objectType && !standardTypes.includes(data.data.objectType)) {
+                        setUseCustomObjectType(true);
+                    }
+                    if (data.data.reportType && !standardReportTypes.includes(data.data.reportType)) {
+                        setUseCustomReportType(true);
+                    }
+                    if (data.data.branch && !standardBranches.includes(data.data.branch)) {
+                        setUseCustomBranch(true);
+                    }
                 } else {
                     toast.error("Proyek tidak ditemukan")
                     router.push("/admin/tracking/projects")
@@ -325,8 +378,8 @@ export default function EditProjectPage() {
                                     Jenis Objek <span className="text-red-500">*</span>
                                 </Label>
                                 <Select
-                                    value={formData.objectType}
-                                    onValueChange={(value) => setFormData((prev) => ({ ...prev, objectType: value }))}
+                                    value={useCustomObjectType ? "LAINNYA" : formData.objectType}
+                                    onValueChange={handleObjectTypeChange}
                                 >
                                     <SelectTrigger className="h-11 bg-gray-50/50">
                                         <SelectValue placeholder="Pilih Jenis Objek..." />
@@ -338,10 +391,58 @@ export default function EditProjectPage() {
                                         <SelectItem value="GUDANG">Gudang</SelectItem>
                                         <SelectItem value="APARTEMEN">Apartemen</SelectItem>
                                         <SelectItem value="PABRIK">Pabrik</SelectItem>
-                                        <SelectItem value="LAINNYA">Lainnya</SelectItem>
+                                        <SelectItem value="LAINNYA">Lainnya / Custom</SelectItem>
                                     </SelectContent>
                                 </Select>
+
+                                {useCustomObjectType && (
+                                    <div className="mt-2 animate-in fade-in slide-in-from-top-2">
+                                        <Input
+                                            placeholder="Masukkan jenis objek lainnya..."
+                                            className="h-11 bg-gray-50/50"
+                                            value={formData.objectType}
+                                            onChange={(e) => setFormData((prev) => ({ ...prev, objectType: e.target.value }))}
+                                            required={useCustomObjectType}
+                                            autoFocus
+                                        />
+                                    </div>
+                                )}
                             </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="report_type" className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                    Jenis Laporan <span className="text-red-500">*</span>
+                                </Label>
+                                <Select
+                                    value={useCustomReportType ? "LAINNYA" : formData.reportType}
+                                    onValueChange={handleReportTypeChange}
+                                >
+                                    <SelectTrigger className="h-11 bg-gray-50/50">
+                                        <SelectValue placeholder="Pilih Jenis Laporan..." />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="SHORT_REPORT">Short Report</SelectItem>
+                                        <SelectItem value="FULL_REPORT">Full Report</SelectItem>
+                                        <SelectItem value="LAINNYA">Lainnya / Custom</SelectItem>
+                                    </SelectContent>
+                                </Select>
+
+                                {useCustomReportType && (
+                                    <div className="mt-2 animate-in fade-in slide-in-from-top-2">
+                                        <Input
+                                            placeholder="Masukkan jenis laporan lainnya..."
+                                            className="h-11 bg-gray-50/50"
+                                            value={formData.reportType}
+                                            onChange={(e) => setFormData((prev) => ({ ...prev, reportType: e.target.value }))}
+                                            required={useCustomReportType}
+                                            autoFocus
+                                        />
+                                    </div>
+                                )}
+                            </div>
+
+                        </div>
+                        <div className="space-y-6">
                             <div className="space-y-2">
                                 <Label htmlFor="objective" className="text-xs font-bold text-gray-500 uppercase tracking-wider">
                                     Tujuan Penilaian <span className="text-red-500">*</span>
@@ -355,20 +456,55 @@ export default function EditProjectPage() {
                                     required
                                 />
                             </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="branch" className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                    Cabang <span className="text-red-500">*</span>
+                                </Label>
+                                <Select
+                                    value={useCustomBranch ? "LAINNYA" : formData.branch}
+                                    onValueChange={handleBranchChange}
+                                >
+                                    <SelectTrigger className="h-11 bg-gray-50/50">
+                                        <SelectValue placeholder="Pilih Cabang..." />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="PUSAT">Pusat (Jakarta)</SelectItem>
+                                        <SelectItem value="BANDUNG">Bandung</SelectItem>
+                                        <SelectItem value="SURABAYA">Surabaya</SelectItem>
+                                        <SelectItem value="PALEMBANG">Palembang</SelectItem>
+                                        <SelectItem value="LAINNYA">Lainnya / Custom</SelectItem>
+                                    </SelectContent>
+                                </Select>
+
+                                {useCustomBranch && (
+                                    <div className="mt-2 animate-in fade-in slide-in-from-top-2">
+                                        <Input
+                                            placeholder="Masukkan cabang lainnya..."
+                                            className="h-11 bg-gray-50/50"
+                                            value={formData.branch}
+                                            onChange={(e) => setFormData((prev) => ({ ...prev, branch: e.target.value }))}
+                                            required={useCustomBranch}
+                                            autoFocus
+                                        />
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="address" className="text-xs font-bold text-gray-500 uppercase tracking-wider">
-                                Alamat Lengkap <span className="text-red-500">*</span>
-                            </Label>
-                            <Textarea
-                                id="address"
-                                placeholder="Masukkan alamat lengkap lokasi properti..."
-                                className="min-h-[132px] bg-gray-50/50 resize-none p-3"
-                                value={formData.address}
-                                onChange={(e) => setFormData((prev) => ({ ...prev, address: e.target.value }))}
-                                required
-                            />
-                        </div>
+                    </div>
+
+                    <div className="mt-6 space-y-2">
+                        <Label htmlFor="address" className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+                            Alamat Lengkap <span className="text-red-500">*</span>
+                        </Label>
+                        <Textarea
+                            id="address"
+                            placeholder="Masukkan alamat lengkap lokasi properti..."
+                            className="h-[597px] bg-gray-50/50 resize-none p-3"
+                            value={formData.address}
+                            onChange={(e) => setFormData((prev) => ({ ...prev, address: e.target.value }))}
+                            required
+                        />
                     </div>
                 </div>
 

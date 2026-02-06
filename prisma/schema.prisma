@@ -251,9 +251,11 @@ model TrackingProject {
   client   ClientContact @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
   // Object details
-  objectType PropertyObjectType
+  objectType String // Bisa nilai dari Enum atau custom string (jika Lainnya)
+  reportType String // Short Report, Full Report, atau custom string (jika Lainnya)
+  branch     String // Bandung, Surabaya, Palembang, Pusat (Jakarta), atau custom string
   objective  String // Tujuan penilaian
-  address    String             @db.Text
+  address    String @db.Text
 
   // Progress tracking
   status   ProjectStatus @default(VERIFIKASI_DOKUMEN)
@@ -285,15 +287,9 @@ enum ProjectStatus {
   SELESAI
 }
 
-enum PropertyObjectType {
-  RUMAH_TINGGAL
-  RUKO_KANTOR
-  TANAH_KOSONG
-  GUDANG
-  APARTEMEN
-  PABRIK
-  LAINNYA
-}
+// PropertyObjectType Enum removed as we now use String to support "Lainnya" custom input
+// The standard values used in frontend are:
+// RUMAH_TINGGAL, RUKO_KANTOR, TANAH_KOSONG, GUDANG, APARTEMEN, PABRIK, LAINNYA
 
 // ==========================================
 // PROJECT PROGRESS MODEL (for detailed tracking)
@@ -336,16 +332,16 @@ enum ProgressStatus {
 // SEKAPUR SIRIH IMAGE MODEL
 // ==========================================
 model SekapurSirihImage {
-  id                    String                  @id @default(cuid())
-  imageType             SekapurSirihImageType
-  imageUrl              String
-  altText               String
-  caption               String?                 @db.Text
-  managingPartnerName   String?
-  managingPartnerTitle  String?
-  isActive              Boolean                 @default(true)
-  createdAt             DateTime                @default(now())
-  updatedAt             DateTime                @updatedAt
+  id                   String                @id @default(cuid())
+  imageType            SekapurSirihImageType
+  imageUrl             String
+  altText              String
+  caption              String?               @db.Text
+  managingPartnerName  String?
+  managingPartnerTitle String?
+  isActive             Boolean               @default(true)
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
 
   @@index([imageType])
   @@index([isActive])

@@ -88,6 +88,8 @@ export async function PUT(
         if (body.proposalNo) updateData.proposalNo = body.proposalNo;
         if (body.clientId) updateData.clientId = body.clientId;
         if (body.objectType) updateData.objectType = body.objectType;
+        if (body.reportType) updateData.reportType = body.reportType;
+        if (body.branch) updateData.branch = body.branch;
         if (body.objective) updateData.objective = body.objective;
         if (body.address) updateData.address = body.address;
         if (body.initialMessage !== undefined)

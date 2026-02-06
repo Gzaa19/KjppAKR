@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 export function WhatsAppWidget() {
     const [isOpen, setIsOpen] = useState(false);
 
-    const phoneNumber = "6287771000800"; 
+    const phoneNumber = "6287771000800";
     const message = "Halo, saya ingin bertanya mengenai layanan KJPP Anas Karim Rivai & Rekan.";
 
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;

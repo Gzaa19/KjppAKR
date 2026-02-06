@@ -9,6 +9,28 @@ const STAGE_CONFIG = [
     { id: 5, name: "Laporan Final", subStepIds: ["5a", "5b"] },
 ];
 
+/**
+ * Normalize phone number - remove all non-digit characters
+ * Handles various formats:
+ * - 081261490378
+ * - +6281261490378
+ * - 0812-6149-0378
+ * - 0812 6149 0378
+ * - +62 812 6149 0378
+ */
+function normalizePhoneNumber(phone: string): string {
+    return phone.replace(/\D/g, "");
+}
+
+/**
+ * Get last 4 digits of a phone number
+ */
+function getLast4Digits(phone: string): string {
+    const normalized = normalizePhoneNumber(phone);
+    return normalized.slice(-4);
+}
+
+// Step 1: Check if tracking code exists (GET request)
 export async function GET(
     request: NextRequest,
     { params }: { params: Promise<{ code: string }> }
@@ -19,6 +41,72 @@ export async function GET(
         if (!code) {
             return NextResponse.json(
                 { success: false, error: "Kode tracking diperlukan" },
+                { status: 400 }
+            );
+        }
+
+        const project = await prisma.trackingProject.findUnique({
+            where: { trackingCode: code.toUpperCase() },
+            select: {
+                id: true,
+                trackingCode: true,
+                client: {
+                    select: {
+                        phone: true,
+                    },
+                },
+            },
+        });
+
+        if (!project) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    error: "Proyek tidak ditemukan. Pastikan kode tracking yang Anda masukkan benar.",
+                },
+                { status: 404 }
+            );
+        }
+
+        // Return success with masked phone number hint
+        const clientPhone = project.client.phone;
+        const last4 = getLast4Digits(clientPhone);
+        const maskedPhone = `****${last4}`;
+
+        return NextResponse.json({
+            success: true,
+            requiresVerification: true,
+            hint: maskedPhone,
+        });
+    } catch (error) {
+        console.error("Error checking tracking code:", error);
+        return NextResponse.json(
+            { success: false, error: "Gagal memeriksa kode tracking" },
+            { status: 500 }
+        );
+    }
+}
+
+// Step 2: Verify phone and get full data (POST request)
+export async function POST(
+    request: NextRequest,
+    { params }: { params: Promise<{ code: string }> }
+) {
+    try {
+        const { code } = await params;
+        const body = await request.json();
+        const { last4Phone } = body;
+
+        if (!code) {
+            return NextResponse.json(
+                { success: false, error: "Kode tracking diperlukan" },
+                { status: 400 }
+            );
+        }
+
+        if (!last4Phone || last4Phone.length !== 4 || !/^\d{4}$/.test(last4Phone)) {
+            return NextResponse.json(
+                { success: false, error: "4 digit terakhir nomor HP diperlukan" },
                 { status: 400 }
             );
         }
@@ -40,6 +128,7 @@ export async function GET(
                 client: {
                     select: {
                         name: true,
+                        phone: true,
                     },
                 },
                 projectProgresses: {
@@ -60,6 +149,19 @@ export async function GET(
                 { status: 404 }
             );
         }
+
+        // Verify last 4 digits of phone number
+        const clientLast4 = getLast4Digits(project.client.phone);
+        if (clientLast4 !== last4Phone) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    error: "Verifikasi gagal. 4 digit terakhir nomor HP tidak cocok.",
+                },
+                { status: 401 }
+            );
+        }
+
         const stages = STAGE_CONFIG.map(config => {
             const subSteps = project.projectProgresses.filter(p =>
                 config.subStepIds.includes(p.subStepId)

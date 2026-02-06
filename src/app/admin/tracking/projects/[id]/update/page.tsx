@@ -139,7 +139,7 @@ export default function UpdateProgressPage() {
     // Auto-save progress to API
     const saveProgressToAPI = async (updatedStages: MainStage[]) => {
         if (!project) return
-        
+
         setSavingProgress(true)
         try {
             const allSubSteps = updatedStages.flatMap(s => s.subSteps)
@@ -372,6 +372,66 @@ export default function UpdateProgressPage() {
                 </div>
             </div>
 
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2 rounded-xl border bg-white p-6 shadow-sm">
+                    <div className="flex items-center gap-2 mb-4 text-red-600">
+                        <div className="h-0.5 w-3 bg-red-600 rounded-full"></div>
+                        <div className="h-0.5 w-1.5 bg-red-600 rounded-full"></div>
+                        <h2 className="text-sm font-bold text-gray-900 ml-1">Catatan Admin</h2>
+                    </div>
+
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <Label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Pesan Untuk Klien</Label>
+                            <Textarea
+                                className="min-h-[100px] resize-none bg-white text-sm"
+                                placeholder="Tulis pesan untuk klien..."
+                                value={notes}
+                                onChange={(e) => setNotes(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="flex items-center justify-end">
+                            <Button
+                                onClick={handleSave}
+                                disabled={saving}
+                                className="bg-red-600 hover:bg-red-700 text-white h-10 font-medium px-6"
+                            >
+                                {saving ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Menyimpan...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Save className="mr-2 h-4 w-4" />
+                                        Simpan Pesan
+                                    </>
+                                )}
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="rounded-xl bg-blue-50/50 border border-blue-100 p-5 h-fit">
+                    <div className="flex gap-3">
+                        <div className="mt-0.5 text-blue-600">
+                            <Lightbulb className="h-5 w-5 fill-current" />
+                        </div>
+                        <div className="space-y-2">
+                            <h3 className="text-sm font-bold text-blue-900">Tips Penggunaan</h3>
+                            <ul className="text-xs text-blue-700 leading-relaxed space-y-1">
+                                <li>• Klik nama <strong>tahapan utama</strong> untuk expand/collapse</li>
+                                <li>• Ubah <strong>status</strong> untuk memperbarui progress kegiatan (otomatis tersimpan)</li>
+                                <li>• <strong>Tanggal mulai</strong> otomatis terisi saat status berubah</li>
+                                <li>• <strong>Tanggal selesai</strong> otomatis terisi saat status menjadi Selesai</li>
+                                <li>• Klik <strong>Simpan Pesan</strong> untuk menyimpan catatan admin</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div className="rounded-xl border bg-white shadow-sm overflow-hidden">
                 <div className="p-6 pb-4 border-b bg-gray-50/50">
                     <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wider">Tahapan Progress Internal</h2>
@@ -530,75 +590,7 @@ export default function UpdateProgressPage() {
                     })}
                 </div>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2 rounded-xl border bg-white p-6 shadow-sm">
-                    <div className="flex items-center gap-2 mb-4 text-red-600">
-                        <div className="h-0.5 w-3 bg-red-600 rounded-full"></div>
-                        <div className="h-0.5 w-1.5 bg-red-600 rounded-full"></div>
-                        <h2 className="text-sm font-bold text-gray-900 ml-1">Catatan Admin</h2>
-                    </div>
 
-                    <div className="space-y-4">
-                        <div className="space-y-2">
-                            <Label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Pesan Untuk Klien</Label>
-                            <Textarea
-                                className="min-h-[100px] resize-none bg-white text-sm"
-                                placeholder="Tulis pesan untuk klien..."
-                                value={notes}
-                                onChange={(e) => setNotes(e.target.value)}
-                            />
-                        </div>
-
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <Switch
-                                    id="notify"
-                                    checked={notifyClient}
-                                    onCheckedChange={setNotifyClient}
-                                    className="data-[state=checked]:bg-red-500"
-                                />
-                                <Label htmlFor="notify" className="text-sm font-medium text-gray-700">Kirim Notifikasi ke Klien</Label>
-                            </div>
-
-                            <Button
-                                onClick={handleSave}
-                                disabled={saving}
-                                className="bg-red-600 hover:bg-red-700 text-white h-10 font-medium px-6"
-                            >
-                                {saving ? (
-                                    <>
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        Menyimpan...
-                                    </>
-                                ) : (
-                                    <>
-                                        <Save className="mr-2 h-4 w-4" />
-                                        Simpan Pesan
-                                    </>
-                                )}
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="rounded-xl bg-blue-50/50 border border-blue-100 p-5 h-fit">
-                    <div className="flex gap-3">
-                        <div className="mt-0.5 text-blue-600">
-                            <Lightbulb className="h-5 w-5 fill-current" />
-                        </div>
-                        <div className="space-y-2">
-                            <h3 className="text-sm font-bold text-blue-900">Tips Penggunaan</h3>
-                            <ul className="text-xs text-blue-700 leading-relaxed space-y-1">
-                                <li>• Klik nama <strong>tahapan utama</strong> untuk expand/collapse</li>
-                                <li>• Ubah <strong>status</strong> untuk memperbarui progress kegiatan (otomatis tersimpan)</li>
-                                <li>• <strong>Tanggal mulai</strong> otomatis terisi saat status berubah</li>
-                                <li>• <strong>Tanggal selesai</strong> otomatis terisi saat status menjadi Selesai</li>
-                                <li>• Klik <strong>Simpan Pesan</strong> untuk menyimpan catatan admin</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     )
 }

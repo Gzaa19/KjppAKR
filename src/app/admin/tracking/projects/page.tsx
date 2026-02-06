@@ -31,7 +31,9 @@ import {
     Loader2,
     Trash2,
     AlertCircle,
-    Pencil
+    Pencil,
+    FileText,
+    FileSpreadsheet
 } from "lucide-react"
 import Link from "next/link"
 import { toast } from "sonner"
@@ -45,6 +47,12 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 interface Client {
     id: string
@@ -60,6 +68,8 @@ interface Project {
     trackingCode: string
     client: Client
     objectType: string
+    reportType: string
+    branch: string
     objective: string
     address: string
     status: string
@@ -93,6 +103,11 @@ const objectTypeLabels: Record<string, string> = {
     LAINNYA: "Lainnya",
 }
 
+const reportTypeLabels: Record<string, string> = {
+    SHORT_REPORT: "Short Report",
+    FULL_REPORT: "Full Report",
+}
+
 export default function ProjectsPage() {
     const [projects, setProjects] = React.useState<Project[]>([])
     const [pagination, setPagination] = React.useState<Pagination>({
@@ -104,6 +119,8 @@ export default function ProjectsPage() {
     const [loading, setLoading] = React.useState(true)
     const [statusFilter, setStatusFilter] = React.useState("all")
     const [objectTypeFilter, setObjectTypeFilter] = React.useState("all")
+    const [reportTypeFilter, setReportTypeFilter] = React.useState("all")
+    const [branchFilter, setBranchFilter] = React.useState("all")
     const [searchQuery, setSearchQuery] = React.useState("")
     const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false)
     const [projectToDelete, setProjectToDelete] = React.useState<Project | null>(null)
@@ -120,6 +137,8 @@ export default function ProjectsPage() {
             if (searchQuery) params.append("search", searchQuery)
             if (statusFilter !== "all") params.append("status", statusFilter)
             if (objectTypeFilter !== "all") params.append("objectType", objectTypeFilter)
+            if (reportTypeFilter !== "all") params.append("reportType", reportTypeFilter)
+            if (branchFilter !== "all") params.append("branch", branchFilter)
 
             const response = await fetch(`/api/tracking-projects?${params}`)
             const data = await response.json()
@@ -136,7 +155,7 @@ export default function ProjectsPage() {
         } finally {
             setLoading(false)
         }
-    }, [pagination.page, pagination.limit, searchQuery, statusFilter, objectTypeFilter])
+    }, [pagination.page, pagination.limit, searchQuery, statusFilter, objectTypeFilter, reportTypeFilter, branchFilter])
 
     React.useEffect(() => {
         fetchProjects()
@@ -177,6 +196,19 @@ export default function ProjectsPage() {
         }
     }
 
+    const handleExport = (format: 'csv' | 'pdf') => {
+        const params = new URLSearchParams({ format })
+
+        if (statusFilter !== "all") params.append("status", statusFilter)
+        if (objectTypeFilter !== "all") params.append("objectType", objectTypeFilter)
+        if (reportTypeFilter !== "all") params.append("reportType", reportTypeFilter)
+        if (branchFilter !== "all") params.append("branch", branchFilter)
+
+        const url = `/api/tracking-projects/export?${params}`
+        window.open(url, '_blank')
+        toast.success(`Mengunduh laporan dalam format ${format.toUpperCase()}...`)
+    }
+
     const handleSearch = React.useMemo(() => {
         let timeout: NodeJS.Timeout
         return (value: string) => {
@@ -203,7 +235,7 @@ export default function ProjectsPage() {
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                         <Input
                             placeholder="Cari proyek..."
-                            className="pl-9 w-[320px] bg-white"
+                            className="pl-9 w-[280px] bg-white"
                             onChange={(e) => handleSearch(e.target.value)}
                         />
                     </div>
@@ -214,7 +246,7 @@ export default function ProjectsPage() {
                             setPagination((prev) => ({ ...prev, page: 1 }))
                         }}
                     >
-                        <SelectTrigger className="w-[180px] bg-white">
+                        <SelectTrigger className="w-[160px] bg-white">
                             <SelectValue placeholder="Semua Status" />
                         </SelectTrigger>
                         <SelectContent>
@@ -234,21 +266,73 @@ export default function ProjectsPage() {
                         }}
                     >
                         <SelectTrigger className="w-[160px] bg-white">
-                            <SelectValue placeholder="Semua Tipe" />
+                            <SelectValue placeholder="Semua Jenis Objek" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">Semua Tipe</SelectItem>
+                            <SelectItem value="all">Semua Jenis Objek</SelectItem>
                             <SelectItem value="RUMAH_TINGGAL">Rumah Tinggal</SelectItem>
                             <SelectItem value="RUKO_KANTOR">Ruko / Kantor</SelectItem>
                             <SelectItem value="TANAH_KOSONG">Tanah Kosong</SelectItem>
                             <SelectItem value="GUDANG">Gudang</SelectItem>
                             <SelectItem value="APARTEMEN">Apartemen</SelectItem>
                             <SelectItem value="PABRIK">Pabrik</SelectItem>
-                            <SelectItem value="LAINNYA">Lainnya</SelectItem>
+                            <SelectItem value="LAINNYA">Lainnya (Custom)</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <Select
+                        value={reportTypeFilter}
+                        onValueChange={(value) => {
+                            setReportTypeFilter(value)
+                            setPagination((prev) => ({ ...prev, page: 1 }))
+                        }}
+                    >
+                        <SelectTrigger className="w-[160px] bg-white">
+                            <SelectValue placeholder="Semua Tipe Laporan" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">Semua Tipe Laporan</SelectItem>
+                            <SelectItem value="SHORT_REPORT">Short Report</SelectItem>
+                            <SelectItem value="FULL_REPORT">Full Report</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <Select
+                        value={branchFilter}
+                        onValueChange={(value) => {
+                            setBranchFilter(value)
+                            setPagination((prev) => ({ ...prev, page: 1 }))
+                        }}
+                    >
+                        <SelectTrigger className="w-[160px] bg-white">
+                            <SelectValue placeholder="Semua Cabang" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">Semua Cabang</SelectItem>
+                            <SelectItem value="Pusat (Jakarta)">Pusat (Jakarta)</SelectItem>
+                            <SelectItem value="Bandung">Bandung</SelectItem>
+                            <SelectItem value="Surabaya">Surabaya</SelectItem>
+                            <SelectItem value="Palembang">Palembang</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
                 <div className="flex items-center gap-2">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline">
+                                <Download className="mr-2 h-4 w-4" />
+                                Download Rekap
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => handleExport('csv')}>
+                                <FileSpreadsheet className="mr-2 h-4 w-4" />
+                                Download CSV
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleExport('pdf')}>
+                                <FileText className="mr-2 h-4 w-4" />
+                                Download PDF
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                     <Button asChild>
                         <Link href="/admin/tracking/projects/new">
                             <Plus className="mr-2 h-4 w-4" />
@@ -277,6 +361,8 @@ export default function ProjectsPage() {
                                     <TableHead className="font-semibold text-xs tracking-wider text-gray-500 uppercase px-6 text-left">ID / Tracking Code</TableHead>
                                     <TableHead className="font-semibold text-xs tracking-wider text-gray-500 uppercase px-6 text-left">Client / Pemohon</TableHead>
                                     <TableHead className="font-semibold text-xs tracking-wider text-gray-500 uppercase px-6 text-left">Tipe Objek</TableHead>
+                                    <TableHead className="font-semibold text-xs tracking-wider text-gray-500 uppercase px-6 text-left">Tipe Laporan</TableHead>
+                                    <TableHead className="font-semibold text-xs tracking-wider text-gray-500 uppercase px-6 text-left">Cabang</TableHead>
                                     <TableHead className="w-[180px] font-semibold text-xs tracking-wider text-gray-500 uppercase px-6 text-left">Progress</TableHead>
                                     <TableHead className="font-semibold text-xs tracking-wider text-gray-500 uppercase px-6 text-center">Aksi</TableHead>
                                 </TableRow>
@@ -309,6 +395,16 @@ export default function ProjectsPage() {
                                             <TableCell className="py-5 px-6 align-top">
                                                 <Badge variant="secondary" className="rounded-md font-normal text-xs bg-gray-100 text-gray-600 hover:bg-gray-200 uppercase">
                                                     {objectTypeLabels[project.objectType] || project.objectType}
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell className="py-5 px-6 align-top">
+                                                <span className="text-sm text-gray-700">
+                                                    {reportTypeLabels[project.reportType] || project.reportType}
+                                                </span>
+                                            </TableCell>
+                                            <TableCell className="py-5 px-6 align-top">
+                                                <Badge variant="outline" className="rounded-md font-normal text-xs bg-blue-50 text-blue-700 border-blue-200">
+                                                    {project.branch}
                                                 </Badge>
                                             </TableCell>
                                             <TableCell className="py-5 px-6 align-top">
@@ -354,9 +450,12 @@ export default function ProjectsPage() {
                                                     <Button
                                                         size="icon"
                                                         variant="ghost"
-                                                        className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
-                                                        onClick={() => handleDeleteClick(project)}
-                                                        title="Hapus Proyek"
+                                                        className={`h-8 w-8 ${project.progress === 100
+                                                            ? "text-gray-300 cursor-not-allowed hover:bg-transparent"
+                                                            : "text-red-600 hover:text-red-700 hover:bg-red-50"}`}
+                                                        onClick={() => project.progress !== 100 && handleDeleteClick(project)}
+                                                        disabled={project.progress === 100}
+                                                        title={project.progress === 100 ? "Proyek selesai tidak dapat dihapus" : "Hapus Proyek"}
                                                     >
                                                         <Trash2 className="h-4 w-4" />
                                                     </Button>

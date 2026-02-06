@@ -53,7 +53,20 @@ export async function GET(request: NextRequest) {
         const status = searchParams.get("status") || "";
         const objectType = searchParams.get("objectType") || "";
 
+        const reportType = searchParams.get("reportType") || "";
+        const branch = searchParams.get("branch") || "";
+
         const skip = (page - 1) * limit;
+
+        // Standard object types
+        const STANDARD_OBJECT_TYPES = [
+            "RUMAH_TINGGAL",
+            "RUKO_KANTOR",
+            "TANAH_KOSONG",
+            "GUDANG",
+            "APARTEMEN",
+            "PABRIK"
+        ];
 
         // Build where clause
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -74,7 +87,25 @@ export async function GET(request: NextRequest) {
         }
 
         if (objectType && objectType !== "all") {
-            where.objectType = objectType;
+            if (objectType === "LAINNYA") {
+                // If "LAINNYA" is selected, find object types that are NOT in the standard list
+                where.objectType = {
+                    notIn: STANDARD_OBJECT_TYPES
+                };
+            } else {
+                where.objectType = objectType;
+            }
+        }
+
+        if (reportType && reportType !== "all") {
+            where.reportType = reportType;
+        }
+
+        if (branch && branch !== "all") {
+            where.branch = {
+                equals: branch,
+                mode: "insensitive"
+            };
         }
 
         // Get total count
@@ -147,17 +178,19 @@ export async function POST(request: NextRequest) {
             proposalNo,
             clientId,
             objectType,
+            reportType,
+            branch,
             objective,
             address,
             initialMessage,
         } = body;
 
         // Validation
-        if (!proposalNo || !clientId || !objectType || !objective || !address) {
+        if (!proposalNo || !clientId || !objectType || !reportType || !branch || !objective || !address) {
             return NextResponse.json(
                 {
                     success: false,
-                    error: "Semua field wajib diisi (proposalNo, clientId, objectType, objective, address)",
+                    error: "Semua field wajib diisi (proposalNo, clientId, objectType, reportType, branch, objective, address)",
                 },
                 { status: 400 }
             );
@@ -187,6 +220,8 @@ export async function POST(request: NextRequest) {
                 trackingCode,
                 clientId,
                 objectType,
+                reportType,
+                branch,
                 objective,
                 address,
                 initialMessage: initialMessage || null,
