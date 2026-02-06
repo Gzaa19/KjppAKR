@@ -49,9 +49,6 @@ export function WhatsAppWidget() {
 
                             <div className="bg-gray-50 rounded-xl p-4 mb-4">
                                 <p className="text-sm text-gray-700 leading-relaxed">
-                                    👋 Halo! Ada yang bisa kami bantu?
-                                    <br />
-                                    <br />
                                     Silakan hubungi kami untuk konsultasi dan informasi lebih lanjut mengenai:
                                 </p>
                                 <ul className="text-xs text-gray-600 mt-2 space-y-1 ml-4">
