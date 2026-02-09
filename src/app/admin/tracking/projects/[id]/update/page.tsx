@@ -96,15 +96,28 @@ export default function UpdateProgressPage() {
                 const response = await fetch(`/api/tracking-projects/${projectId}/progress`)
                 const data = await response.json()
 
-                if (data.success) {
-                    setProject(data.data)
+                if (data.success && data.data) {
+                    // Map the API response to match the expected Project interface
+                    const projectData = {
+                        ...data.data,
+                        client: data.data.client_contacts || data.data.client,
+                        projectProgresses: data.data.project_progress || data.data.projectProgresses || []
+                    }
+                    setProject(projectData)
                     setNotes(data.data.initialMessage || "")
+
+                    // Use project_progress from API (snake_case) or projectProgresses (camelCase)
+                    const projectProgresses = Array.isArray(data.data.project_progress)
+                        ? data.data.project_progress
+                        : Array.isArray(data.data.projectProgresses)
+                            ? data.data.projectProgresses
+                            : []
 
                     const groupedStages: MainStage[] = STAGE_CONFIG.map(config => ({
                         id: config.id,
                         name: config.name,
                         expanded: true,
-                        subSteps: data.data.projectProgresses
+                        subSteps: projectProgresses
                             .filter((p: SubStep) => config.subStepIds.includes(p.subStepId))
                             .map((p: SubStep) => ({
                                 ...p,
@@ -136,7 +149,6 @@ export default function UpdateProgressPage() {
         ))
     }
 
-    // Auto-save progress to API
     const saveProgressToAPI = async (updatedStages: MainStage[]) => {
         if (!project) return
 
@@ -161,7 +173,6 @@ export default function UpdateProgressPage() {
             const data = await response.json()
 
             if (data.success) {
-                // Update project progress from response
                 if (data.data) {
                     setProject(data.data)
                 }
@@ -232,6 +243,9 @@ export default function UpdateProgressPage() {
     }
 
     const getStageStatus = (stage: MainStage) => {
+        // If no subSteps, return pending
+        if (stage.subSteps.length === 0) return "pending"
+
         const allCompleted = stage.subSteps.every(s => s.status === "COMPLETED")
         const anyInProgress = stage.subSteps.some(s => s.status === "IN_PROGRESS")
         const anyCompleted = stage.subSteps.some(s => s.status === "COMPLETED")
@@ -341,7 +355,7 @@ export default function UpdateProgressPage() {
                                     {project.trackingCode}
                                 </Badge>
                             </div>
-                            <p className="text-sm text-gray-500">{project.client.name} - {project.address}</p>
+                            <p className="text-sm text-gray-500">{project.client?.name || 'N/A'} - {project.address}</p>
                         </div>
                     </div>
 
