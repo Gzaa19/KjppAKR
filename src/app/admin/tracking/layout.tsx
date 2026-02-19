@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { TrackingSidebar } from "@/components/tracking-sidebar"
 import {
     SidebarInset,
