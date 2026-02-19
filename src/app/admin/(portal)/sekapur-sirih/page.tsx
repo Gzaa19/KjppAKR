@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { SekapurSirihForm } from "@/components/admin/SekapurSirihForm";
 import { SekapurSirihActionMenu } from "@/components/admin/sekapur-sirih-actions";
 import prisma from "@/lib/prisma";
