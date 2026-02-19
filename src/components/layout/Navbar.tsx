@@ -50,17 +50,8 @@ export function Navbar() {
                 <div className="container mx-auto px-4">
                     <div className="flex flex-wrap items-center justify-end text-xs lg:text-sm gap-4 lg:gap-6">
                         <div className="flex items-center gap-2">
-                            <MapPin className="w-3 h-3 lg:w-4 lg:h-4 text-kjpp-red" />
-                            <span className="hidden lg:inline">Permata Kebayoran Plaza Blok A-12A</span>
-                            <span className="lg:hidden">Jakarta Selatan</span>
-                        </div>
-                        <div className="flex items-center gap-2">
                             <Clock className="w-3 h-3 lg:w-4 lg:h-4 text-kjpp-red" />
                             <span>Sen - Jum 08.00 - 17.00</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Phone className="w-3 h-3 lg:w-4 lg:h-4 text-kjpp-red" />
-                            <span className="whitespace-nowrap">021-7268181 | 021-7227643</span>
                         </div>
                     </div>
                 </div>

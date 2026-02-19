@@ -330,8 +330,7 @@ export function LacakStatusSection() {
                             Verifikasi Nomor HP
                         </h2>
                         <p className="text-gray-500 text-center text-sm mb-6">
-                            Masukkan 4 digit terakhir nomor HP yang terdaftar<br />
-                            <span className="font-mono text-gray-700">({phoneHint})</span>
+                            Masukkan 4 digit terakhir nomor HP yang terdaftar
                         </p>
 
                         {/* OTP-style input */}

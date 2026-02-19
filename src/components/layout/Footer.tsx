@@ -38,14 +38,42 @@ export function Footer() {
                                     </div>
                                 </div>
                                 <div className="w-full max-w-[300px] h-px bg-white/30 mx-auto lg:mx-0"></div>
-                                <div className="space-y-2 text-sm md:text-base text-white/90 text-center lg:text-left">
-                                    <p className="font-semibold text-white">Alamat Kantor</p>
-                                    <div className="flex items-start justify-center lg:justify-start gap-2">
-                                        <MapPin className="w-5 h-5 text-kjpp-red flex-shrink-0 mt-0.5" />
-                                        <div className="space-y-1 text-left">
-                                            <p>Permata Kebayoran Plaza Blok A-12A</p>
-                                            <p>Jl. Raya Kebayoran Lama No. 225</p>
-                                            <p>Jakarta 12220, Indonesia</p>
+                                <div className="space-y-6 text-sm md:text-base text-white/90 text-center lg:text-left">
+                                    <div className="space-y-2">
+                                        <p className="font-semibold text-white text-base">Kantor Pusat</p>
+                                        <div className="flex items-start justify-center lg:justify-start gap-2">
+                                            <MapPin className="w-5 h-5 text-kjpp-red flex-shrink-0 mt-0.5" />
+                                            <div className="space-y-1 text-left">
+                                                <p>Permata Kebayoran Plaza Blok A-12A</p>
+                                                <p>Jl. Raya Kebayoran Lama No. 225</p>
+                                                <p>Jakarta 12220, Indonesia</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="space-y-3">
+                                        <p className="font-semibold text-white text-base">Kantor Cabang</p>
+                                        <div className="space-y-3 text-xs md:text-sm">
+                                            <div className="flex items-start justify-center lg:justify-start gap-2">
+                                                <MapPin className="w-4 h-4 text-kjpp-red flex-shrink-0 mt-0.5" />
+                                                <div className="text-left">
+                                                    <p className="font-medium text-white/95">Bandung</p>
+                                                    <p className="text-white/80">Jl. Buah Batu No. 123, Bandung 40264</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-start justify-center lg:justify-start gap-2">
+                                                <MapPin className="w-4 h-4 text-kjpp-red flex-shrink-0 mt-0.5" />
+                                                <div className="text-left">
+                                                    <p className="font-medium text-white/95">Surabaya</p>
+                                                    <p className="text-white/80">Jl. Pemuda No. 456, Surabaya 60271</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-start justify-center lg:justify-start gap-2">
+                                                <MapPin className="w-4 h-4 text-kjpp-red flex-shrink-0 mt-0.5" />
+                                                <div className="text-left">
+                                                    <p className="font-medium text-white/95">Palembang</p>
+                                                    <p className="text-white/80">Jl. Sudirman No. 789, Palembang 30126</p>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
