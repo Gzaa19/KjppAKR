@@ -1,46 +1,40 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// Hardcode the secret key for Edge Runtime compatibility
-// Edge Runtime may not have access to process.env in some cases
 const ADMIN_SECRET_KEY = process.env.ADMIN_SECRET_KEY || "kjpp-secure-2026";
 
 export function middleware(request: NextRequest) {
     const { pathname, searchParams } = request.nextUrl;
 
-    // Debug logging
-    console.log('[Middleware] Path:', pathname);
-    console.log('[Middleware] Has admin_access_granted cookie:', !!request.cookies.get("admin_access_granted"));
-
     if (pathname.startsWith("/admin")) {
         const hasAccess = request.cookies.get("admin_access_granted");
+        const hasSession = request.cookies.get("admin_session");
         const keyParam = searchParams.get("key");
 
-        console.log('[Middleware] Key param:', keyParam);
-        console.log('[Middleware] Expected key:', ADMIN_SECRET_KEY);
+        // Jika sudah login (punya session), redirect dari halaman login ke dashboard
+        if (pathname === "/admin/login" && hasSession) {
+            return NextResponse.redirect(new URL("/admin/portal-selection", request.url));
+        }
 
-        // Check if this is a login page access with secret key
-        if (pathname === "/admin/login" && keyParam && keyParam === ADMIN_SECRET_KEY) {
-            // Valid secret key provided - set cookie and redirect to clean URL
-            console.log('[Middleware] Valid key provided, setting cookie');
+        // Jika akses /admin/login dengan key yang benar → set cookie & bersihkan URL
+        if (pathname === "/admin/login" && keyParam === ADMIN_SECRET_KEY) {
             const response = NextResponse.redirect(new URL("/admin/login", request.url));
             response.cookies.set("admin_access_granted", "true", {
                 path: "/",
                 httpOnly: true,
                 secure: process.env.NODE_ENV === "production",
-                maxAge: 60 * 60 * 8, // 8 hours
+                sameSite: "strict",
+                maxAge: 60 * 60 * 8, // 8 jam
             });
             return response;
         }
 
-        // If user already has access cookie, allow them through
+        // Jika sudah punya cookie akses → izinkan masuk
         if (hasAccess) {
-            console.log('[Middleware] Has access cookie, allowing');
             return NextResponse.next();
         }
 
-        // No access cookie and no valid secret key - block access
-        console.log('[Middleware] No access, redirecting to home');
+        // Tidak ada cookie & tidak ada key yang valid → blokir semua route /admin/*
         return NextResponse.redirect(new URL("/", request.url));
     }
 
