@@ -45,8 +45,8 @@ export function Footer() {
                                             <MapPin className="w-5 h-5 text-kjpp-red flex-shrink-0 mt-0.5" />
                                             <div className="space-y-1 text-left">
                                                 <p>Permata Kebayoran Plaza Blok A-12A</p>
-                                                <p>Jl. Raya Kebayoran Lama No. 225</p>
-                                                <p>Jakarta 12220, Indonesia</p>
+                                                <p>Jl. Raya Kebayoran Lama</p>
+                                                <p>Jakarta, Indonesia</p>
                                             </div>
                                         </div>
                                     </div>
@@ -57,21 +57,21 @@ export function Footer() {
                                                 <MapPin className="w-4 h-4 text-kjpp-red flex-shrink-0 mt-0.5" />
                                                 <div className="text-left">
                                                     <p className="font-medium text-white/95">Bandung</p>
-                                                    <p className="text-white/80">Jl. Buah Batu No. 123, Bandung 40264</p>
+                                                    <p className="text-white/80">Jl. Alam Nirwana No. 18, Kav. 32, Cluster Graha Nirwana, Resort Dago - 40191</p>
                                                 </div>
                                             </div>
                                             <div className="flex items-start justify-center lg:justify-start gap-2">
                                                 <MapPin className="w-4 h-4 text-kjpp-red flex-shrink-0 mt-0.5" />
                                                 <div className="text-left">
                                                     <p className="font-medium text-white/95">Surabaya</p>
-                                                    <p className="text-white/80">Jl. Pemuda No. 456, Surabaya 60271</p>
+                                                    <p className="text-white/80">Perumahan Sidosermo Indah, Jl. Sidosermo Indah IV No. 17, Wonocolo - 60239</p>
                                                 </div>
                                             </div>
                                             <div className="flex items-start justify-center lg:justify-start gap-2">
                                                 <MapPin className="w-4 h-4 text-kjpp-red flex-shrink-0 mt-0.5" />
                                                 <div className="text-left">
                                                     <p className="font-medium text-white/95">Palembang</p>
-                                                    <p className="text-white/80">Jl. Sudirman No. 789, Palembang 30126</p>
+                                                    <p className="text-white/80">Komplek Pusri Sako, Jl. Kelapa 2 Blok E 26, Kel. Sako, Kec. Sako - 30163</p>
                                                 </div>
                                             </div>
                                         </div>
