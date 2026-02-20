@@ -11,30 +11,37 @@ export function middleware(request: NextRequest) {
         const hasSession = request.cookies.get("admin_session");
         const keyParam = searchParams.get("key");
 
-        // Jika sudah login (punya session), redirect dari halaman login ke dashboard
-        if (pathname === "/admin/login" && hasSession) {
-            return NextResponse.redirect(new URL("/admin/portal-selection", request.url));
+        // ─── Khusus halaman login ──────────────────────────────────────────
+        if (pathname === "/admin/login") {
+            // Sudah login → langsung ke portal-selection
+            if (hasSession) {
+                return NextResponse.redirect(new URL("/admin/portal-selection", request.url));
+            }
+
+            // Kunci rahasia benar → izinkan & set cookie akses
+            if (keyParam === ADMIN_SECRET_KEY) {
+                const response = NextResponse.next();
+                response.cookies.set("admin_access_granted", "true", {
+                    path: "/",
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === "production",
+                    sameSite: "strict",
+                    maxAge: 60 * 60 * 8, // 8 jam
+                });
+                return response;
+            }
+
+            // Tanpa kunci yang valid → blokir SELALU (walau ada cookie)
+            return NextResponse.redirect(new URL("/", request.url));
         }
 
-        // Jika akses /admin/login dengan key yang benar → set cookie & bersihkan URL
-        if (pathname === "/admin/login" && keyParam === ADMIN_SECRET_KEY) {
-            const response = NextResponse.redirect(new URL("/admin/login", request.url));
-            response.cookies.set("admin_access_granted", "true", {
-                path: "/",
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-                sameSite: "strict",
-                maxAge: 60 * 60 * 8, // 8 jam
-            });
-            return response;
-        }
-
-        // Jika sudah punya cookie akses → izinkan masuk
-        if (hasAccess) {
+        // ─── Semua route /admin/* lainnya ─────────────────────────────────
+        // Butuh session (sudah login) ATAU cookie akses
+        if (hasSession || hasAccess) {
             return NextResponse.next();
         }
 
-        // Tidak ada cookie & tidak ada key yang valid → blokir semua route /admin/*
+        // Tidak ada akses → redirect ke homepage
         return NextResponse.redirect(new URL("/", request.url));
     }
 
