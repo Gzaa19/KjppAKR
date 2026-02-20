@@ -14,7 +14,6 @@ function createPrismaClient() {
         throw new Error("DATABASE_URL is not defined");
     }
 
-    // Railway internal URL tidak memerlukan SSL
     const isInternalRailway = connectionString.includes("railway.internal");
 
     const pool =
