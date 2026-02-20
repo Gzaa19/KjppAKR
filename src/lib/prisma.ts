@@ -14,7 +14,15 @@ function createPrismaClient() {
         throw new Error("DATABASE_URL is not defined");
     }
 
-    const pool = globalForPrisma.pool ?? new Pool({ connectionString });
+    // Railway internal URL tidak memerlukan SSL
+    const isInternalRailway = connectionString.includes("railway.internal");
+
+    const pool =
+        globalForPrisma.pool ??
+        new Pool({
+            connectionString,
+            ssl: isInternalRailway ? false : { rejectUnauthorized: false },
+        });
     globalForPrisma.pool = pool;
 
     const adapter = new PrismaPg(pool);
