@@ -13,12 +13,10 @@ export function middleware(request: NextRequest) {
 
         // ─── Khusus halaman login ──────────────────────────────────────────
         if (pathname === "/admin/login") {
-            // Sudah login → langsung ke portal-selection
             if (hasSession) {
                 return NextResponse.redirect(new URL("/admin/portal-selection", request.url));
             }
 
-            // Kunci rahasia benar → izinkan & set cookie akses
             if (keyParam === ADMIN_SECRET_KEY) {
                 const response = NextResponse.next();
                 response.cookies.set("admin_access_granted", "true", {
@@ -31,17 +29,12 @@ export function middleware(request: NextRequest) {
                 return response;
             }
 
-            // Tanpa kunci yang valid → blokir SELALU (walau ada cookie)
             return NextResponse.redirect(new URL("/", request.url));
         }
-
-        // ─── Semua route /admin/* lainnya ─────────────────────────────────
-        // Butuh session (sudah login) ATAU cookie akses
-        if (hasSession || hasAccess) {
+        if (hasSession) {
             return NextResponse.next();
         }
 
-        // Tidak ada akses → redirect ke homepage
         return NextResponse.redirect(new URL("/", request.url));
     }
 
