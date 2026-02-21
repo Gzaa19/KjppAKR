@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+// Middleware v4 — 2026-02-22
 const ADMIN_SECRET_KEY = process.env.ADMIN_SECRET_KEY || "kjpp-secure-2026";
 
 export function middleware(request: NextRequest) {
@@ -29,13 +30,17 @@ export function middleware(request: NextRequest) {
                 return response;
             }
 
-            return NextResponse.redirect(new URL("/", request.url));
+            const blockedRes = NextResponse.redirect(new URL("/", request.url));
+            blockedRes.headers.set("Cache-Control", "no-store, no-cache");
+            return blockedRes;
         }
         if (hasSession) {
             return NextResponse.next();
         }
 
-        return NextResponse.redirect(new URL("/", request.url));
+        const noAccessRes = NextResponse.redirect(new URL("/", request.url));
+        noAccessRes.headers.set("Cache-Control", "no-store, no-cache");
+        return noAccessRes;
     }
 
     return NextResponse.next();
