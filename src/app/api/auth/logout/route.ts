@@ -1,19 +1,23 @@
 export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
+
+export async function GET() {
+    const response = NextResponse.redirect(
+        new URL("/", process.env.NEXT_PUBLIC_APP_URL || "https://kjpp-akr.co.id")
+    );
+
+    response.cookies.set("admin_session", "", { maxAge: 0, path: "/" });
+    response.cookies.set("admin_access_granted", "", { maxAge: 0, path: "/" });
+
+    return response;
+}
 
 export async function POST() {
-    try {
-        const cookieStore = await cookies();
-        cookieStore.delete("admin_session");
+    const response = NextResponse.json({ success: true });
 
-        return NextResponse.json({ success: true });
-    } catch (error) {
-        console.error("Logout error:", error);
-        return NextResponse.json(
-            { success: false, error: "Terjadi kesalahan saat logout" },
-            { status: 500 }
-        );
-    }
+    response.cookies.set("admin_session", "", { maxAge: 0, path: "/" });
+    response.cookies.set("admin_access_granted", "", { maxAge: 0, path: "/" });
+
+    return response;
 }
