@@ -1,10 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { Quote, ImageIcon, FileDown } from "lucide-react";
+import { Quote, ImageIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { useCompanyProfile } from "@/hooks/useCompanyProfile";
+import { CompanyProfileButton } from "@/components/ui/CompanyProfileButton";
 
 interface SekapurSirihImages {
     managingPartner: {
@@ -22,7 +21,6 @@ interface SekapurSirihImages {
 }
 
 export function SekapurSirihSection() {
-    const { downloadUrl } = useCompanyProfile();
     const [images, setImages] = useState<SekapurSirihImages>({
         managingPartner: null,
         teamPhoto: null
@@ -170,18 +168,7 @@ export function SekapurSirihSection() {
                         </div>
 
                         {/* Right: Download button */}
-                        {downloadUrl && (
-                            <Button
-                                asChild
-                                size="lg"
-                                className="bg-white text-kjpp-dark hover:bg-white/95 px-8 py-6 text-base font-semibold rounded-full shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 transition-all duration-300 group shrink-0"
-                            >
-                                <a href={downloadUrl} download="Company-Profile-KJPP-AKR.pdf" className="flex items-center gap-2.5">
-                                    <FileDown className="w-5 h-5 transition-transform duration-300 group-hover:-translate-y-0.5" />
-                                    Download PDF
-                                </a>
-                            </Button>
-                        )}
+                        <CompanyProfileButton variant="card" />
                     </div>
                 </div>
                 <div className="mt-16 relative w-full aspect-video rounded-3xl overflow-hidden shadow-xl group">
