@@ -264,3 +264,13 @@ enum UserRole {
   ADMIN
   EDITOR
 }
+
+model company_profiles {
+  id        String   @id
+  title     String
+  fileUrl   String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+

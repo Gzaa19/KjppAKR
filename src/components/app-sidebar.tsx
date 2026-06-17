@@ -82,6 +82,11 @@ const cmsMenu = [
         url: "/admin/sekapur-sirih",
         icon: ImageIcon,
     },
+    {
+        title: "Company Profile",
+        url: "/admin/company-profile",
+        icon: FileText,
+    },
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {

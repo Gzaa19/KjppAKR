@@ -1,8 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { Quote, ImageIcon } from "lucide-react";
+import { Quote, ImageIcon, FileDown } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { useCompanyProfile } from "@/hooks/useCompanyProfile";
 
 interface SekapurSirihImages {
     managingPartner: {
@@ -20,6 +22,7 @@ interface SekapurSirihImages {
 }
 
 export function SekapurSirihSection() {
+    const { pdfUrl } = useCompanyProfile();
     const [images, setImages] = useState<SekapurSirihImages>({
         managingPartner: null,
         teamPhoto: null
@@ -136,6 +139,48 @@ export function SekapurSirihSection() {
                     <p>
                         Secara umum KJPP Anas Karim Rivai & Rekan (AKR) didirikan dengan cita-cita yang luhur dari pendirinya, yang berkeinginan untuk mengembangkan kemampuan dan talenta setiap personil untuk aktif berperan serta dalam pembangunan terkait dengan Jasa Penilai dan Jasa Konsultansi. KJPP Anas Karim Rivai & Rekan selalu berusaha untuk menjadi perusahaan yang berintegritas tinggi serta menjunjung tinggi komitmen sebagai Perusahaan Penilai yang independen dan profesional. Dalam menjalankan bisnis serta layanan kami, kami didukung oleh tenaga ahli yang profesional, berdedikasi tinggi.
                     </p>
+                </div>
+                <div className="mt-12 mb-8 relative overflow-hidden rounded-2xl shadow-2xl">
+                    {/* Background with refined gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#1a2f42] via-kjpp-dark to-[#3a5a73]" />
+
+                    {/* Decorative elements */}
+                    <div className="absolute inset-0 overflow-hidden">
+                        <div className="absolute -top-20 -right-20 w-72 h-72 bg-white/[0.04] rounded-full" />
+                        <div className="absolute -bottom-16 -left-16 w-56 h-56 bg-white/[0.03] rounded-full" />
+                        <div className="absolute top-1/2 right-1/4 w-32 h-32 bg-kjpp-red/10 rounded-full blur-2xl" />
+                        {/* Subtle accent line */}
+                        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-kjpp-red/60 to-transparent" />
+                    </div>
+
+                    <div className="relative z-10 p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8">
+                        {/* Left: Icon + Text */}
+                        <div className="flex items-start gap-5 text-center md:text-left">
+                            <div className="hidden md:flex shrink-0 w-14 h-14 rounded-xl bg-white/10 backdrop-blur-sm items-center justify-center border border-white/10">
+                                <FileDown className="w-7 h-7 text-white/90" />
+                            </div>
+                            <div className="space-y-2">
+                                <h3 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+                                    Company Profile
+                                </h3>
+                                <p className="text-white/60 text-sm md:text-base max-w-lg leading-relaxed">
+                                    Unduh Company Profile KJPP AKR untuk mengenal lebih dalam tentang layanan, portofolio, dan komitmen kami.
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Right: Download button */}
+                        <Button
+                            asChild
+                            size="lg"
+                            className="bg-white text-kjpp-dark hover:bg-white/95 px-8 py-6 text-base font-semibold rounded-full shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 transition-all duration-300 group shrink-0"
+                        >
+                            <a href={pdfUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5">
+                                <FileDown className="w-5 h-5 transition-transform duration-300 group-hover:-translate-y-0.5" />
+                                Download PDF
+                            </a>
+                        </Button>
+                    </div>
                 </div>
                 <div className="mt-16 relative w-full aspect-video rounded-3xl overflow-hidden shadow-xl group">
                     {loading ? (

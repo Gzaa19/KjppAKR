@@ -4,9 +4,11 @@ import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ChevronDown } from "lucide-react";
+import { ArrowRight, ChevronDown, FileDown } from "lucide-react";
+import { useCompanyProfile } from "@/hooks/useCompanyProfile";
 
 export default function HeroSection() {
+    const { pdfUrl } = useCompanyProfile();
     return (
         <section className="relative w-full h-screen overflow-hidden">
             <div className="absolute inset-0">
@@ -40,7 +42,7 @@ export default function HeroSection() {
                             <p className="text-white text-base md:text-lg max-w-3xl mx-auto leading-relaxed font-medium mt-6">
                                 Partner terpercaya Anda dalam penilaian properti, bisnis, dan aset industri dengan standar profesional tertinggi. Didukung sertifikasi resmi dan pengalaman lebih dari 30 tahun.
                             </p>
-                            <div className="pt-8">
+                            <div className="pt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
                                 <Link href="/hubungi-kami">
                                     <Button
                                         size="lg"
@@ -50,6 +52,15 @@ export default function HeroSection() {
                                         <ArrowRight className="w-5 h-5 ml-2" />
                                     </Button>
                                 </Link>
+                                <a href={pdfUrl} target="_blank" rel="noopener noreferrer">
+                                    <Button
+                                        size="lg"
+                                        className="h-16 px-14 text-base font-bold bg-kjpp-red text-white hover:bg-kjpp-red/90 transition-all duration-300 shadow-xl hover:shadow-2xl"
+                                    >
+                                        <FileDown className="w-5 h-5 mr-2" />
+                                        COMPANY PROFILE
+                                    </Button>
+                                </a>
                             </div>
                         </div>
                     </div>

@@ -4,9 +4,11 @@ import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Instagram, Linkedin, ArrowRight, MapPin } from "lucide-react";
+import { Instagram, Linkedin, ArrowRight, MapPin, FileDown } from "lucide-react";
+import { useCompanyProfile } from "@/hooks/useCompanyProfile";
 
 export function Footer() {
+    const { pdfUrl } = useCompanyProfile();
     return (
         <footer className="relative w-full">
             <div className="relative w-full mb-0">
@@ -106,7 +108,7 @@ export function Footer() {
                                         <Linkedin className="w-5 h-5 text-bg-primary2 group-hover:text-white transition-colors" />
                                     </Link>
                                 </div>
-                                <div className="pt-4">
+                                <div className="pt-4 flex flex-wrap items-center justify-center lg:justify-start gap-4">
                                     <Button
                                         asChild
                                         size="lg"
@@ -116,6 +118,16 @@ export function Footer() {
                                             Kontak Kami
                                             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                         </Link>
+                                    </Button>
+                                    <Button
+                                        asChild
+                                        size="lg"
+                                        className="bg-transparent text-white border-2 border-white/50 hover:bg-white hover:text-bg-primary2 px-8 py-6 text-base font-semibold rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 group"
+                                    >
+                                        <a href={pdfUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                                            <FileDown className="w-5 h-5" />
+                                            Company Profile
+                                        </a>
                                     </Button>
                                 </div>
                             </div>
