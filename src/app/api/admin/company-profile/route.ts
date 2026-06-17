@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { uploadImage } from "@/lib/uploadImage";
+import { uploadPdf } from "@/lib/uploadImage";
 
 export async function GET() {
     try {
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
         }
 
         // Upload PDF to Cloudinary
-        const uploadResult: any = await uploadImage(file, "documents");
+        const uploadResult: any = await uploadPdf(file, "documents");
         const fileUrl = uploadResult.secure_url;
 
         const newProfile = await prisma.company_profiles.create({

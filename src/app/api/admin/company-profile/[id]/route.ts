@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { uploadImage } from "@/lib/uploadImage";
+import { uploadPdf } from "@/lib/uploadImage";
 
 export async function PUT(
     req: Request,
@@ -48,7 +48,7 @@ export async function PUT(
 
         // If new file uploaded, upload it to Cloudinary
         if (file) {
-            const uploadResult: any = await uploadImage(file, "documents");
+            const uploadResult: any = await uploadPdf(file, "documents");
             fileUrl = uploadResult.secure_url;
         }
 
