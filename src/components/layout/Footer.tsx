@@ -119,16 +119,18 @@ export function Footer() {
                                             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                         </Link>
                                     </Button>
-                                    <Button
-                                        asChild
-                                        size="lg"
-                                        className="bg-transparent text-white border-2 border-white/50 hover:bg-white hover:text-bg-primary2 px-8 py-6 text-base font-semibold rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 group"
-                                    >
-                                        <a href={pdfUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
-                                            <FileDown className="w-5 h-5" />
-                                            Company Profile
-                                        </a>
-                                    </Button>
+                                    {pdfUrl && pdfUrl !== "/documents/company-profile.pdf" && (
+                                        <Button
+                                            asChild
+                                            size="lg"
+                                            className="bg-kjpp-red text-white px-8 py-6 text-base font-semibold rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 group"
+                                        >
+                                            <a href={pdfUrl} download="Company-Profile-KJPP-AKR.pdf" rel="noopener noreferrer" className="flex items-center gap-2">
+                                                <FileDown className="w-5 h-5" />
+                                                Company Profile
+                                            </a>
+                                        </Button>
+                                    )}
                                 </div>
                             </div>
                         </div>

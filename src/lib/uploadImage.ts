@@ -63,7 +63,7 @@ export const uploadPdf = async (file: File, folder: string) => {
                 {
                     folder: folder,
                     resource_type: "raw", // required for PDF files
-                    format: "pdf",
+                    access_mode: "public", // ensure file is publicly accessible
                 },
                 (error, result) => {
                     if (error) {

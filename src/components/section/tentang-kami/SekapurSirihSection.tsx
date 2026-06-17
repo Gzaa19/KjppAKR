@@ -170,16 +170,18 @@ export function SekapurSirihSection() {
                         </div>
 
                         {/* Right: Download button */}
-                        <Button
-                            asChild
-                            size="lg"
-                            className="bg-white text-kjpp-dark hover:bg-white/95 px-8 py-6 text-base font-semibold rounded-full shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 transition-all duration-300 group shrink-0"
-                        >
-                            <a href={pdfUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5">
-                                <FileDown className="w-5 h-5 transition-transform duration-300 group-hover:-translate-y-0.5" />
-                                Download PDF
-                            </a>
-                        </Button>
+                        {pdfUrl && pdfUrl !== "/documents/company-profile.pdf" && (
+                            <Button
+                                asChild
+                                size="lg"
+                                className="bg-white text-kjpp-dark hover:bg-white/95 px-8 py-6 text-base font-semibold rounded-full shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 transition-all duration-300 group shrink-0"
+                            >
+                                <a href={pdfUrl} download="Company-Profile-KJPP-AKR.pdf" rel="noopener noreferrer" className="flex items-center gap-2.5">
+                                    <FileDown className="w-5 h-5 transition-transform duration-300 group-hover:-translate-y-0.5" />
+                                    Download PDF
+                                </a>
+                            </Button>
+                        )}
                     </div>
                 </div>
                 <div className="mt-16 relative w-full aspect-video rounded-3xl overflow-hidden shadow-xl group">
