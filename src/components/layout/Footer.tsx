@@ -8,7 +8,7 @@ import { Instagram, Linkedin, ArrowRight, MapPin, FileDown } from "lucide-react"
 import { useCompanyProfile } from "@/hooks/useCompanyProfile";
 
 export function Footer() {
-    const { pdfUrl } = useCompanyProfile();
+    const { downloadUrl } = useCompanyProfile();
     return (
         <footer className="relative w-full">
             <div className="relative w-full mb-0">
@@ -119,13 +119,13 @@ export function Footer() {
                                             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                         </Link>
                                     </Button>
-                                    {pdfUrl && pdfUrl !== "/documents/company-profile.pdf" && (
+                                    {downloadUrl && (
                                         <Button
                                             asChild
                                             size="lg"
                                             className="bg-kjpp-red text-white px-8 py-6 text-base font-semibold rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 group"
                                         >
-                                            <a href={pdfUrl} download="Company-Profile-KJPP-AKR.pdf" rel="noopener noreferrer" className="flex items-center gap-2">
+                                            <a href={downloadUrl} download="Company-Profile-KJPP-AKR.pdf" className="flex items-center gap-2">
                                                 <FileDown className="w-5 h-5" />
                                                 Company Profile
                                             </a>

@@ -8,7 +8,7 @@ import { ArrowRight, ChevronDown, FileDown } from "lucide-react";
 import { useCompanyProfile } from "@/hooks/useCompanyProfile";
 
 export default function HeroSection() {
-    const { pdfUrl } = useCompanyProfile();
+    const { downloadUrl } = useCompanyProfile();
     return (
         <section className="relative w-full h-screen overflow-hidden">
             <div className="absolute inset-0">
@@ -52,8 +52,8 @@ export default function HeroSection() {
                                         <ArrowRight className="w-5 h-5 ml-2" />
                                     </Button>
                                 </Link>
-                                {pdfUrl && pdfUrl !== "/documents/company-profile.pdf" && (
-                                    <a href={pdfUrl} download="Company-Profile-KJPP-AKR.pdf" rel="noopener noreferrer">
+                                {downloadUrl && (
+                                    <a href={downloadUrl} download="Company-Profile-KJPP-AKR.pdf">
                                         <Button
                                             size="lg"
                                             className="h-16 px-14 text-base font-bold bg-kjpp-red text-white hover:bg-kjpp-red/90 transition-all duration-300 shadow-xl hover:shadow-2xl"

@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 
-const DEFAULT_PDF_URL = "/documents/company-profile.pdf";
-
 export function useCompanyProfile() {
-    const [pdfUrl, setPdfUrl] = useState<string>(DEFAULT_PDF_URL);
+    const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+    const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
@@ -12,13 +11,17 @@ export function useCompanyProfile() {
                 const response = await fetch("/api/company-profile");
                 if (!response.ok) throw new Error("Failed to fetch");
                 const result = await response.json();
-                
+
                 if (result.success && result.data?.fileUrl) {
-                    setPdfUrl(result.data.fileUrl);
+                    const url = result.data.fileUrl;
+                    setPdfUrl(url);
+                    // Proxy URL forces direct download (bypasses cross-origin restriction)
+                    setDownloadUrl(
+                        `/api/download-pdf?url=${encodeURIComponent(url)}&filename=Company-Profile-KJPP-AKR.pdf`
+                    );
                 }
             } catch (error) {
                 console.error("Error loading company profile PDF:", error);
-                setPdfUrl(DEFAULT_PDF_URL); // fallback
             } finally {
                 setLoading(false);
             }
@@ -27,5 +30,5 @@ export function useCompanyProfile() {
         fetchProfile();
     }, []);
 
-    return { pdfUrl, loading };
+    return { pdfUrl, downloadUrl, loading };
 }
