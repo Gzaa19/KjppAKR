@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Quote, ImageIcon } from "lucide-react";
+import { Quote, ImageIcon, FileDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CompanyProfileButton } from "@/components/ui/CompanyProfileButton";
 
